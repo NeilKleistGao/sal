@@ -1,4 +1,6 @@
-// Generated from SalParser.g4 by ANTLR 4.10.1
+// Generated from src/main/antlr4/SalParser.g4 by ANTLR 4.10.1
+package sal.parser;
+
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -100,6 +102,11 @@ public class SalParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SalParserListener ) ((SalParserListener)listener).exitLit(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SalParserVisitor ) return ((SalParserVisitor<? extends T>)visitor).visitLit(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 

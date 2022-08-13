@@ -1,4 +1,5 @@
-// Generated from SalParser.g4 by ANTLR 4.10.1
+// Generated from src/main/antlr4/SalParser.g4 by ANTLR 4.10.1
+package sal.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;

@@ -1,4 +1,6 @@
-// Generated from SalLexer.g4 by ANTLR 4.10.1
+// Generated from src/main/antlr4/SalLexer.g4 by ANTLR 4.10.1
+package sal.parser;
+
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -91,7 +93,7 @@ public class SalLexer extends Lexer {
 	@Override
 	public String getSerializedATN() { return _serializedATN; }
 
-	// @Override
+	@Override
 	public String[] getChannelNames() { return channelNames; }
 
 	@Override
