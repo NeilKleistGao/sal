@@ -2,5 +2,7 @@ ThisBuild / scalaVersion := "2.13.8"
 
 lazy val root = project.in(file("."))
   .settings(
+    libraryDependencies += "org.antlr" % "antlr4-runtime" % "4.6",
+    libraryDependencies += "org.antlr" % "stringtemplate" % "3.2",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.12" % Test
   )
