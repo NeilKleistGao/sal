@@ -1,1 +1,3 @@
 * eol=lf
+*.java linguist-vendored
+*.sal linguist-language=lua

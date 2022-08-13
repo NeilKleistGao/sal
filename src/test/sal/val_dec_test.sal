@@ -1,0 +1,4 @@
+val x: int = 10
+val y: float = 3.14
+val z: bool = false
+val w: string = "abc"
