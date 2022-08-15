@@ -38,7 +38,7 @@ class Compiler(filename: String) {
   def toLua(outputname: String): Unit = {
     try {
       val writer = new BufferedWriter(new FileWriter(outputname))
-      writer.write(Compiler.compile(program))
+      writer.write(program.toString())
       writer.close()
     }
     catch {
@@ -51,6 +51,4 @@ class Compiler(filename: String) {
 
 object Compiler {
   def apply(filename: String) = new Compiler(filename)
-
-  private def compile(program: ProgramNode): String = "" // TODO: generate lua code
 }

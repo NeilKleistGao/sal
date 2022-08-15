@@ -19,7 +19,7 @@ public class SalParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		WS=1, NUMBER=2, COLON_OP=3, ASSIGN_OP=4, ID=5, VAL_KW=6, INT_KW=7;
+		VAL_KW=1, INT_KW=2, WS=3, NUMBER=4, COLON_OP=5, ASSIGN_OP=6, ID=7;
 	public static final int
 		RULE_lit = 0, RULE_program = 1, RULE_statement = 2, RULE_typeName = 3, 
 		RULE_value = 4, RULE_expression = 5;
@@ -32,13 +32,13 @@ public class SalParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, null, null, "':'", "'='", null, "'val'", "'int'"
+			null, "'val'", "'int'", null, null, "':'", "'='"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "WS", "NUMBER", "COLON_OP", "ASSIGN_OP", "ID", "VAL_KW", "INT_KW"
+			null, "VAL_KW", "INT_KW", "WS", "NUMBER", "COLON_OP", "ASSIGN_OP", "ID"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -399,16 +399,16 @@ public class SalParser extends Parser {
 		"\u001e\u0000\f\u0001\u0000\u0000\u0000\u0002\u0011\u0001\u0000\u0000\u0000"+
 		"\u0004\u0016\u0001\u0000\u0000\u0000\u0006\u0018\u0001\u0000\u0000\u0000"+
 		"\b\u001a\u0001\u0000\u0000\u0000\n!\u0001\u0000\u0000\u0000\f\r\u0005"+
-		"\u0002\u0000\u0000\r\u0001\u0001\u0000\u0000\u0000\u000e\u0010\u0003\u0004"+
+		"\u0004\u0000\u0000\r\u0001\u0001\u0000\u0000\u0000\u000e\u0010\u0003\u0004"+
 		"\u0002\u0000\u000f\u000e\u0001\u0000\u0000\u0000\u0010\u0013\u0001\u0000"+
 		"\u0000\u0000\u0011\u000f\u0001\u0000\u0000\u0000\u0011\u0012\u0001\u0000"+
 		"\u0000\u0000\u0012\u0014\u0001\u0000\u0000\u0000\u0013\u0011\u0001\u0000"+
 		"\u0000\u0000\u0014\u0015\u0005\u0000\u0000\u0001\u0015\u0003\u0001\u0000"+
 		"\u0000\u0000\u0016\u0017\u0003\b\u0004\u0000\u0017\u0005\u0001\u0000\u0000"+
-		"\u0000\u0018\u0019\u0005\u0007\u0000\u0000\u0019\u0007\u0001\u0000\u0000"+
-		"\u0000\u001a\u001b\u0005\u0006\u0000\u0000\u001b\u001c\u0005\u0005\u0000"+
-		"\u0000\u001c\u001d\u0005\u0003\u0000\u0000\u001d\u001e\u0003\u0006\u0003"+
-		"\u0000\u001e\u001f\u0005\u0004\u0000\u0000\u001f \u0003\n\u0005\u0000"+
+		"\u0000\u0018\u0019\u0005\u0002\u0000\u0000\u0019\u0007\u0001\u0000\u0000"+
+		"\u0000\u001a\u001b\u0005\u0001\u0000\u0000\u001b\u001c\u0005\u0007\u0000"+
+		"\u0000\u001c\u001d\u0005\u0005\u0000\u0000\u001d\u001e\u0003\u0006\u0003"+
+		"\u0000\u001e\u001f\u0005\u0006\u0000\u0000\u001f \u0003\n\u0005\u0000"+
 		" \t\u0001\u0000\u0000\u0000!\"\u0003\u0000\u0000\u0000\"\u000b\u0001\u0000"+
 		"\u0000\u0000\u0001\u0011";
 	public static final ATN _ATN =
