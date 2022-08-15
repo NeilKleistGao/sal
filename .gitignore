@@ -5,3 +5,4 @@
 .metals/
 .bloop/
 target/
+src/main/antlr4/.antlr/

@@ -5,11 +5,9 @@ import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import java.io.BufferedWriter
 
 class Compiler(filename: String) {
-  import grammar._
+  private lazy val program = init
 
-  lazy val visitor = init
-
-  private def init(): ASTVisitor = {
+  private def init(): ProgramNode = {
    val reader =
     try { new BufferedReader(new FileReader(filename)) }
     catch {
@@ -26,7 +24,7 @@ class Compiler(filename: String) {
       val lexer = new sal.parser.SalLexer(stream)
       val tokens = new CommonTokenStream(lexer)
       val parser = new sal.parser.SalParser(tokens)
-      ASTVisitor(parser)
+      STVisitor().visit(parser.program).asInstanceOf[ProgramNode]
     }
   }
 
@@ -40,7 +38,7 @@ class Compiler(filename: String) {
   def toLua(outputname: String): Unit = {
     try {
       val writer = new BufferedWriter(new FileWriter(outputname))
-      writer.write("") // TODO: write things here
+      writer.write(Compiler.compile(program))
       writer.close()
     }
     catch {
@@ -53,4 +51,6 @@ class Compiler(filename: String) {
 
 object Compiler {
   def apply(filename: String) = new Compiler(filename)
+
+  private def compile(program: ProgramNode): String = "" // TODO: generate lua code
 }
