@@ -6,13 +6,13 @@ parser grammar SalParser;
 
 options { tokenVocab=SalLexer; }
 
-lit: NUMBER | TRUE_LIT | FALSE_LIT;
+lit: NUMBER | TRUE_LIT | FALSE_LIT | STRING_LIT;
 
 program: statement* EOF;
 
 statement: value;
 
-typeName: INT_KW | FLOAT_KW | BOOL_KW;
+typeName: INT_KW | FLOAT_KW | BOOL_KW | STRING_KW;
 
 value: VAL_KW ID COLON_OP typeName ASSIGN_OP expression;
 
