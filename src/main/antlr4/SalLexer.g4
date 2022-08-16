@@ -6,6 +6,7 @@ lexer grammar SalLexer;
 
 VAL_KW: 'val';
 INT_KW: 'int';
+FLOAT_KW: 'float';
 
 WS: [ \t\n]+ -> skip;
 NUMBER: ('0' .. '9') + ('.' ('0' .. '9') +)?;

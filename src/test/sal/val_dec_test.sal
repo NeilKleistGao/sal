@@ -1,1 +1,2 @@
 val x: int = 10
+val y: float = 3.14

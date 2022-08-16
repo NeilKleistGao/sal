@@ -12,7 +12,7 @@ program: statement* EOF;
 
 statement: value;
 
-typeName: INT_KW;
+typeName: INT_KW | FLOAT_KW;
 
 value: VAL_KW ID COLON_OP typeName ASSIGN_OP expression;
 

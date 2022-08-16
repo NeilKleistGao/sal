@@ -2,9 +2,9 @@ package sal
 
 sealed trait STNode
 
-// so far only int is supported
-case class LitNode(value: Int) extends STNode {
-  override def toString(): String = value.toString
+
+case class LitNode(value: String) extends STNode {
+  override def toString(): String = value
 }
 
 case class TypeNameNode(tp: types.Type) extends STNode {
