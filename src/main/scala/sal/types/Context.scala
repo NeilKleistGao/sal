@@ -7,7 +7,7 @@ class Context(parent: Option[Context]) {
 
   def derive() = new Context(Some(this))
 
-  def +=(name: String, tp: Type) = map.put(name, tp)
+  def +=(info: (String, Type)) = map.put(info._1, info._2)
 
   def require(name: String, req: Type) =
     if (!map.contains(name)) false

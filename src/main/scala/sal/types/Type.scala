@@ -9,4 +9,6 @@ case class BuiltInType(name: String) extends Type {
     case BuiltInType(nm) => nm.equals(name)
     case _ => false // TODO: support other types
   }
+
+  override def toString(): String = name
 }
