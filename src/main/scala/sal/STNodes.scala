@@ -54,3 +54,23 @@ case class ProgramNode(states: List[StatementNode]) extends STNode with ResultNo
 case class ErrorNode(errInfo: String) extends ResultNode {
   override def toString(): String = s"--[[$errInfo]]"
 }
+
+case class ParamNode(name: String, tp: types.Type) extends STNode {
+
+}
+
+case class ParamsNode(params: List[ParamNode]) extends STNode {
+
+}
+
+case class BlockNode(stats: List[StatementNode]) extends STNode {
+
+}
+
+case class FunctionBodyNode(body: Either[StatementNode, BlockNode]) extends STNode {
+
+}
+
+case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode) extends STNode {
+  
+}
