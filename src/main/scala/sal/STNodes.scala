@@ -55,7 +55,7 @@ case class ErrorNode(errInfo: String) extends ResultNode {
   override def toString(): String = s"--[[$errInfo]]"
 }
 
-case class ParamNode(name: String, tp: types.Type) extends STNode {
+case class ParamNode(name: String, tp: TypeNameNode) extends STNode {
 
 }
 
