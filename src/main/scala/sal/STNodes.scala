@@ -4,6 +4,8 @@ sealed trait STNode {
   lazy val salType: types.Type = ???
 }
 
+sealed trait ResultNode
+
 case class LitNode(value: String) extends STNode {
   override def toString(): String = value
 
@@ -42,9 +44,13 @@ case class StatementNode(v: ValueNode) extends STNode {
   override lazy val salType = v.salType
 }
 
-case class ProgramNode(states: List[StatementNode]) extends STNode {
+case class ProgramNode(states: List[StatementNode]) extends STNode with ResultNode {
   override def toString(): String =
     states.foldLeft("")((res, s) => s"$res$s\n")
 
   override lazy val salType = states.tail(0).salType
+}
+
+case class ErrorNode(errInfo: String) extends ResultNode {
+  override def toString(): String = s"--[[$errInfo]]"
 }

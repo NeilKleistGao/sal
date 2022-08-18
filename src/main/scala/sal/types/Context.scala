@@ -8,7 +8,7 @@ class Context(parent: Option[Context]) {
   def derive() = new Context(Some(this))
 
   def +=(info: (String, Type)) =
-    if (map.contains(info._1)) throw new java.lang.Exception(s"duplicate ${info._1}")
+    if (map.contains(info._1)) throw new sal.SalException(s"duplicate ${info._1}")
     else map.put(info._1, info._2)
 
   def require(name: String, req: Type) =

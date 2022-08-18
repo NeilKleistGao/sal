@@ -26,7 +26,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val exp = visitExpression(ctx.expression)
     typeCtx += (name, tp.salType)
     if (!typeCtx.require(name, exp.salType))
-      throw new java.lang.Exception(s"$name got ${exp.salType}, but ${tp.salType} is requireed.")
+      throw new SalException(s"$name got ${exp.salType}, but ${tp.salType} is requireed.")
 
     ValueNode(name, tp, exp)
   }

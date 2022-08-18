@@ -7,7 +7,7 @@ import java.io.BufferedWriter
 class Compiler(filename: String) {
   private lazy val program = init
 
-  private def init(): ProgramNode = {
+  private def init(): ResultNode = {
    val reader =
     try { new BufferedReader(new FileReader(filename)) }
     catch {
@@ -24,7 +24,12 @@ class Compiler(filename: String) {
       val lexer = new sal.parser.SalLexer(stream)
       val tokens = new CommonTokenStream(lexer)
       val parser = new sal.parser.SalParser(tokens)
-      STVisitor().visit(parser.program).asInstanceOf[ProgramNode]
+      try
+        STVisitor().visit(parser.program).asInstanceOf[ProgramNode]
+      catch {
+        case SalException(info) => ErrorNode(info)
+        case _ => ErrorNode("unknown error.")
+      }
     }
   }
 
