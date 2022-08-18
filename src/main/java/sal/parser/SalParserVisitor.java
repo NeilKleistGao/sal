@@ -31,6 +31,12 @@ public interface SalParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStatement(SalParser.StatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SalParser#block}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlock(SalParser.BlockContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SalParser#typeName}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -48,4 +54,28 @@ public interface SalParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpression(SalParser.ExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#functionBody}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionBody(SalParser.FunctionBodyContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#param}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParam(SalParser.ParamContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#params}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParams(SalParser.ParamsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#function}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunction(SalParser.FunctionContext ctx);
 }
