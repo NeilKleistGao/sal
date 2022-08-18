@@ -1,0 +1,4 @@
+val x: int = "abc"
+val y: bool = false
+val z: string = true
+val x: int = 42
