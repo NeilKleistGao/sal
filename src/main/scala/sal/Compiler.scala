@@ -5,9 +5,9 @@ import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import java.io.BufferedWriter
 
 class Compiler(filename: String) {
-  private lazy val program = init
+  private lazy val result = compile
 
-  private def init(): ResultNode = {
+  private def compile(): ResultNode = {
    val reader =
     try { new BufferedReader(new FileReader(filename)) }
     catch {
@@ -28,7 +28,7 @@ class Compiler(filename: String) {
         STVisitor().visit(parser.program).asInstanceOf[ProgramNode]
       catch {
         case SalException(info) => ErrorNode(info)
-        case _ => ErrorNode("unknown error.")
+        case _: Throwable => ErrorNode("unknown error.")
       }
     }
   }
@@ -43,7 +43,7 @@ class Compiler(filename: String) {
   def toLua(outputname: String): Unit = {
     try {
       val writer = new BufferedWriter(new FileWriter(outputname))
-      writer.write(program.toString())
+      writer.write(result.toString())
       writer.close()
     }
     catch {

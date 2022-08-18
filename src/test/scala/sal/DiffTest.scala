@@ -2,9 +2,9 @@ package sal
 
 import org.scalatest.funsuite.AnyFunSuite
 
-class DiffTest(from: String, to: String) extends AnyFunSuite {
+class DiffTest extends AnyFunSuite {
   // TODO: add more test parameters
-  def generate(): Unit = {
+  def generate(from: String, to: String): Unit = {
     import DiffTest._
     val compiler = Compiler(s"$salPath/$from")
     compiler.toLua(s"$luaPath/$to")
