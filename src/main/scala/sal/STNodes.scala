@@ -69,8 +69,12 @@ case class ParamNode(name: String, tp: TypeNameNode) extends STNode {
 }
 
 case class ParamsNode(val params: List[ParamNode]) extends STNode {
-  override def toLua(indent: Int): String =
-    params.foldLeft("")((r, p) => s"$r, ${p.toLua(0)}").substring(2)
+  override def toLua(indent: Int): String = {
+    val lua = params.foldLeft("")((r, p) => s"$r, ${p.toLua(0)}")
+    if (lua.isEmpty()) lua
+    else lua.substring(2)
+  }
+    
 }
 
 case class BlockNode(stats: List[StatementNode], res: String) extends STNode with FunctionBodyType {
@@ -103,6 +107,6 @@ case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body:
     
   override def toLua(indent: Int): String = {
     val prefix = super.toLua(indent)
-    s"${prefix}function $id(${params.toLua(0)})\n${body.toLua(indent + 1)}\n${prefix}"
+    s"${prefix}function $id(${params.toLua(0)})\n${body.toLua(indent + 1)}\n${prefix}end"
   }
 }

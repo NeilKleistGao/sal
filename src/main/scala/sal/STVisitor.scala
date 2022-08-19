@@ -4,12 +4,14 @@ import org.antlr.v4.runtime.{CharStreams}
 import scala.util.Try
 import scala.collection.JavaConverters._
 import java.lang.StringBuilder
+import scala.collection.mutable.Stack
 
 class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   import sal.parser.SalParser
   import STVisitor._
 
-  private val typeCtx = types.Context()
+  private var typeCtx = types.Context()
+  private val stack = Stack[types.Context]()
   private val errors = new StringBuilder("\n")
 
   override def visitLit(ctx: SalParser.LitContext) = LitNode(ctx.getText)
