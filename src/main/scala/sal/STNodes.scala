@@ -76,14 +76,25 @@ case class ParamsNode(val params: List[ParamNode]) extends STNode {
 case class BlockNode(stats: List[StatementNode], res: String) extends STNode with FunctionBodyType {
   override lazy val salType = stats.tail(0).salType
 
-  override def toLua(indent: Int): String =
-    stats.foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
+  override def toLua(indent: Int): String = {
+    salType match {
+      case types.BuiltInType(name) if (name.equals("void")) =>
+        stats.foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
+      case _ => {
+        val body = stats.dropRight(0).foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
+        s"${super.toLua(indent)}$res = ${stats.tail(0).toLua(0)}"
+      }
+    }
+  }
 }
 
 case class FunctionBodyNode(body: STNode with FunctionBodyType) extends STNode {
   override lazy val salType = body.salType
 
-  override def toLua(indent: Int): String = body.toLua(indent)
+  override def toLua(indent: Int): String = body match {
+    case e: ExpressionNode => s"${super.toLua(indent)}return ${e.toLua(0)}"
+    case BlockNode(_, res) => s"${body.toLua(indent)}\n${super.toLua(indent)}return $res"
+  }
 }
 
 case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode) extends STNode with StatementType {

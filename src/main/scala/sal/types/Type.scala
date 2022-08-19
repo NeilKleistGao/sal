@@ -2,6 +2,7 @@ package sal.types
 
 sealed trait Type {
   def ==(other: Type): Boolean = ???
+  def !=(other: Type): Boolean = ! ==(other)
 }
 
 case class BuiltInType(name: String) extends Type {
