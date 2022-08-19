@@ -10,7 +10,7 @@ lit: NUMBER | TRUE_LIT | FALSE_LIT | STRING_LIT;
 
 program: statement* EOF;
 
-statement: value;
+statement: value | function;
 
 block: LEFT_BRACES statement* RIGHT_BRACES;
 
