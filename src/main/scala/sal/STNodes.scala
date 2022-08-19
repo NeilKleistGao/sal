@@ -12,8 +12,8 @@ sealed trait STNode {
 }
 
 sealed trait ResultNode
-
 sealed trait FunctionBodyType
+sealed trait StatementType
 
 case class LitNode(value: String) extends STNode {
   override def toLua(indent: Int): String = s"${super.toLua(indent)}$value"
@@ -40,22 +40,16 @@ case class ExpressionNode(lit: LitNode) extends STNode with FunctionBodyType {
   override lazy val salType = lit.salType
 }
 
-case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends STNode {
+case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends STNode with StatementType {
   override def toLua(indent: Int): String = s"${super.toLua(indent)}local $id = ${expr.toLua(0)}"
 
   override lazy val salType = types.BuiltInType("void") // TODO: add true void type
 }
 
-case class StatementNode(s: Either[ValueNode, FunctionNode]) extends STNode with FunctionBodyType {
-  override def toLua(indent: Int): String = s match {
-    case Left(l) => l.toLua(indent)
-    case Right(r) => r.toLua(indent)
-  }
+case class StatementNode(s: STNode with StatementType) extends STNode with FunctionBodyType {
+  override def toLua(indent: Int): String = s.toLua(indent)
 
-  override lazy val salType = s match {
-    case Left(l) => l.salType
-    case Right(r) => r.salType
-  }
+  override lazy val salType = s.salType
 }
 
 case class ProgramNode(states: List[StatementNode]) extends STNode with ResultNode {
@@ -85,15 +79,13 @@ case class BlockNode(stats: List[StatementNode]) extends STNode with FunctionBod
     stats.foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
 }
 
-
-
 case class FunctionBodyNode(body: STNode with FunctionBodyType) extends STNode {
   override lazy val salType = body.salType
 
   override def toLua(indent: Int): String = body.toLua(indent)
 }
 
-case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode) extends STNode {
+case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode) extends STNode with StatementType {
   override lazy val salType = res.salType
 
   override def toLua(indent: Int): String = {

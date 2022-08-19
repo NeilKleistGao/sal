@@ -22,8 +22,8 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   }
 
   override def visitStatement(ctx: SalParser.StatementContext): StatementNode =
-    if (ctx.value != null) StatementNode(Left(visitValue(ctx.value)))
-    else StatementNode(Right(visitFunction(ctx.function)))
+    if (ctx.value != null) StatementNode(visitValue(ctx.value))
+    else StatementNode(visitFunction(ctx.function))
 
   override def visitTypeName(ctx: SalParser.TypeNameContext): TypeNameNode =
     TypeNameNode(types.BuiltInType(ctx.getText))
