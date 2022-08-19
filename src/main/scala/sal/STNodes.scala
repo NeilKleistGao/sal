@@ -46,7 +46,7 @@ case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends
   override lazy val salType = types.BuiltInType("void") // TODO: add true void type
 }
 
-case class StatementNode(s: STNode with StatementType) extends STNode with FunctionBodyType {
+case class StatementNode(s: STNode with StatementType) extends STNode {
   override def toLua(indent: Int): String = s.toLua(indent)
 
   override lazy val salType = s.salType
@@ -64,15 +64,16 @@ case class ErrorNode(errInfo: String) extends ResultNode {
 }
 
 case class ParamNode(name: String, tp: TypeNameNode) extends STNode {
+  override lazy val salType = tp.salType
   override def toLua(indent: Int): String = name
 }
 
-case class ParamsNode(params: List[ParamNode]) extends STNode {
+case class ParamsNode(val params: List[ParamNode]) extends STNode {
   override def toLua(indent: Int): String =
     params.foldLeft("")((r, p) => s"$r, ${p.toLua(0)}").substring(2)
 }
 
-case class BlockNode(stats: List[StatementNode]) extends STNode with FunctionBodyType {
+case class BlockNode(stats: List[StatementNode], res: String) extends STNode with FunctionBodyType {
   override lazy val salType = stats.tail(0).salType
 
   override def toLua(indent: Int): String =
@@ -86,8 +87,9 @@ case class FunctionBodyNode(body: STNode with FunctionBodyType) extends STNode {
 }
 
 case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode) extends STNode with StatementType {
-  override lazy val salType = res.salType
-
+  //params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t))
+  override lazy val salType = types.BuiltInType("void") // TODO: add true void type
+    
   override def toLua(indent: Int): String = {
     val prefix = super.toLua(indent)
     s"${prefix}function $id(${params.toLua(0)})\n${body.toLua(indent + 1)}\n${prefix}"

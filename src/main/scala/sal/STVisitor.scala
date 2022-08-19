@@ -48,12 +48,13 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
   override def visitExpression(ctx: SalParser.ExpressionContext) = ExpressionNode(visitLit(ctx.lit))
 
-  override def visitBlock(ctx: SalParser.BlockContext) =
-    BlockNode(ctx.statement.asScala.toList.map((s) => visitStatement(s)))
+  override def visitBlock(ctx: SalParser.BlockContext) = {
+    val states = ctx.statement.asScala.toList.map((s) => visitStatement(s))
+    BlockNode(states, typeCtx.alloc("res", states.tail(0).salType))
+  }
 
   override def visitFunctionBody(ctx: SalParser.FunctionBodyContext): FunctionBodyNode =
-    if (ctx.statement != null) FunctionBodyNode(visitStatement(ctx.statement))
-    else if (ctx.block != null) FunctionBodyNode(visitBlock(ctx.block))
+    if (ctx.block != null) FunctionBodyNode(visitBlock(ctx.block))
     else FunctionBodyNode(visitExpression(ctx.expression))
 
   override def visitParam(ctx: SalParser.ParamContext) =

@@ -3,3 +3,4 @@ val y: float = 3.14
 val z1: bool = false
 val z2: bool = true
 val w: string = "\"abc\""
+val w2: string = "def"

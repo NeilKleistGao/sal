@@ -20,7 +20,7 @@ value: VAL_KW ID COLON_OP typeName ASSIGN_OP expression;
 
 expression: lit;
 
-functionBody: statement | block | expression;
+functionBody: block | expression;
 
 param: ID COLON_OP typeName;
 

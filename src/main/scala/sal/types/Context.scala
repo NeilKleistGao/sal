@@ -14,6 +14,14 @@ class Context(parent: Option[Context]) {
   def require(name: String, req: Type) =
     if (!map.contains(name)) false
     else map(name) == req
+
+  def alloc(name: String, tp: Type): String = {
+    if (map.contains(name)) alloc(name + "_", tp)
+    else {
+      map.put(name, tp)
+      name
+    }
+  }
 }
 
 object Context {
