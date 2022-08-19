@@ -1,0 +1,5 @@
+fun f(): int = "rua"
+
+fun g(x: int): void = {
+  val y: string = x
+}
