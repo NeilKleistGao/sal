@@ -12,7 +12,7 @@ program: statement* EOF;
 
 statement: value | function;
 
-block: LEFT_BRACES statement* RIGHT_BRACES;
+block: LEFT_BRACES (statement | expression)* RIGHT_BRACES;
 
 typeName: INT_KW | FLOAT_KW | BOOL_KW | STRING_KW;
 
@@ -20,7 +20,7 @@ value: VAL_KW ID COLON_OP typeName ASSIGN_OP expression;
 
 expression: lit;
 
-functionBody: statement | block;
+functionBody: statement | block | expression;
 
 param: ID COLON_OP typeName;
 
