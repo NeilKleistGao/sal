@@ -56,21 +56,22 @@ case class ErrorNode(errInfo: String) extends ResultNode {
 }
 
 case class ParamNode(name: String, tp: TypeNameNode) extends STNode {
-
 }
 
 case class ParamsNode(params: List[ParamNode]) extends STNode {
-
 }
 
 case class BlockNode(stats: List[StatementNode]) extends STNode {
-
+  override lazy val salType = stats.tail(0).salType
 }
 
 case class FunctionBodyNode(body: Either[StatementNode, BlockNode]) extends STNode {
-
+  override lazy val salType = body match {
+    case Left(l) => l.salType
+    case Right(r) => r.salType
+  }
 }
 
 case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode) extends STNode {
-  
+  override lazy val salType = res.salType
 }
