@@ -89,7 +89,7 @@ case class BlockNode(stats: List[STNode with BlockInnerType], res: String) exten
         stats.foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
       case _ => {
         val body = stats.dropRight(1).foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
-        s"${super.toLua(indent)}$res = ${stats.last.toLua(0)}"
+        s"$body\n${super.toLua(indent)}$res = ${stats.last.toLua(0)}"
       }
     }
 }
@@ -101,7 +101,7 @@ case class FunctionBodyNode(body: STNode with FunctionBodyType) extends STNode {
     val prefix = super.toLua(indent)
     body match {
       case e: ExpressionNode => s"${prefix}return ${e.toLua(0)}"
-      case BlockNode(_, res) => s"${prefix}local $res = nil\n${body.toLua(indent)}\n${prefix}return $res"
+      case BlockNode(_, res) => s"${prefix}local $res = nil${body.toLua(indent)}\n${prefix}return $res"
     }
   }
 }
