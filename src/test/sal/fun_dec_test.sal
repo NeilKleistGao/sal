@@ -1,1 +1,6 @@
 fun f(): int = 42
+
+fun g(): string = {
+  val x: bool = false
+  "wuwuwu"
+}
