@@ -63,13 +63,19 @@ case class ErrorNode(errInfo: String) extends ResultNode {
 }
 
 case class ParamNode(name: String, tp: TypeNameNode) extends STNode {
+  override def toLua(indent: Int): String = name
 }
 
 case class ParamsNode(params: List[ParamNode]) extends STNode {
+  override def toLua(indent: Int): String =
+    params.foldLeft("")((r, p) => s"$r, ${p.toLua(0)}").substring(2)
 }
 
 case class BlockNode(stats: List[StatementNode]) extends STNode {
   override lazy val salType = stats.tail(0).salType
+
+  override def toLua(indent: Int): String =
+    stats.foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
 }
 
 case class FunctionBodyNode(body: Either[StatementNode, BlockNode]) extends STNode {
@@ -77,8 +83,18 @@ case class FunctionBodyNode(body: Either[StatementNode, BlockNode]) extends STNo
     case Left(l) => l.salType
     case Right(r) => r.salType
   }
+
+  override def toLua(indent: Int): String = body match {
+    case Left(l) => l.toLua(indent)
+    case Right(r) => r.toLua(indent)
+  }
 }
 
 case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode) extends STNode {
   override lazy val salType = res.salType
+
+  override def toLua(indent: Int): String = {
+    val prefix = super.toLua(indent)
+    s"${prefix}function $id(${params.toLua(0)})\n${body.toLua(indent + 1)}\n${prefix}"
+  }
 }
