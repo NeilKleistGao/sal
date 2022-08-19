@@ -117,11 +117,12 @@ case class FunctionBodyNode(body: STNode with FunctionBodyType) extends STNode {
 }
 
 case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode) extends STNode with StatementType {
-  //params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t))
   override lazy val salType = types.BuiltInType("void") // TODO: add true void type
     
   override def toLua(indent: Int): String = {
     val prefix = super.toLua(indent)
     s"${prefix}function $id(${params.toLua(0)})\n${body.toLua(indent + 1)}\n${prefix}end"
   }
+
+  val functionType = params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t))
 }
