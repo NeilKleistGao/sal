@@ -14,6 +14,7 @@ sealed trait STNode {
 sealed trait ResultNode
 sealed trait FunctionBodyType
 sealed trait StatementType
+sealed trait BlockInnerType
 
 case class LitNode(value: String) extends STNode {
   override def toLua(indent: Int): String = s"${super.toLua(indent)}$value"
@@ -34,7 +35,7 @@ case class TypeNameNode(tp: types.Type) extends STNode {
 }
 
 // so far only lit is supported
-case class ExpressionNode(lit: LitNode) extends STNode with FunctionBodyType {
+case class ExpressionNode(lit: LitNode) extends STNode with FunctionBodyType with BlockInnerType {
   override def toLua(indent: Int): String = lit.toLua(indent)
 
   override lazy val salType = lit.salType
@@ -46,7 +47,7 @@ case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends
   override lazy val salType = types.BuiltInType("void") // TODO: add true void type
 }
 
-case class StatementNode(s: STNode with StatementType) extends STNode {
+case class StatementNode(s: STNode with StatementType) extends STNode with BlockInnerType {
   override def toLua(indent: Int): String = s.toLua(indent)
 
   override lazy val salType = s.salType
@@ -74,10 +75,9 @@ case class ParamsNode(val params: List[ParamNode]) extends STNode {
     if (lua.isEmpty()) lua
     else lua.substring(2)
   }
-    
 }
 
-case class BlockNode(stats: List[StatementNode], res: String) extends STNode with FunctionBodyType {
+case class BlockNode(stats: List[STNode with BlockInnerType], res: String) extends STNode with FunctionBodyType {
   override lazy val salType =
     if (stats.isEmpty) types.BuiltInType("void")
     else stats.last.salType
@@ -88,7 +88,7 @@ case class BlockNode(stats: List[StatementNode], res: String) extends STNode wit
       case types.BuiltInType(name) if (name.equals("void")) =>
         stats.foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
       case _ => {
-        val body = stats.dropRight(0).foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
+        val body = stats.dropRight(1).foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
         s"${super.toLua(indent)}$res = ${stats.last.toLua(0)}"
       }
     }
@@ -101,7 +101,7 @@ case class FunctionBodyNode(body: STNode with FunctionBodyType) extends STNode {
     val prefix = super.toLua(indent)
     body match {
       case e: ExpressionNode => s"${prefix}return ${e.toLua(0)}"
-      case BlockNode(_, res) => s"${prefix}local $res = nil${body.toLua(indent)}\n${prefix}return $res"
+      case BlockNode(_, res) => s"${prefix}local $res = nil\n${body.toLua(indent)}\n${prefix}return $res"
     }
   }
 }

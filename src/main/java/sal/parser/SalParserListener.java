@@ -40,6 +40,16 @@ public interface SalParserListener extends ParseTreeListener {
 	 */
 	void exitStatement(SalParser.StatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SalParser#blockInner}.
+	 * @param ctx the parse tree
+	 */
+	void enterBlockInner(SalParser.BlockInnerContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SalParser#blockInner}.
+	 * @param ctx the parse tree
+	 */
+	void exitBlockInner(SalParser.BlockInnerContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SalParser#block}.
 	 * @param ctx the parse tree
 	 */

@@ -12,7 +12,9 @@ program: statement* EOF;
 
 statement: value | function;
 
-block: LEFT_BRACES (statement | expression)* RIGHT_BRACES;
+blockInner: statement | expression;
+
+block: LEFT_BRACES (blockInner)* RIGHT_BRACES;
 
 typeName: INT_KW | FLOAT_KW | BOOL_KW | STRING_KW;
 

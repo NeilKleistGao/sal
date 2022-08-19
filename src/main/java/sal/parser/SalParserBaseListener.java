@@ -54,6 +54,18 @@ public class SalParserBaseListener implements SalParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterBlockInner(SalParser.BlockInnerContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBlockInner(SalParser.BlockInnerContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterBlock(SalParser.BlockContext ctx) { }
 	/**
 	 * {@inheritDoc}
