@@ -2,12 +2,19 @@ package sal
 
 sealed trait STNode {
   lazy val salType: types.Type = ???
+  def toLua(indent: Int): String = {
+    def prefix(s: String, num: Int): String =
+      if (num == 0) s
+      else prefix(s"$s  ", num - 1)
+
+    prefix("", indent)
+  }
 }
 
 sealed trait ResultNode
 
 case class LitNode(value: String) extends STNode {
-  override def toString(): String = value
+  override def toLua(indent: Int): String = s"${super.toLua(indent)}$value"
 
   override lazy val salType = LitNode.getLitType(value)
 }
@@ -26,27 +33,27 @@ case class TypeNameNode(tp: types.Type) extends STNode {
 
 // so far only lit is supported
 case class ExpressionNode(lit: LitNode) extends STNode {
-  override def toString(): String = lit.toString
+  override def toLua(indent: Int): String = lit.toLua(indent)
 
   override lazy val salType = lit.salType
 }
 
 case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends STNode {
-  override def toString(): String = s"local $id = $expr"
+  override def toLua(indent: Int): String = s"${super.toLua(indent)}local $id = ${expr.toLua(0)}"
 
   override lazy val salType = types.BuiltInType("void") // TODO: add true void type
 }
 
 // so far only value is supported
 case class StatementNode(v: ValueNode) extends STNode {
-  override def toString(): String = v.toString
+  override def toLua(indent: Int): String = v.toLua(indent)
 
   override lazy val salType = v.salType
 }
 
 case class ProgramNode(states: List[StatementNode]) extends STNode with ResultNode {
-  override def toString(): String =
-    states.foldLeft("")((res, s) => s"$res$s\n")
+  override def toLua(indent: Int): String =
+    states.foldLeft("")((res, s) => s"$res${s.toLua(0)}\n")
 
   override lazy val salType = states.tail(0).salType
 }
