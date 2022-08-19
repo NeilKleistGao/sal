@@ -6,3 +6,9 @@ fun g(): string = {
 }
 
 fun h(x: bool): bool = x
+
+fun m(x: int, y: float): string = ""
+
+fun n(): void = {
+  val x: float = 1.0
+}

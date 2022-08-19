@@ -10,3 +10,11 @@ end
 function h(x)
   return x
 end
+function m(x, y)
+  return ""
+end
+function n()
+  local res = nil
+  local x = 1.0
+  return res
+end
