@@ -13,6 +13,8 @@ sealed trait STNode {
 
 sealed trait ResultNode
 
+sealed trait FunctionBodyType
+
 case class LitNode(value: String) extends STNode {
   override def toLua(indent: Int): String = s"${super.toLua(indent)}$value"
 
@@ -32,7 +34,7 @@ case class TypeNameNode(tp: types.Type) extends STNode {
 }
 
 // so far only lit is supported
-case class ExpressionNode(lit: LitNode) extends STNode {
+case class ExpressionNode(lit: LitNode) extends STNode with FunctionBodyType {
   override def toLua(indent: Int): String = lit.toLua(indent)
 
   override lazy val salType = lit.salType
@@ -44,7 +46,7 @@ case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends
   override lazy val salType = types.BuiltInType("void") // TODO: add true void type
 }
 
-case class StatementNode(s: Either[ValueNode, FunctionNode]) extends STNode {
+case class StatementNode(s: Either[ValueNode, FunctionNode]) extends STNode with FunctionBodyType {
   override def toLua(indent: Int): String = s match {
     case Left(l) => l.toLua(indent)
     case Right(r) => r.toLua(indent)
@@ -76,23 +78,19 @@ case class ParamsNode(params: List[ParamNode]) extends STNode {
     params.foldLeft("")((r, p) => s"$r, ${p.toLua(0)}").substring(2)
 }
 
-case class BlockNode(stats: List[StatementNode]) extends STNode {
+case class BlockNode(stats: List[StatementNode]) extends STNode with FunctionBodyType {
   override lazy val salType = stats.tail(0).salType
 
   override def toLua(indent: Int): String =
     stats.foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
 }
 
-case class FunctionBodyNode(body: Either[StatementNode, BlockNode]) extends STNode {
-  override lazy val salType = body match {
-    case Left(l) => l.salType
-    case Right(r) => r.salType
-  }
 
-  override def toLua(indent: Int): String = body match {
-    case Left(l) => l.toLua(indent)
-    case Right(r) => r.toLua(indent)
-  }
+
+case class FunctionBodyNode(body: STNode with FunctionBodyType) extends STNode {
+  override lazy val salType = body.salType
+
+  override def toLua(indent: Int): String = body.toLua(indent)
 }
 
 case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode) extends STNode {
