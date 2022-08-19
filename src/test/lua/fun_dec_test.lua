@@ -7,3 +7,6 @@ function g()
   res = "wuwuwu"
   return res
 end
+function h(x)
+  return x
+end

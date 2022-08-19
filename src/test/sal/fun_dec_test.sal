@@ -4,3 +4,5 @@ fun g(): string = {
   val x: bool = false
   "wuwuwu"
 }
+
+fun h(x: bool): bool = x
