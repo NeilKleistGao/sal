@@ -44,11 +44,16 @@ case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends
   override lazy val salType = types.BuiltInType("void") // TODO: add true void type
 }
 
-// so far only value is supported
-case class StatementNode(v: ValueNode) extends STNode {
-  override def toLua(indent: Int): String = v.toLua(indent)
+case class StatementNode(s: Either[ValueNode, FunctionNode]) extends STNode {
+  override def toLua(indent: Int): String = s match {
+    case Left(l) => l.toLua(indent)
+    case Right(r) => r.toLua(indent)
+  }
 
-  override lazy val salType = v.salType
+  override lazy val salType = s match {
+    case Left(l) => l.salType
+    case Right(r) => r.salType
+  }
 }
 
 case class ProgramNode(states: List[StatementNode]) extends STNode with ResultNode {
