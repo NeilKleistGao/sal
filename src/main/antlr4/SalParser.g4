@@ -20,7 +20,7 @@ typeName: INT_KW | FLOAT_KW | BOOL_KW | STRING_KW;
 
 value: VAL_KW ID COLON_OP typeName ASSIGN_OP expression;
 
-expression: lit;
+expression: lit | ID;
 
 functionBody: block | expression;
 

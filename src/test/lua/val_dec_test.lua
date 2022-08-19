@@ -4,3 +4,4 @@ local z1 = false
 local z2 = true
 local w = "\"abc\""
 local w2 = "def"
+local r = x

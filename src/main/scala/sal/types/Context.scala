@@ -22,6 +22,9 @@ class Context(parent: Option[Context]) {
       name
     }
   }
+
+  def query(name: String) =
+    map.getOrElse(name, throw sal.SalException(s"unknown variable $name."))
 }
 
 object Context {

@@ -34,11 +34,21 @@ case class TypeNameNode(tp: types.Type) extends STNode {
   override lazy val salType = tp
 }
 
-// so far only lit is supported
-case class ExpressionNode(lit: LitNode) extends STNode with FunctionBodyType with BlockInnerType {
-  override def toLua(indent: Int): String = lit.toLua(indent)
+case class VariableNode(name: String, tp: types.Type) extends STNode {
+  override lazy val salType = tp
+  override def toLua(indent: Int): String = name
+}
 
-  override lazy val salType = lit.salType
+case class ExpressionNode(exp: Either[LitNode, VariableNode]) extends STNode with FunctionBodyType with BlockInnerType {
+  override def toLua(indent: Int): String = exp match {
+    case Left(lit) => lit.toLua(indent)
+    case Right(v) => v.toLua(indent)
+  }
+
+  override lazy val salType = exp match {
+    case Left(lit) => lit.salType
+    case Right(v) => v.salType
+  }
 }
 
 case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends STNode with StatementType {

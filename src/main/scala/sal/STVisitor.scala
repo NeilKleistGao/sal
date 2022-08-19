@@ -48,7 +48,12 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     ValueNode(name, tp, exp)
   }
 
-  override def visitExpression(ctx: SalParser.ExpressionContext) = ExpressionNode(visitLit(ctx.lit))
+  override def visitExpression(ctx: SalParser.ExpressionContext): ExpressionNode =
+    if (ctx.lit != null) ExpressionNode(Left(visitLit(ctx.lit)))
+    else {
+      val name = ctx.ID().getText
+      ExpressionNode(Right(VariableNode(name, typeCtx.query(name))))
+    } 
 
   override def visitBlockInner(ctx: SalParser.BlockInnerContext): STNode with BlockInnerType =
     if (ctx.statement != null) visitStatement(ctx.statement)
