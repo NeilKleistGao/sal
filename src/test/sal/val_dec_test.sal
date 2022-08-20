@@ -6,3 +6,7 @@ val w: string = "\"abc\""
 val w2: string = "def"
 
 val r: int = x
+val a: anything = 42
+val b: anything = "www"
+val c: anything = false
+val d: anything = 6.28

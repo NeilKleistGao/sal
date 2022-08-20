@@ -12,3 +12,5 @@ fun m(x: int, y: float): string = ""
 fun n(): void = {
   val x: float = 1.0
 }
+
+fun p(x: int): anything = x

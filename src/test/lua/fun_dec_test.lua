@@ -18,3 +18,6 @@ function n()
   local x = 1.0
   return res
 end
+function p(x)
+  return x
+end

@@ -6,7 +6,7 @@ parser grammar SalParser;
 
 options { tokenVocab=SalLexer; }
 
-lit: NUMBER | TRUE_LIT | FALSE_LIT | STRING_LIT;
+lit: NUMBER | TRUE_LIT | FALSE_LIT | STRING_LIT | VOID_KW | ANY_KW;
 
 program: statement* EOF;
 

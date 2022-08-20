@@ -10,6 +10,8 @@ FLOAT_KW: 'float';
 BOOL_KW: 'bool';
 STRING_KW: 'string';
 FUN_KW: 'fun';
+VOID_KW: 'void';
+ANY_KW: 'anything';
 
 TRUE_LIT: 'true';
 FALSE_LIT: 'false';

@@ -5,3 +5,7 @@ local z2 = true
 local w = "\"abc\""
 local w2 = "def"
 local r = x
+local a = 42
+local b = "www"
+local c = false
+local d = 6.28
