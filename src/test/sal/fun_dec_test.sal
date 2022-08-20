@@ -45,3 +45,11 @@ fun high3(): bool -> string = {
 }
 
 fun high4(): void -> int = f
+
+fun highhhh(): anything = {
+  fun f(): anything = g
+  f
+}
+
+val mmm: int -> float -> string = m
+

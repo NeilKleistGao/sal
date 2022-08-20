@@ -64,3 +64,12 @@ end
 function high4()
   return f
 end
+function highhhh()
+  local res = nil
+  function f()
+    return g
+  end
+  res = f
+  return res
+end
+local mmm = m

@@ -8,7 +8,8 @@ sealed trait Type {
 case class BuiltInType(name: String) extends Type {
   override def ==(other: Type): Boolean = other match {
     case BuiltInType(nm) if (nm.equals("anything")) => true
-    case BuiltInType(nm) => name.equals("anything") || nm.equals(name)
+    case BuiltInType(nm) if (!name.equals("anything")) => nm.equals(name)
+    case _ if (name.equals("anything")) => true
     case _ => false
   }
 
