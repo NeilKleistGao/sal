@@ -133,5 +133,7 @@ case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body:
     s"${prefix}function $id(${params.toLua(0)})\n${body.toLua(indent + 1)}\n${prefix}end"
   }
 
-  val functionType = params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t))
+  val functionType =
+    if (params.params.isEmpty) types.FunctionType(types.voidType, res.salType)
+    else params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t))
 }

@@ -41,6 +41,15 @@ function noFun()
   return res
 end
 local xx = h
+local yy = f
 function high(f)
   return f
+end
+function high2()
+  local res = nil
+  function inner()
+    return "rua"
+  end
+  res = inner
+  return res
 end

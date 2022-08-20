@@ -30,5 +30,11 @@ fun s(): anything = {
 fun noFun(): void = {}
 
 val xx: bool -> bool = h
+val yy: void -> int = f
 
 fun high(f: int -> int): int -> int = f
+
+fun high2(): void -> string = {
+  fun inner(): string = "rua"
+  inner
+}
