@@ -9,3 +9,5 @@ local a = 42
 local b = "www"
 local c = false
 local d = 6.28
+local n1 = nil
+local n2 = nil

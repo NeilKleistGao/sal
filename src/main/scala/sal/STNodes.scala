@@ -17,7 +17,9 @@ sealed trait StatementType
 sealed trait BlockInnerType
 
 case class LitNode(value: String) extends STNode {
-  override def toLua(indent: Int): String = s"${super.toLua(indent)}$value"
+  override def toLua(indent: Int): String =
+    if (value.equals("nix")) s"${super.toLua(indent)}nil"
+    else s"${super.toLua(indent)}$value"
 
   override lazy val salType = LitNode.getLitType(value)
 }
@@ -27,6 +29,7 @@ object LitNode {
     if (value.contains("\"")) types.stringType
     else if (value.equals("true") || value.equals("false")) types.boolType
     else if (value.contains(".")) types.floatType
+    else if (value.equals("nix")) types.anythingType
     else types.intType
 }
 

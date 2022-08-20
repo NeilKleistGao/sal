@@ -10,3 +10,6 @@ val a: anything = 42
 val b: anything = "www"
 val c: anything = false
 val d: anything = 6.28
+
+val n1: anything = nix
+val n2: int = nix
