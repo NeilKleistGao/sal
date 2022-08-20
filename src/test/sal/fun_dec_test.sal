@@ -20,3 +20,9 @@ fun q(): float = {
   false
   x
 }
+
+fun r(): anything = true
+
+fun s(): anything = {
+  val y: string = nix
+}

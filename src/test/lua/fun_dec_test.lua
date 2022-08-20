@@ -28,3 +28,11 @@ function q()
   res = x
   return res
 end
+function r()
+  return true
+end
+function s()
+  local res = nil
+  local y = nil
+  return res
+end
