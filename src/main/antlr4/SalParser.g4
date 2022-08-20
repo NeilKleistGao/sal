@@ -6,7 +6,7 @@ parser grammar SalParser;
 
 options { tokenVocab=SalLexer; }
 
-lit: NUMBER | TRUE_LIT | FALSE_LIT | STRING_LIT | VOID_KW | ANY_KW;
+lit: NUMBER | TRUE_LIT | FALSE_LIT | STRING_LIT | NIX_LIT;
 
 program: statement* EOF;
 
@@ -16,7 +16,7 @@ blockInner: statement | expression;
 
 block: LEFT_BRACES (blockInner)* RIGHT_BRACES;
 
-typeName: INT_KW | FLOAT_KW | BOOL_KW | STRING_KW;
+typeName: INT_KW | FLOAT_KW | BOOL_KW | STRING_KW | VOID_KW | ANY_KW;
 
 value: VAL_KW ID COLON_OP typeName ASSIGN_OP expression;
 

@@ -20,9 +20,9 @@ public class SalParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		VAL_KW=1, INT_KW=2, FLOAT_KW=3, BOOL_KW=4, STRING_KW=5, FUN_KW=6, VOID_KW=7, 
-		ANY_KW=8, TRUE_LIT=9, FALSE_LIT=10, STRING_LIT=11, LEFT_BRACES=12, RIGHT_BRACES=13, 
-		LEFT_PARENTHESE=14, RIGHT_PARENTHESE=15, WS=16, NUMBER=17, COLON_OP=18, 
-		ASSIGN_OP=19, COMMA_OP=20, ID=21;
+		ANY_KW=8, TRUE_LIT=9, FALSE_LIT=10, NIX_LIT=11, STRING_LIT=12, LEFT_BRACES=13, 
+		RIGHT_BRACES=14, LEFT_PARENTHESE=15, RIGHT_PARENTHESE=16, WS=17, NUMBER=18, 
+		COLON_OP=19, ASSIGN_OP=20, COMMA_OP=21, ID=22;
 	public static final int
 		RULE_lit = 0, RULE_program = 1, RULE_statement = 2, RULE_blockInner = 3, 
 		RULE_block = 4, RULE_typeName = 5, RULE_value = 6, RULE_expression = 7, 
@@ -38,17 +38,17 @@ public class SalParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'val'", "'int'", "'float'", "'bool'", "'string'", "'fun'", "'void'", 
-			"'anything'", "'true'", "'false'", null, "'{'", "'}'", "'('", "')'", 
-			null, null, "':'", "'='", "','"
+			"'anything'", "'true'", "'false'", "'nix'", null, "'{'", "'}'", "'('", 
+			"')'", null, null, "':'", "'='", "','"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, "VAL_KW", "INT_KW", "FLOAT_KW", "BOOL_KW", "STRING_KW", "FUN_KW", 
-			"VOID_KW", "ANY_KW", "TRUE_LIT", "FALSE_LIT", "STRING_LIT", "LEFT_BRACES", 
-			"RIGHT_BRACES", "LEFT_PARENTHESE", "RIGHT_PARENTHESE", "WS", "NUMBER", 
-			"COLON_OP", "ASSIGN_OP", "COMMA_OP", "ID"
+			"VOID_KW", "ANY_KW", "TRUE_LIT", "FALSE_LIT", "NIX_LIT", "STRING_LIT", 
+			"LEFT_BRACES", "RIGHT_BRACES", "LEFT_PARENTHESE", "RIGHT_PARENTHESE", 
+			"WS", "NUMBER", "COLON_OP", "ASSIGN_OP", "COMMA_OP", "ID"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -107,8 +107,7 @@ public class SalParser extends Parser {
 		public TerminalNode TRUE_LIT() { return getToken(SalParser.TRUE_LIT, 0); }
 		public TerminalNode FALSE_LIT() { return getToken(SalParser.FALSE_LIT, 0); }
 		public TerminalNode STRING_LIT() { return getToken(SalParser.STRING_LIT, 0); }
-		public TerminalNode VOID_KW() { return getToken(SalParser.VOID_KW, 0); }
-		public TerminalNode ANY_KW() { return getToken(SalParser.ANY_KW, 0); }
+		public TerminalNode NIX_LIT() { return getToken(SalParser.NIX_LIT, 0); }
 		public LitContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -137,7 +136,7 @@ public class SalParser extends Parser {
 			{
 			setState(24);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VOID_KW) | (1L << ANY_KW) | (1L << TRUE_LIT) | (1L << FALSE_LIT) | (1L << STRING_LIT) | (1L << NUMBER))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TRUE_LIT) | (1L << FALSE_LIT) | (1L << NIX_LIT) | (1L << STRING_LIT) | (1L << NUMBER))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -324,10 +323,9 @@ public class SalParser extends Parser {
 				statement();
 				}
 				break;
-			case VOID_KW:
-			case ANY_KW:
 			case TRUE_LIT:
 			case FALSE_LIT:
+			case NIX_LIT:
 			case STRING_LIT:
 			case NUMBER:
 			case ID:
@@ -392,7 +390,7 @@ public class SalParser extends Parser {
 			setState(46);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VAL_KW) | (1L << FUN_KW) | (1L << VOID_KW) | (1L << ANY_KW) | (1L << TRUE_LIT) | (1L << FALSE_LIT) | (1L << STRING_LIT) | (1L << NUMBER) | (1L << ID))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VAL_KW) | (1L << FUN_KW) | (1L << TRUE_LIT) | (1L << FALSE_LIT) | (1L << NIX_LIT) | (1L << STRING_LIT) | (1L << NUMBER) | (1L << ID))) != 0)) {
 				{
 				{
 				setState(43);
@@ -423,6 +421,8 @@ public class SalParser extends Parser {
 		public TerminalNode FLOAT_KW() { return getToken(SalParser.FLOAT_KW, 0); }
 		public TerminalNode BOOL_KW() { return getToken(SalParser.BOOL_KW, 0); }
 		public TerminalNode STRING_KW() { return getToken(SalParser.STRING_KW, 0); }
+		public TerminalNode VOID_KW() { return getToken(SalParser.VOID_KW, 0); }
+		public TerminalNode ANY_KW() { return getToken(SalParser.ANY_KW, 0); }
 		public TypeNameContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -451,7 +451,7 @@ public class SalParser extends Parser {
 			{
 			setState(51);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT_KW) | (1L << FLOAT_KW) | (1L << BOOL_KW) | (1L << STRING_KW))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT_KW) | (1L << FLOAT_KW) | (1L << BOOL_KW) | (1L << STRING_KW) | (1L << VOID_KW) | (1L << ANY_KW))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -564,10 +564,9 @@ public class SalParser extends Parser {
 			setState(62);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case VOID_KW:
-			case ANY_KW:
 			case TRUE_LIT:
 			case FALSE_LIT:
+			case NIX_LIT:
 			case STRING_LIT:
 			case NUMBER:
 				enterOuterAlt(_localctx, 1);
@@ -638,10 +637,9 @@ public class SalParser extends Parser {
 				block();
 				}
 				break;
-			case VOID_KW:
-			case ANY_KW:
 			case TRUE_LIT:
 			case FALSE_LIT:
+			case NIX_LIT:
 			case STRING_LIT:
 			case NUMBER:
 			case ID:
@@ -889,7 +887,7 @@ public class SalParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u0015d\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001\u0016d\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0001"+
@@ -904,8 +902,8 @@ public class SalParser extends Parser {
 		"\n\u0001\n\u0005\nS\b\n\n\n\f\nV\t\n\u0001\n\u0001\n\u0003\nZ\b\n\u0001"+
 		"\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001"+
 		"\u000b\u0001\u000b\u0001\u000b\u0000\u0000\f\u0000\u0002\u0004\u0006\b"+
-		"\n\f\u000e\u0010\u0012\u0014\u0016\u0000\u0002\u0002\u0000\u0007\u000b"+
-		"\u0011\u0011\u0001\u0000\u0002\u0005`\u0000\u0018\u0001\u0000\u0000\u0000"+
+		"\n\f\u000e\u0010\u0012\u0014\u0016\u0000\u0002\u0002\u0000\t\f\u0012\u0012"+
+		"\u0002\u0000\u0002\u0005\u0007\b`\u0000\u0018\u0001\u0000\u0000\u0000"+
 		"\u0002\u001d\u0001\u0000\u0000\u0000\u0004$\u0001\u0000\u0000\u0000\u0006"+
 		"(\u0001\u0000\u0000\u0000\b*\u0001\u0000\u0000\u0000\n3\u0001\u0000\u0000"+
 		"\u0000\f5\u0001\u0000\u0000\u0000\u000e>\u0001\u0000\u0000\u0000\u0010"+
@@ -919,29 +917,29 @@ public class SalParser extends Parser {
 		"\f\u0006\u0000#%\u0003\u0016\u000b\u0000$\"\u0001\u0000\u0000\u0000$#"+
 		"\u0001\u0000\u0000\u0000%\u0005\u0001\u0000\u0000\u0000&)\u0003\u0004"+
 		"\u0002\u0000\')\u0003\u000e\u0007\u0000(&\u0001\u0000\u0000\u0000(\'\u0001"+
-		"\u0000\u0000\u0000)\u0007\u0001\u0000\u0000\u0000*.\u0005\f\u0000\u0000"+
+		"\u0000\u0000\u0000)\u0007\u0001\u0000\u0000\u0000*.\u0005\r\u0000\u0000"+
 		"+-\u0003\u0006\u0003\u0000,+\u0001\u0000\u0000\u0000-0\u0001\u0000\u0000"+
 		"\u0000.,\u0001\u0000\u0000\u0000./\u0001\u0000\u0000\u0000/1\u0001\u0000"+
-		"\u0000\u00000.\u0001\u0000\u0000\u000012\u0005\r\u0000\u00002\t\u0001"+
+		"\u0000\u00000.\u0001\u0000\u0000\u000012\u0005\u000e\u0000\u00002\t\u0001"+
 		"\u0000\u0000\u000034\u0007\u0001\u0000\u00004\u000b\u0001\u0000\u0000"+
-		"\u000056\u0005\u0001\u0000\u000067\u0005\u0015\u0000\u000078\u0005\u0012"+
-		"\u0000\u000089\u0003\n\u0005\u00009:\u0005\u0013\u0000\u0000:;\u0003\u000e"+
+		"\u000056\u0005\u0001\u0000\u000067\u0005\u0016\u0000\u000078\u0005\u0013"+
+		"\u0000\u000089\u0003\n\u0005\u00009:\u0005\u0014\u0000\u0000:;\u0003\u000e"+
 		"\u0007\u0000;\r\u0001\u0000\u0000\u0000<?\u0003\u0000\u0000\u0000=?\u0005"+
-		"\u0015\u0000\u0000><\u0001\u0000\u0000\u0000>=\u0001\u0000\u0000\u0000"+
+		"\u0016\u0000\u0000><\u0001\u0000\u0000\u0000>=\u0001\u0000\u0000\u0000"+
 		"?\u000f\u0001\u0000\u0000\u0000@C\u0003\b\u0004\u0000AC\u0003\u000e\u0007"+
 		"\u0000B@\u0001\u0000\u0000\u0000BA\u0001\u0000\u0000\u0000C\u0011\u0001"+
-		"\u0000\u0000\u0000DE\u0005\u0015\u0000\u0000EF\u0005\u0012\u0000\u0000"+
-		"FG\u0003\n\u0005\u0000G\u0013\u0001\u0000\u0000\u0000HI\u0005\u000e\u0000"+
-		"\u0000IZ\u0005\u000f\u0000\u0000JK\u0005\u000e\u0000\u0000KL\u0003\u0012"+
-		"\t\u0000LM\u0005\u000f\u0000\u0000MZ\u0001\u0000\u0000\u0000NO\u0005\u000e"+
-		"\u0000\u0000OT\u0003\u0012\t\u0000PQ\u0005\u0014\u0000\u0000QS\u0003\u0012"+
+		"\u0000\u0000\u0000DE\u0005\u0016\u0000\u0000EF\u0005\u0013\u0000\u0000"+
+		"FG\u0003\n\u0005\u0000G\u0013\u0001\u0000\u0000\u0000HI\u0005\u000f\u0000"+
+		"\u0000IZ\u0005\u0010\u0000\u0000JK\u0005\u000f\u0000\u0000KL\u0003\u0012"+
+		"\t\u0000LM\u0005\u0010\u0000\u0000MZ\u0001\u0000\u0000\u0000NO\u0005\u000f"+
+		"\u0000\u0000OT\u0003\u0012\t\u0000PQ\u0005\u0015\u0000\u0000QS\u0003\u0012"+
 		"\t\u0000RP\u0001\u0000\u0000\u0000SV\u0001\u0000\u0000\u0000TR\u0001\u0000"+
 		"\u0000\u0000TU\u0001\u0000\u0000\u0000UW\u0001\u0000\u0000\u0000VT\u0001"+
-		"\u0000\u0000\u0000WX\u0005\u000f\u0000\u0000XZ\u0001\u0000\u0000\u0000"+
+		"\u0000\u0000\u0000WX\u0005\u0010\u0000\u0000XZ\u0001\u0000\u0000\u0000"+
 		"YH\u0001\u0000\u0000\u0000YJ\u0001\u0000\u0000\u0000YN\u0001\u0000\u0000"+
 		"\u0000Z\u0015\u0001\u0000\u0000\u0000[\\\u0005\u0006\u0000\u0000\\]\u0005"+
-		"\u0015\u0000\u0000]^\u0003\u0014\n\u0000^_\u0005\u0012\u0000\u0000_`\u0003"+
-		"\n\u0005\u0000`a\u0005\u0013\u0000\u0000ab\u0003\u0010\b\u0000b\u0017"+
+		"\u0016\u0000\u0000]^\u0003\u0014\n\u0000^_\u0005\u0013\u0000\u0000_`\u0003"+
+		"\n\u0005\u0000`a\u0005\u0014\u0000\u0000ab\u0003\u0010\b\u0000b\u0017"+
 		"\u0001\u0000\u0000\u0000\b\u001d$(.>BTY";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());

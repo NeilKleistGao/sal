@@ -15,6 +15,7 @@ ANY_KW: 'anything';
 
 TRUE_LIT: 'true';
 FALSE_LIT: 'false';
+NIX_LIT: 'nix';
 
 STRING_LIT: '"' ('\\"'|~["])* '"';
 
