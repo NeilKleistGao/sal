@@ -28,7 +28,7 @@ class Compiler(filename: String) {
         STVisitor().visit(parser.program).asInstanceOf[ProgramNode]
       catch {
         case SalException(info) => ErrorNode(info)
-        case _: Throwable => ErrorNode("unknown error.")
+        case _: Throwable => ErrorNode("\n  unknown error.\n")
       }
     }
   }

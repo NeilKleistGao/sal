@@ -73,3 +73,6 @@ function highhhh()
   return res
 end
 local mmm = m
+local mmm2 = m
+local pHigh = high
+local pHigh2 = high2

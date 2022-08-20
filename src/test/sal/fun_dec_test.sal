@@ -52,4 +52,8 @@ fun highhhh(): anything = {
 }
 
 val mmm: int -> float -> string = m
+val mmm2: (int) -> float -> string = m
 
+val pHigh: (int -> int) -> int -> int = high
+
+val pHigh2: void -> void -> string = high2
