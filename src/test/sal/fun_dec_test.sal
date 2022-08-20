@@ -14,3 +14,9 @@ fun n(): void = {
 }
 
 fun p(x: int): anything = x
+
+fun q(): float = {
+  val x: float = 4.2
+  false
+  x
+}

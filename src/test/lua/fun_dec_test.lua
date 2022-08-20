@@ -21,3 +21,10 @@ end
 function p(x)
   return x
 end
+function q()
+  local res = nil
+  local x = 4.2
+  local _ = false
+  res = x
+  return res
+end

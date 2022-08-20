@@ -92,13 +92,19 @@ case class BlockNode(stats: List[STNode with BlockInnerType], res: String) exten
     if (stats.isEmpty) types.voidType
     else stats.last.salType
 
+  private def translateBlock(lst: List[STNode with BlockInnerType], indent: Int): String =
+    lst.foldLeft("")((r, s) => s match {
+        case e: ExpressionNode => s"$r\n${super.toLua(indent)}local _ = ${s.toLua(0)}"
+        case _ => s"$r\n${s.toLua(indent)}"
+      })
+
   override def toLua(indent: Int): String =
     if (stats.isEmpty) ""
     else salType match {
       case types.BuiltInType(name) if (name.equals("void")) =>
-        stats.foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
+        translateBlock(stats, indent)
       case _ => {
-        val body = stats.dropRight(1).foldLeft("")((r, s) => s"$r\n${s.toLua(indent)}")
+        val body = translateBlock(stats.dropRight(1), indent)
         s"$body\n${super.toLua(indent)}$res = ${stats.last.toLua(0)}"
       }
     }
