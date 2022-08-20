@@ -40,3 +40,7 @@ function noFun()
   local res = nil
   return res
 end
+local xx = h
+function high(f)
+  return f
+end

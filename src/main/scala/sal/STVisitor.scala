@@ -81,7 +81,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   override def visitParam(ctx: SalParser.ParamContext) = {
     val name = ctx.ID().getText
     val tp = visitAllTypes(ctx.allTypes)
-    typeCtx += (name, tp.salType)
+    typeCtx ++= (name, tp.salType)
     ParamNode(name, tp)
   }
 

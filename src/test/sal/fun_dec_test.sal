@@ -28,3 +28,7 @@ fun s(): anything = {
 }
 
 fun noFun(): void = {}
+
+val xx: bool -> bool = h
+
+fun high(f: int -> int): int -> int = f
