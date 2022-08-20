@@ -53,3 +53,14 @@ function high2()
   res = inner
   return res
 end
+function high3()
+  local res = nil
+  function f(x)
+    return "VG is always your home!"
+  end
+  res = f
+  return res
+end
+function high4()
+  return f
+end

@@ -38,3 +38,10 @@ fun high2(): void -> string = {
   fun inner(): string = "rua"
   inner
 }
+
+fun high3(): bool -> string = {
+  fun f(x: bool): string = "VG is always your home!"
+  f
+}
+
+fun high4(): void -> int = f
