@@ -19,7 +19,8 @@ NUMBER=18
 COLON_OP=19
 ASSIGN_OP=20
 COMMA_OP=21
-ID=22
+ARROW_OP=22
+ID=23
 'val'=1
 'int'=2
 'float'=3
@@ -38,3 +39,4 @@ ID=22
 ':'=19
 '='=20
 ','=21
+'->'=22

@@ -49,6 +49,12 @@ public interface SalParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeName(SalParser.TypeNameContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SalParser#allTypes}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAllTypes(SalParser.AllTypesContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SalParser#value}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

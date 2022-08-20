@@ -30,9 +30,19 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   override def visitTypeName(ctx: SalParser.TypeNameContext): TypeNameNode =
     TypeNameNode(types.BuiltInType(ctx.getText))
 
+  override def visitAllTypes(ctx: SalParser.AllTypesContext): TypeNameNode =
+    if (ctx.ARROW_OP() != null)
+      if (ctx.typeName != null)
+        TypeNameNode(types.FunctionType(visitTypeName(ctx.typeName).salType, visitAllTypes(ctx.allTypes(0)).salType))
+      else
+        TypeNameNode(types.FunctionType(visitAllTypes(ctx.allTypes(0)).salType, visitAllTypes(ctx.allTypes(1)).salType))
+    else
+      if (ctx.LEFT_PARENTHESE() != null) visitAllTypes(ctx.allTypes(0))
+      else visitTypeName(ctx.typeName)
+
   override def visitValue(ctx: SalParser.ValueContext) = {
     val name = ctx.ID().getText
-    val tp = visitTypeName(ctx.typeName)
+    val tp = visitAllTypes(ctx.allTypes)
     val exp = visitExpression(ctx.expression)
 
     try
@@ -70,7 +80,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
   override def visitParam(ctx: SalParser.ParamContext) = {
     val name = ctx.ID().getText
-    val tp = visitTypeName(ctx.typeName)
+    val tp = visitAllTypes(ctx.allTypes)
     typeCtx += (name, tp.salType)
     ParamNode(name, tp)
   }
@@ -84,7 +94,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
     val name = ctx.ID().getText
     val params = visitParams(ctx.params)
-    val retType = visitTypeName(ctx.typeName)
+    val retType = visitAllTypes(ctx.allTypes)
     val body = visitFunctionBody(ctx.functionBody)
     if (retType.salType != body.salType)
       errors.append(s"  return value of $name got ${body.salType}, but ${retType.salType} is required.\n")

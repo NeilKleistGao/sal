@@ -29,5 +29,6 @@ NUMBER: ('0' .. '9') + ('.' ('0' .. '9') +)?;
 COLON_OP: ':';
 ASSIGN_OP: '=';
 COMMA_OP: ',';
+ARROW_OP: '->';
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;

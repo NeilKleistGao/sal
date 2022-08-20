@@ -70,6 +70,16 @@ public interface SalParserListener extends ParseTreeListener {
 	 */
 	void exitTypeName(SalParser.TypeNameContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SalParser#allTypes}.
+	 * @param ctx the parse tree
+	 */
+	void enterAllTypes(SalParser.AllTypesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SalParser#allTypes}.
+	 * @param ctx the parse tree
+	 */
+	void exitAllTypes(SalParser.AllTypesContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SalParser#value}.
 	 * @param ctx the parse tree
 	 */
