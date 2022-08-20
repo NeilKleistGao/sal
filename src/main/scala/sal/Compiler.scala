@@ -28,7 +28,7 @@ class Compiler(filename: String) {
         STVisitor().visit(parser.program).asInstanceOf[ProgramNode]
       catch {
         case SalException(info) => ErrorNode(info)
-        case _: Throwable => ErrorNode("unknown error.")
+        case _: Throwable => ErrorNode("\n  unknown error.\n")
       }
     }
   }
@@ -43,7 +43,10 @@ class Compiler(filename: String) {
   def toLua(outputname: String): Unit = {
     try {
       val writer = new BufferedWriter(new FileWriter(outputname))
-      writer.write(result.toString())
+      result match {
+        case e: ErrorNode => writer.write(e.toString)
+        case p: ProgramNode => writer.write(p.toLua(0))
+      }
       writer.close()
     }
     catch {

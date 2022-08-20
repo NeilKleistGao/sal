@@ -1,0 +1,22 @@
+fun f(): int = "rua"
+
+fun g(x: int): void = {
+  val y: string = x
+}
+
+fun h(): void = 42
+
+fun k(): void = {}
+
+val xxx: void -> int = k
+
+fun high1(f: int -> int): int -> void = f
+
+fun high2(): int -> int = {
+  fun inner(): void = {}
+  inner
+}
+
+fun hh(f: int -> int): int -> int = f
+
+val h_h: int -> int -> int -> int = hh

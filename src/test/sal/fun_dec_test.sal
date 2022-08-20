@@ -1,0 +1,60 @@
+fun f(): int = 42
+
+fun g(): string = {
+  val x: bool = false
+  "wuwuwu"
+}
+
+fun h(x: bool): bool = x
+
+fun m(x: int, y: float): string = ""
+
+fun n(): void = {
+  val x: float = 1.0
+}
+
+fun p(x: int): anything = x
+
+fun q(): float = {
+  val x: float = 4.2
+  false
+  x
+}
+
+fun r(): anything = true
+
+fun s(): anything = {
+  val y: string = nix
+}
+
+fun noFun(): void = {}
+
+val xx: bool -> bool = h
+val yy: void -> int = f
+
+fun high(f: int -> int): int -> int = f
+
+fun high2(): void -> string = {
+  fun inner(): string = "rua"
+  inner
+}
+
+fun high3(): bool -> string = {
+  fun f(x: bool): string = "VG is always your home!"
+  f
+}
+
+fun high4(): void -> int = f
+
+fun highhhh(): anything = {
+  fun f(): anything = g
+  f
+}
+
+val mmm: int -> float -> string = m
+val mmm2: (int) -> float -> string = m
+val mmm3: (int) -> (float -> string) = m
+
+val pHigh: (int -> int) -> int -> int = high
+val pHigh2: void -> void -> string = high2
+val pHigh3: (int -> int) -> (int -> int) = high
