@@ -16,3 +16,7 @@ fun high2(): int -> int = {
   fun inner(): void = {}
   inner
 }
+
+fun hh(f: int -> int): int -> int = f
+
+val h_h: int -> int -> int -> int = hh

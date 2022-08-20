@@ -24,5 +24,8 @@ case class FunctionType(param: Type, res: Type) extends Type {
     case _ => false
   }
 
-  override def toString(): String = s"$param -> $res"
+  override def toString(): String = param match {
+    case f: FunctionType => s"($param) -> $res"
+    case _ => s"$param -> $res"
+  }
 }

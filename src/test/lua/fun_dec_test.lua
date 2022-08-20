@@ -74,5 +74,7 @@ function highhhh()
 end
 local mmm = m
 local mmm2 = m
+local mmm3 = m
 local pHigh = high
 local pHigh2 = high2
+local pHigh3 = high
