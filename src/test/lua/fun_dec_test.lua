@@ -36,3 +36,7 @@ function s()
   local y = nil
   return res
 end
+function noFun()
+  local res = nil
+  return res
+end

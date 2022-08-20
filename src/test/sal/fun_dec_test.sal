@@ -26,3 +26,5 @@ fun r(): anything = true
 fun s(): anything = {
   val y: string = nix
 }
+
+fun noFun(): void = {}
