@@ -33,3 +33,8 @@ function foofoo(x, y)
   return res
 end
 local barbar = function(p_) return foofoo(p, p_) end
+function n(x, y, z)
+  return 42
+end
+local v42 = n(1, 2, 3)
+local v42f = function(p_) return n(4, 5, p_) end

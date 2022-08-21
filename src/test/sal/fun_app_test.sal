@@ -26,3 +26,7 @@ print("hello world!")
 val p: int = 1
 fun foofoo(x: int, y: int): void = {}
 val barbar: int -> void = foofoo(p)
+
+fun n(x: int, y: int, z: int): int = 42
+val v42: int = n(1, 2, 3)
+val v42f: int -> int = n(4, 5)
