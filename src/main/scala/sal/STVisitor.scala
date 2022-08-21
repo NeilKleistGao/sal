@@ -104,6 +104,26 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     typeCtx += (name, res.functionType)
     res
   }
+
+  override def visitApplication(ctx: SalParser.ApplicationContext): ApplicationNode = {
+    val name = ctx.ID().getText
+    val params = ctx.expression.asScala.toList.map((e) => visitExpression(e))
+    val funcType = typeCtx.query(name)
+
+    def matchType(fun: types.Type, index: Int): types.Type = fun match {
+      case types.FunctionType(p, r) =>
+        if (p == types.voidType && params.isEmpty) r
+        else if (index == params.length - 1)
+          if (p == params(index)) r
+          else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index)}.")
+        else
+          if (p == params(index)) matchType(r, index + 1)
+          else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index)}.")
+      case _ => throw SalException(s"$name is not a function.")
+    }
+
+    ApplicationNode(name, params, matchType(funcType, 0))
+  }
 }
 
 object STVisitor {

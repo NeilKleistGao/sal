@@ -137,3 +137,14 @@ case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body:
     if (params.params.isEmpty) types.FunctionType(types.voidType, res.salType)
     else params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t))
 }
+
+case class ApplicationNode(func: String, params: List[ExpressionNode], retType: types.Type) extends STNode {
+  override lazy val salType = retType
+
+  override def toLua(indent: Int): String = {
+    val luaParams = params.foldLeft("")((r, p) => s"$r, ${p.toLua(0)}")
+    val prefix = super.toLua(indent)
+    if (luaParams.isEmpty()) s"$prefix$func()"
+    else s"$prefix$func(${luaParams.substring(2)})"
+  }
+}
