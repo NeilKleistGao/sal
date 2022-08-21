@@ -139,4 +139,14 @@ public interface SalParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFunction(SalParser.FunctionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SalParser#application}.
+	 * @param ctx the parse tree
+	 */
+	void enterApplication(SalParser.ApplicationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SalParser#application}.
+	 * @param ctx the parse tree
+	 */
+	void exitApplication(SalParser.ApplicationContext ctx);
 }

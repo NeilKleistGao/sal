@@ -90,4 +90,10 @@ public interface SalParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFunction(SalParser.FunctionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#application}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitApplication(SalParser.ApplicationContext ctx);
 }
