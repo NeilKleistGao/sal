@@ -6,3 +6,17 @@ fun g(x: anything, y: string): string = y
 
 val hg: string -> string = g(42)
 val s: string = hg("rua")
+
+fun h(): bool = false
+val fs: bool = h()
+
+fun m(): int -> int = {
+  fun f(x: int): int = x
+  f
+}
+
+val innerF: int -> int = m()
+val res: int = innerF(42)
+
+fun foo(x: int, y: int, z: int): void = {}
+val bar: int -> int -> void = foo(42)
