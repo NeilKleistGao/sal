@@ -117,14 +117,18 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
         if (p === types.voidType && params.isEmpty) r
         else if (index == params.length - 1)
           if (p === params(index).salType) r
-          else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index)}.")
+          else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index).salType}.")
         else
           if (p === params(index).salType) matchType(r, index + 1)
-          else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index)}.")
+          else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index).salType}.")
       case _ => throw SalException(s"$name is not a function.")
     }
 
-    val retType = matchType(funcType, 0)
+    val retType =
+      try { matchType(funcType, 0) }
+      catch {
+        case SalException(info) => errors.append(s"  $info\n"); types.anythingType // shield other type checking.
+      }
     def generateRestParams(fun: types.Type): List[String] = fun match {
       case types.FunctionType(p, r) => List(typeCtx.alloc("p", p)) ::: generateRestParams(r)
       case _ => List()

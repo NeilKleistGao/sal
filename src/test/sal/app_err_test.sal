@@ -1,0 +1,8 @@
+fun f(x: int, y: int): int = 42
+
+val subF: string -> int = f(1)
+val subF2: int -> string = f(2)
+val subF3: int -> int = f("3")
+
+val g: string = "hello"
+val hello: string = g()
