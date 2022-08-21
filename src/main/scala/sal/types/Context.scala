@@ -18,13 +18,14 @@ class Context(parent: Option[Context]) {
     }
     else map(name) === req
 
-  def alloc(name: String, tp: Type): String = {
+  def alloc(name: String, tp: Type): String =
     if (map.contains(name)) alloc(name + "_", tp)
     else {
       map.put(name, tp)
       name
     }
-  }
+
+  def -=(name: String): Unit = map.remove(name); {}
 
   def query(name: String): Type =
     map.getOrElse(name, parent match {

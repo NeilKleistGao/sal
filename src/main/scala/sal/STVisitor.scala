@@ -123,7 +123,15 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       case _ => throw SalException(s"$name is not a function.")
     }
 
-    ApplicationNode(name, params, matchType(funcType, 0))
+    val retType = matchType(funcType, 0)
+    def generateRestParams(fun: types.Type): List[String] = fun match {
+      case types.FunctionType(p, r) => List(typeCtx.alloc("p", p)) ::: generateRestParams(r)
+      case _ => List()
+    }
+
+    val rest = generateRestParams(retType)
+    rest.foreach((nm) => typeCtx -= nm)
+    ApplicationNode(name, params, retType, rest)
   }
 }
 
