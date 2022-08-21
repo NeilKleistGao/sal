@@ -47,14 +47,17 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val exp = visitExpression(ctx.expression)
 
     try
-      typeCtx += (name, tp.salType)
+      typeCtx += (name, tp.salType) // it doesn't format automatically.
     catch {
-      case SalException(info) => errors.append(s"  $info\n")
-      case _: Throwable => errors.append("  unknown error.\n")
+      case SalException(info) => errors.append(SalException.format(info, ctx.getStart().getLine()))
+      case _: Throwable => errors.append(SalException.format("unknown error.", ctx.getStart().getLine()))
     }
 
     if (!typeCtx.require(name, exp.salType))
-      errors.append(s"  $name got ${exp.salType}, but ${tp.salType} is required.\n")
+      errors.append(SalException.format(
+        s"$name got ${exp.salType}, but ${tp.salType} is required.",
+        ctx.getStart().getLine()
+      ))
 
     ValueNode(name, tp, exp)
   }
@@ -83,7 +86,10 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   override def visitParam(ctx: SalParser.ParamContext) = {
     val name = ctx.ID().getText
     val tp = visitAllTypes(ctx.allTypes)
-    typeCtx += (name, tp.salType)
+    try { typeCtx += (name, tp.salType) }
+    catch {
+      case SalException(info) => throw SalException(info, ctx.getStart().getLine())
+    }
     ParamNode(name, tp)
   }
 
@@ -99,11 +105,17 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val retType = visitAllTypes(ctx.allTypes)
     val body = visitFunctionBody(ctx.functionBody)
     if (retType.salType !== body.salType)
-      errors.append(s"  return value of $name got ${body.salType}, but ${retType.salType} is required.\n")
+      errors.append(SalException.format(
+        s"return value of $name got ${body.salType}, but ${retType.salType} is required.",
+        ctx.getStart().getLine()
+      ))
 
     val res = FunctionNode(name, params, retType, body)
     typeCtx = stack.pop()
-    typeCtx += (name, res.functionType)
+    try { typeCtx += (name, res.functionType) }
+    catch {
+      case SalException(info) => throw SalException(info, ctx.getStart().getLine())
+    }
     res
   }
 
@@ -117,17 +129,17 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
         if (p === types.voidType && params.isEmpty) r
         else if (index == params.length - 1)
           if (p === params(index).salType) r
-          else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index).salType}.")
+          else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index).salType}.", ctx.getStart().getLine())
         else
           if (p === params(index).salType) matchType(r, index + 1)
-          else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index).salType}.")
-      case _ => throw SalException(s"$name is not a function.")
+          else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index).salType}.", ctx.getStart().getLine())
+      case _ => throw SalException(s"$name is not a function.", ctx.getStart().getLine())
     }
 
     val retType =
       try { matchType(funcType, 0) }
       catch {
-        case SalException(info) => errors.append(s"  $info\n"); types.anythingType // shield other type checking.
+        case SalException(info) => errors.append(info); types.anythingType // shield other type checking.
       }
     def generateRestParams(fun: types.Type): List[String] = fun match {
       case types.FunctionType(p, r) => List(typeCtx.alloc("p", p)) ::: generateRestParams(r)
