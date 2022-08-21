@@ -20,3 +20,5 @@ val res: int = innerF(42)
 
 fun foo(x: int, y: int, z: int): void = {}
 val bar: int -> int -> void = foo(42)
+
+print("hello world!")

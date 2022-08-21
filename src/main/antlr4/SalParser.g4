@@ -10,7 +10,7 @@ lit: NUMBER | TRUE_LIT | FALSE_LIT | STRING_LIT | NIX_LIT;
 
 program: statement* EOF;
 
-statement: value | function;
+statement: value | function | application;
 
 blockInner: statement | expression;
 

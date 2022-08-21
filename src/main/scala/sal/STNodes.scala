@@ -133,7 +133,8 @@ case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body:
     else params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t))
 }
 
-case class ApplicationNode(func: String, params: List[ExpressionNode], retType: types.Type, rest: List[String]) extends STNode with ExpressionType {
+case class ApplicationNode(func: String, params: List[ExpressionNode], retType: types.Type, rest: List[String]) 
+  extends STNode with ExpressionType with StatementType {
   override lazy val salType = retType
 
   override def toLua(indent: Int): String = {

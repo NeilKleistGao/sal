@@ -26,3 +26,4 @@ function foo(x, y, z)
   return res
 end
 local bar = function(p, p_) return foo(42, p, p_) end
+print("hello world!")

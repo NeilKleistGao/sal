@@ -3,7 +3,9 @@ package sal.types
 import scala.collection.mutable.HashMap
 
 class Context(parent: Option[Context]) {
-  private val map = HashMap[String, Type]()
+  private val map = HashMap[String, Type](
+    "print" -> FunctionType(BuiltInType("anything"), BuiltInType("void"))
+  )
 
   def derive() = new Context(Some(this))
 
