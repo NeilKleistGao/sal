@@ -15,8 +15,9 @@ sealed trait ResultNode
 sealed trait FunctionBodyType
 sealed trait StatementType
 sealed trait BlockInnerType
+sealed trait ExpressionType
 
-case class LitNode(value: String) extends STNode {
+case class LitNode(value: String) extends STNode with ExpressionType {
   override def toLua(indent: Int): String =
     if (value.equals("nix")) s"${super.toLua(indent)}nil"
     else s"${super.toLua(indent)}$value"
@@ -37,21 +38,15 @@ case class TypeNameNode(tp: types.Type) extends STNode {
   override lazy val salType = tp
 }
 
-case class VariableNode(name: String, tp: types.Type) extends STNode {
+case class VariableNode(name: String, tp: types.Type) extends STNode with ExpressionType {
   override lazy val salType = tp
   override def toLua(indent: Int): String = name
 }
 
-case class ExpressionNode(exp: Either[LitNode, VariableNode]) extends STNode with FunctionBodyType with BlockInnerType {
-  override def toLua(indent: Int): String = exp match {
-    case Left(lit) => lit.toLua(indent)
-    case Right(v) => v.toLua(indent)
-  }
+case class ExpressionNode(exp: STNode with ExpressionType) extends STNode with FunctionBodyType with BlockInnerType {
+  override def toLua(indent: Int): String = exp.toLua(indent)
 
-  override lazy val salType = exp match {
-    case Left(lit) => lit.salType
-    case Right(v) => v.salType
-  }
+  override lazy val salType = exp.salType
 }
 
 case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends STNode with StatementType {
@@ -136,4 +131,23 @@ case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body:
   val functionType =
     if (params.params.isEmpty) types.FunctionType(types.voidType, res.salType)
     else params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t))
+}
+
+case class ApplicationNode(func: String, params: List[ExpressionNode], retType: types.Type, rest: List[String]) 
+  extends STNode with ExpressionType with StatementType {
+  override lazy val salType = retType
+
+  override def toLua(indent: Int): String = {
+    val luaParams = params.foldLeft("")((r, p) => s"$r, ${p.toLua(0)}")
+    val prefix = super.toLua(indent)
+
+    if (rest.isEmpty)
+      if (luaParams.isEmpty()) s"$prefix$func()"
+      else s"$prefix$func(${luaParams.substring(2)})"
+    else {
+      val newList = rest.foldLeft("")((r, p) => s"$r, $p").substring(2)
+      if (luaParams.isEmpty()) s"${prefix}function($newList) return $func($newList) end"
+      else s"${prefix}function($newList) return $func(${luaParams.substring(2)}, $newList) end"
+    }
+  }
 }

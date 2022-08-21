@@ -3,7 +3,9 @@ package sal.types
 import scala.collection.mutable.HashMap
 
 class Context(parent: Option[Context]) {
-  private val map = HashMap[String, Type]()
+  private val map = HashMap[String, Type](
+    "print" -> FunctionType(BuiltInType("anything"), BuiltInType("void"))
+  )
 
   def derive() = new Context(Some(this))
 
@@ -16,15 +18,16 @@ class Context(parent: Option[Context]) {
       case Some(p) => p.require(name, req)
       case _ => false
     }
-    else map(name) == req
+    else map(name) === req
 
-  def alloc(name: String, tp: Type): String = {
+  def alloc(name: String, tp: Type): String =
     if (map.contains(name)) alloc(name + "_", tp)
     else {
       map.put(name, tp)
       name
     }
-  }
+
+  def -=(name: String): Unit = map.remove(name); {}
 
   def query(name: String): Type =
     map.getOrElse(name, parent match {

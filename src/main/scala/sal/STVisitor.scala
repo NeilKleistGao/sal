@@ -25,6 +25,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
   override def visitStatement(ctx: SalParser.StatementContext): StatementNode =
     if (ctx.value != null) StatementNode(visitValue(ctx.value))
+    else if (ctx.application != null) StatementNode(visitApplication(ctx.application))
     else StatementNode(visitFunction(ctx.function))
 
   override def visitTypeName(ctx: SalParser.TypeNameContext): TypeNameNode =
@@ -59,10 +60,11 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   }
 
   override def visitExpression(ctx: SalParser.ExpressionContext): ExpressionNode =
-    if (ctx.lit != null) ExpressionNode(Left(visitLit(ctx.lit)))
+    if (ctx.lit != null) ExpressionNode(visitLit(ctx.lit))
+    else if (ctx.application != null) ExpressionNode(visitApplication(ctx.application))
     else {
       val name = ctx.ID().getText
-      ExpressionNode(Right(VariableNode(name, typeCtx.query(name))))
+      ExpressionNode(VariableNode(name, typeCtx.query(name)))
     } 
 
   override def visitBlockInner(ctx: SalParser.BlockInnerContext): STNode with BlockInnerType =
@@ -96,13 +98,45 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val params = visitParams(ctx.params)
     val retType = visitAllTypes(ctx.allTypes)
     val body = visitFunctionBody(ctx.functionBody)
-    if (retType.salType != body.salType)
+    if (retType.salType !== body.salType)
       errors.append(s"  return value of $name got ${body.salType}, but ${retType.salType} is required.\n")
 
     val res = FunctionNode(name, params, retType, body)
     typeCtx = stack.pop()
     typeCtx += (name, res.functionType)
     res
+  }
+
+  override def visitApplication(ctx: SalParser.ApplicationContext): ApplicationNode = {
+    val name = ctx.ID().getText
+    val params = ctx.expression.asScala.toList.map((e) => visitExpression(e))
+    val funcType = typeCtx.query(name)
+
+    def matchType(fun: types.Type, index: Int): types.Type = fun match {
+      case types.FunctionType(p, r) =>
+        if (p === types.voidType && params.isEmpty) r
+        else if (index == params.length - 1)
+          if (p === params(index).salType) r
+          else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index).salType}.")
+        else
+          if (p === params(index).salType) matchType(r, index + 1)
+          else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index).salType}.")
+      case _ => throw SalException(s"$name is not a function.")
+    }
+
+    val retType =
+      try { matchType(funcType, 0) }
+      catch {
+        case SalException(info) => errors.append(s"  $info\n"); types.anythingType // shield other type checking.
+      }
+    def generateRestParams(fun: types.Type): List[String] = fun match {
+      case types.FunctionType(p, r) => List(typeCtx.alloc("p", p)) ::: generateRestParams(r)
+      case _ => List()
+    }
+
+    val rest = generateRestParams(retType)
+    rest.foreach((nm) => typeCtx -= nm)
+    ApplicationNode(name, params, retType, rest)
   }
 }
 

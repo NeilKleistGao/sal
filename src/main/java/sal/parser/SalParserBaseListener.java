@@ -169,6 +169,18 @@ public class SalParserBaseListener implements SalParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFunction(SalParser.FunctionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterApplication(SalParser.ApplicationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitApplication(SalParser.ApplicationContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
