@@ -96,7 +96,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val params = visitParams(ctx.params)
     val retType = visitAllTypes(ctx.allTypes)
     val body = visitFunctionBody(ctx.functionBody)
-    if (retType.salType != body.salType)
+    if (retType.salType !== body.salType)
       errors.append(s"  return value of $name got ${body.salType}, but ${retType.salType} is required.\n")
 
     val res = FunctionNode(name, params, retType, body)
@@ -112,12 +112,12 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
     def matchType(fun: types.Type, index: Int): types.Type = fun match {
       case types.FunctionType(p, r) =>
-        if (p == types.voidType && params.isEmpty) r
+        if (p === types.voidType && params.isEmpty) r
         else if (index == params.length - 1)
-          if (p == params(index)) r
+          if (p === params(index).salType) r
           else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index)}.")
         else
-          if (p == params(index)) matchType(r, index + 1)
+          if (p === params(index).salType) matchType(r, index + 1)
           else throw SalException(s"$name's parameters[$index] requires $p, but got ${params(index)}.")
       case _ => throw SalException(s"$name is not a function.")
     }

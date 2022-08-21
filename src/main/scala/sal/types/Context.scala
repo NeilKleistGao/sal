@@ -16,7 +16,7 @@ class Context(parent: Option[Context]) {
       case Some(p) => p.require(name, req)
       case _ => false
     }
-    else map(name) == req
+    else map(name) === req
 
   def alloc(name: String, tp: Type): String = {
     if (map.contains(name)) alloc(name + "_", tp)
