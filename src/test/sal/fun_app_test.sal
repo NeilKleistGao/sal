@@ -22,3 +22,7 @@ fun foo(x: int, y: int, z: int): void = {}
 val bar: int -> int -> void = foo(42)
 
 print("hello world!")
+
+val p: int = 1
+fun foofoo(x: int, y: int): void = {}
+val barbar: int -> void = foofoo(p)

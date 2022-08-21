@@ -27,3 +27,9 @@ function foo(x, y, z)
 end
 local bar = function(p, p_) return foo(42, p, p_) end
 print("hello world!")
+local p = 1
+function foofoo(x, y)
+  local res = nil
+  return res
+end
+local barbar = function(p_) return foofoo(p, p_) end
