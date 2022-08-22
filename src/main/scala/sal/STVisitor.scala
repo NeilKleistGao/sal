@@ -85,7 +85,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
   override def visitParam(ctx: SalParser.ParamContext) = {
     val name = ctx.ID().getText
-    val tp = visitAllTypes(ctx.allTypes)
+    val tp = if(ctx.allTypes != null) visitAllTypes(ctx.allTypes) else TypeNameNode(types.anythingType)
     try { typeCtx += (name, tp.salType) }
     catch {
       case SalException(info) => throw SalException(info, ctx.getStart().getLine())
@@ -102,8 +102,8 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
     val name = ctx.ID().getText
     val params = visitParams(ctx.params)
-    val retType = visitAllTypes(ctx.allTypes)
     val body = visitFunctionBody(ctx.functionBody)
+    val retType = if (ctx.allTypes != null) visitAllTypes(ctx.allTypes) else TypeNameNode(body.salType)
     if (retType.salType !== body.salType)
       errors.append(SalException.format(
         s"return value of $name got ${body.salType}, but ${retType.salType} is required.",
