@@ -10,6 +10,10 @@ class ValDecTest extends DiffTest {
   test("Value Declaration Error Test") {
     generate(err_input, err_output)
   }
+
+  test("Value Declaration Inference Test") {
+    generate(inf_input, inf_output)
+  }
 }
 
 object ValDecTest {
@@ -18,4 +22,7 @@ object ValDecTest {
 
   val err_input = "val_err_test.sal"
   val err_output = "val_err_test.lua"
+
+  val inf_input = "val_inf_test.sal"
+  val inf_output = "val_inf_test.lua"
 }

@@ -1,0 +1,6 @@
+val x = 10
+val y = 3.14
+val z1 = false
+val z2 = true
+val w = "\"abc\""
+val n1 = nix
