@@ -1,6 +1,6 @@
-local x = 10
-local y = 3.14
-local z1 = false
-local z2 = true
-local w = "\"abc\""
-local n1 = nil
+local x = 10 --[[type: int]]
+local y = 3.14 --[[type: float]]
+local z1 = false --[[type: bool]]
+local z2 = true --[[type: bool]]
+local w = "\"abc\"" --[[type: string]]
+local n1 = nil --[[type: anything]]

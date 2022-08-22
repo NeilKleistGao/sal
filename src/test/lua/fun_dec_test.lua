@@ -3,7 +3,7 @@ function f()
 end
 function g()
   local res = nil
-  local x = false
+  local x = false --[[type: bool]]
   res = "wuwuwu"
   return res
 end
@@ -15,7 +15,7 @@ function m(x, y)
 end
 function n()
   local res = nil
-  local x = 1.0
+  local x = 1.0 --[[type: float]]
   return res
 end
 function p(x)
@@ -23,7 +23,7 @@ function p(x)
 end
 function q()
   local res = nil
-  local x = 4.2
+  local x = 4.2 --[[type: float]]
   local _ = false
   res = x
   return res
@@ -33,15 +33,15 @@ function r()
 end
 function s()
   local res = nil
-  local y = nil
+  local y = nil --[[type: string]]
   return res
 end
 function noFun()
   local res = nil
   return res
 end
-local xx = h
-local yy = f
+local xx = h --[[type: bool -> bool]]
+local yy = f --[[type: void -> int]]
 function high(f)
   return f
 end
@@ -72,9 +72,9 @@ function highhhh()
   res = f
   return res
 end
-local mmm = m
-local mmm2 = m
-local mmm3 = m
-local pHigh = high
-local pHigh2 = high2
-local pHigh3 = high
+local mmm = m --[[type: int -> float -> string]]
+local mmm2 = m --[[type: int -> float -> string]]
+local mmm3 = m --[[type: int -> float -> string]]
+local pHigh = high --[[type: (int -> int) -> int -> int]]
+local pHigh2 = high2 --[[type: void -> void -> string]]
+local pHigh3 = high --[[type: (int -> int) -> int -> int]]

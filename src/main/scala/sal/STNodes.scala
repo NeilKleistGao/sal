@@ -50,7 +50,7 @@ case class ExpressionNode(exp: STNode with ExpressionType) extends STNode with F
 }
 
 case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends STNode with StatementType {
-  override def toLua(indent: Int): String = s"${super.toLua(indent)}local $id = ${expr.toLua(0)}"
+  override def toLua(indent: Int): String = s"${super.toLua(indent)}local $id = ${expr.toLua(0)} --[[type: ${tp.salType}]]"
 
   override lazy val salType = types.voidType
 }
