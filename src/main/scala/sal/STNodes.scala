@@ -125,7 +125,7 @@ case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body:
     
   override def toLua(indent: Int): String = {
     val prefix = super.toLua(indent)
-    s"${prefix}function $id(${params.toLua(0)})\n${body.toLua(indent + 1)}\n${prefix}end"
+    s"${prefix}function $id(${params.toLua(0)}) --[[type: $functionType]]\n${body.toLua(indent + 1)}\n${prefix}end"
   }
 
   val functionType =

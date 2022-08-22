@@ -4,18 +4,18 @@ local z1 = false --[[type: bool]]
 local z2 = true --[[type: bool]]
 local w = "\"abc\"" --[[type: string]]
 local n1 = nil --[[type: anything]]
-function f(x)
+function f(x) --[[type: int -> void]]
   local res = nil
   local y = x --[[type: int]]
   return res
 end
-function g()
+function g() --[[type: void -> float]]
   return 3.14
 end
 local pi = g() --[[type: float]]
-function h(x, y)
+function h(x, y) --[[type: string -> bool -> string -> bool]]
   local res = nil
-  function hh(xx)
+  function hh(xx) --[[type: string -> bool]]
     return y
   end
   res = hh

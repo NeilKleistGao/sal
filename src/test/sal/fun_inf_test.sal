@@ -1,0 +1,10 @@
+fun f() = 42
+
+fun g() = {
+  val x: bool = false
+  "wuwuwu"
+}
+
+fun h(x: bool) = x
+
+fun m(x, y): string = ""
