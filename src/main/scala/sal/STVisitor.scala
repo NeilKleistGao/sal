@@ -43,8 +43,8 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
   override def visitValue(ctx: SalParser.ValueContext) = {
     val name = ctx.ID().getText
-    val tp = visitAllTypes(ctx.allTypes)
     val exp = visitExpression(ctx.expression)
+    val tp = if (ctx.allTypes != null) visitAllTypes(ctx.allTypes) else TypeNameNode(exp.salType)
 
     try
       typeCtx += (name, tp.salType) // it doesn't format automatically.
