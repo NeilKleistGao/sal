@@ -1,80 +1,80 @@
-function f()
+function f() --[[type: void -> int]]
   return 42
 end
-function g()
+function g() --[[type: void -> string]]
   local res = nil
-  local x = false
+  local x = false --[[type: bool]]
   res = "wuwuwu"
   return res
 end
-function h(x)
+function h(x) --[[type: bool -> bool]]
   return x
 end
-function m(x, y)
+function m(x, y) --[[type: int -> float -> string]]
   return ""
 end
-function n()
+function n() --[[type: void -> void]]
   local res = nil
-  local x = 1.0
+  local x = 1.0 --[[type: float]]
   return res
 end
-function p(x)
+function p(x) --[[type: int -> anything]]
   return x
 end
-function q()
+function q() --[[type: void -> float]]
   local res = nil
-  local x = 4.2
+  local x = 4.2 --[[type: float]]
   local _ = false
   res = x
   return res
 end
-function r()
+function r() --[[type: void -> anything]]
   return true
 end
-function s()
+function s() --[[type: void -> anything]]
   local res = nil
-  local y = nil
+  local y = nil --[[type: string]]
   return res
 end
-function noFun()
+function noFun() --[[type: void -> void]]
   local res = nil
   return res
 end
-local xx = h
-local yy = f
-function high(f)
+local xx = h --[[type: bool -> bool]]
+local yy = f --[[type: void -> int]]
+function high(f) --[[type: (int -> int) -> int -> int]]
   return f
 end
-function high2()
+function high2() --[[type: void -> void -> string]]
   local res = nil
-  function inner()
+  function inner() --[[type: void -> string]]
     return "rua"
   end
   res = inner
   return res
 end
-function high3()
+function high3() --[[type: void -> bool -> string]]
   local res = nil
-  function f(x)
+  function f(x) --[[type: bool -> string]]
     return "VG is always your home!"
   end
   res = f
   return res
 end
-function high4()
+function high4() --[[type: void -> void -> int]]
   return f
 end
-function highhhh()
+function highhhh() --[[type: void -> anything]]
   local res = nil
-  function f()
+  function f() --[[type: void -> anything]]
     return g
   end
   res = f
   return res
 end
-local mmm = m
-local mmm2 = m
-local mmm3 = m
-local pHigh = high
-local pHigh2 = high2
-local pHigh3 = high
+local mmm = m --[[type: int -> float -> string]]
+local mmm2 = m --[[type: int -> float -> string]]
+local mmm3 = m --[[type: int -> float -> string]]
+local pHigh = high --[[type: (int -> int) -> int -> int]]
+local pHigh2 = high2 --[[type: void -> void -> string]]
+local pHigh3 = high --[[type: (int -> int) -> int -> int]]

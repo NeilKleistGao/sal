@@ -1,0 +1,22 @@
+val x = 10
+val y = 3.14
+val z1 = false
+val z2 = true
+val w = "\"abc\""
+val n1 = nix
+
+fun f(x: int): void = {
+  val y = x
+}
+
+fun g(): float = 3.14
+val pi = g()
+
+fun h(x: string, y: bool): string -> bool = {
+  fun hh(xx: string): bool = y
+  hh
+}
+
+val hh = h
+val hhh = h("rua")
+val hhhh = hh("rua", false)
