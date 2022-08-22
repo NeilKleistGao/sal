@@ -27,13 +27,14 @@ expression: lit | ID | application;
 
 functionBody: block | expression;
 
-param: ID COLON_OP allTypes;
+param: ID COLON_OP allTypes | ID;
 
 params: (LEFT_PARENTHESE RIGHT_PARENTHESE) |
         (LEFT_PARENTHESE param RIGHT_PARENTHESE) |
         (LEFT_PARENTHESE param (COMMA_OP param)* RIGHT_PARENTHESE);
 
-function: FUN_KW ID params COLON_OP allTypes ASSIGN_OP functionBody;
+function: FUN_KW ID params COLON_OP allTypes ASSIGN_OP functionBody |
+          FUN_KW ID params ASSIGN_OP functionBody;
 
 application: ID LEFT_PARENTHESE RIGHT_PARENTHESE |
              ID LEFT_PARENTHESE expression RIGHT_PARENTHESE |
