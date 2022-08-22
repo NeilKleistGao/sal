@@ -13,3 +13,25 @@ end
 function m(x, y) --[[type: anything -> anything -> string]]
   return ""
 end
+function high(x) --[[type: int -> anything -> int]]
+  local res = nil
+  function inner(y) --[[type: anything -> int]]
+    return x
+  end
+  res = inner
+  return res
+end
+function hgih(x) --[[type: anything -> float -> anything]]
+  local res = nil
+  function outer(y) --[[type: float -> anything]]
+    return x
+  end
+  res = outer
+  return res
+end
+function n() --[[type: void -> int]]
+  local res = nil
+  local x = 42 --[[type: int]]
+  res = x
+  return res
+end

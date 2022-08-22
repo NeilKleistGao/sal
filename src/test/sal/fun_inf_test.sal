@@ -8,3 +8,18 @@ fun g() = {
 fun h(x: bool) = x
 
 fun m(x, y): string = ""
+
+fun high(x: int) = {
+  fun inner(y) = x
+  inner
+}
+
+fun hgih(x) = {
+  fun outer(y: float) = x
+  outer
+}
+
+fun n() = {
+  val x = 42
+  x
+}
