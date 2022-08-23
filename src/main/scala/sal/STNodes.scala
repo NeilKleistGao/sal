@@ -151,3 +151,39 @@ case class ApplicationNode(func: String, params: List[ExpressionNode], retType: 
     }
   }
 }
+
+case class FieldNode(name: String, tp: types.Type) extends STNode {
+  override lazy val salType = tp
+
+  override def toLua(indent: Int): String = ???
+}
+
+case class FieldsNode(fields: List[FieldsNode]) extends STNode {
+  override lazy val salType = ???
+
+  override def toLua(indent: Int): String = ???
+}
+
+case class RecordNode(fields: FieldsNode) extends STNode {
+  override lazy val salType = ???
+
+  override def toLua(indent: Int): String = ???
+}
+
+case class AccessNode(rec: String, field: String, res: types.Type) extends STNode {
+  override lazy val salType = ???
+
+  override def toLua(indent: Int): String = ???
+}
+
+case class InitializerNode(params: List[(Some[String], ExpressionNode)]) extends STNode {
+  override lazy val salType = ???
+
+  override def toLua(indent: Int): String = ???
+}
+
+case class CreateNode(initializer: InitializerNode) extends STNode {
+  override lazy val salType = ???
+
+  override def toLua(indent: Int): String = ???
+}

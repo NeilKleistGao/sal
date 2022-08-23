@@ -38,4 +38,6 @@ case class RecordType(name: String, fields: Map[String, Type]) extends Type {
   }
 
   override def toString(): String = s"rec $name"
+
+  def get(field: String) = fields.getOrElse(field, throw sal.SalException(s"$name doesn't have $field."))
 }
