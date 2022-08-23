@@ -12,6 +12,7 @@ STRING_KW: 'string';
 FUN_KW: 'fun';
 VOID_KW: 'void';
 ANY_KW: 'anything';
+REC_KW: 'rec';
 
 TRUE_LIT: 'true';
 FALSE_LIT: 'false';
@@ -30,5 +31,6 @@ COLON_OP: ':';
 ASSIGN_OP: '=';
 COMMA_OP: ',';
 ARROW_OP: '->';
+DOT_OP: '.';
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;

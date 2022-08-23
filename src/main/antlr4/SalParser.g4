@@ -30,12 +30,19 @@ functionBody: block | expression;
 param: ID COLON_OP allTypes | ID;
 
 params: (LEFT_PARENTHESE RIGHT_PARENTHESE) |
-        (LEFT_PARENTHESE param RIGHT_PARENTHESE) |
         (LEFT_PARENTHESE param (COMMA_OP param)* RIGHT_PARENTHESE);
+
+field: ID COLON_OP allTypes;
+
+fields: field (COMMA_OP field)*;
 
 function: FUN_KW ID params COLON_OP allTypes ASSIGN_OP functionBody |
           FUN_KW ID params ASSIGN_OP functionBody;
 
 application: ID LEFT_PARENTHESE RIGHT_PARENTHESE |
-             ID LEFT_PARENTHESE expression RIGHT_PARENTHESE |
              ID LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE;
+
+record: REC_KW LEFT_BRACES RIGHT_BRACES |
+        REC_KW LEFT_BRACES fields RIGHT_BRACES;
+
+access: ID DOT_OP ID;
