@@ -13,6 +13,7 @@ FUN_KW: 'fun';
 VOID_KW: 'void';
 ANY_KW: 'anything';
 REC_KW: 'rec';
+NEW_KW: 'new';
 
 TRUE_LIT: 'true';
 FALSE_LIT: 'false';
