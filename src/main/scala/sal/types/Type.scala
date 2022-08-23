@@ -29,3 +29,13 @@ case class FunctionType(param: Type, res: Type) extends Type {
     case _ => s"$param -> $res"
   }
 }
+
+case class RecordType(name: String, fields: Map[String, Type]) extends Type {
+  override def ===(other: Type): Boolean = other match {
+    case RecordType(nm, _) => name.equals(nm)
+    case BuiltInType(nm) if (nm.equals("anything")) => true
+    case _ => false
+  }
+
+  override def toString(): String = s"rec $name"
+}
