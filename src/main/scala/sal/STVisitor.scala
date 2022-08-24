@@ -156,7 +156,8 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
   override def visitField(ctx: SalParser.FieldContext): FieldNode =
     if (ctx.function != null) FieldNode(ctx.ID().getText(), visitFunction(ctx.function))
-    else FieldNode(ctx.ID().getText(), visitAllTypes(ctx.allTypes))
+    else if (ctx.expression == null) FieldNode(ctx.ID().getText(), visitAllTypes(ctx.allTypes))
+    else FieldNode(ctx.ID().getText(), visitAllTypes(ctx.allTypes), Some(visitExpression(ctx.expression)))
 
   override def visitFields(ctx: SalParser.FieldsContext) =
     FieldsNode(ctx.field.asScala.toList.map((f) => visitField(f)))

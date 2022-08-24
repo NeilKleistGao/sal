@@ -32,7 +32,7 @@ param: ID COLON_OP allTypes | ID;
 params: (LEFT_PARENTHESE RIGHT_PARENTHESE) |
         (LEFT_PARENTHESE param (COMMA_OP param)* RIGHT_PARENTHESE);
 
-field: ID COLON_OP allTypes | function;
+field: ID COLON_OP allTypes | function | ID COLON_OP allTypes ASSIGN_OP expression;
 
 fields: field (COMMA_OP field)*;
 

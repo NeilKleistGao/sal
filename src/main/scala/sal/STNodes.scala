@@ -154,10 +154,13 @@ case class ApplicationNode(func: String, params: List[ExpressionNode], retType: 
   }
 }
 
-case class FieldNode(val id: String, field: STNode with FieldType) extends STNode {
+case class FieldNode(val id: String, field: STNode with FieldType, default: Option[ExpressionNode] = None) extends STNode {
   override lazy val salType = field.salType
   override def toLua(indent: Int): String = field match {
-    case t: TypeNameNode => s"${super.toLua(indent)}$id = nil"
+    case t: TypeNameNode => default match {
+      case Some(v) => s"${super.toLua(indent)}$id = ${v.toLua(0)}"
+      case _ => s"${super.toLua(indent)}$id = nil"
+    }
     case f: FunctionNode => s"${super.toLua(indent)}$id =\n${f.toLua(indent + 1)}"
   }
 }

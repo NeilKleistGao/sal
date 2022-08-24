@@ -1,3 +1,5 @@
 rec Empty {}
 
 rec Num { x: int, y: float }
+
+rec WithDefault { s: string = "ez"}
