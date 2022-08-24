@@ -16,6 +16,7 @@ sealed trait FunctionBodyType
 sealed trait StatementType
 sealed trait BlockInnerType
 sealed trait ExpressionType
+sealed trait FieldType
 
 case class LitNode(value: String) extends STNode with ExpressionType {
   override def toLua(indent: Int): String =
@@ -34,7 +35,7 @@ object LitNode {
     else types.intType
 }
 
-case class TypeNameNode(tp: types.Type) extends STNode {
+case class TypeNameNode(tp: types.Type) extends STNode with FieldType {
   override lazy val salType = tp
 }
 
@@ -120,7 +121,8 @@ case class FunctionBodyNode(body: STNode with FunctionBodyType) extends STNode {
   }
 }
 
-case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode) extends STNode with StatementType {
+case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode)
+  extends STNode with StatementType with FieldType {
   override lazy val salType = types.voidType
     
   override def toLua(indent: Int): String = {
@@ -152,38 +154,66 @@ case class ApplicationNode(func: String, params: List[ExpressionNode], retType: 
   }
 }
 
-case class FieldNode(name: String, tp: types.Type) extends STNode {
-  override lazy val salType = tp
-
-  override def toLua(indent: Int): String = ???
+case class FieldNode(val id: String, field: STNode with FieldType) extends STNode {
+  override lazy val salType = field.salType
+  override def toLua(indent: Int): String = field match {
+    case t: TypeNameNode => s"${super.toLua(indent)}$id = nil"
+    case f: FunctionNode => s"${super.toLua(indent)}$id =\n${f.toLua(indent + 1)}"
+  }
 }
 
-case class FieldsNode(fields: List[FieldsNode]) extends STNode {
-  override lazy val salType = ???
+case class FieldsNode(fields: List[FieldNode]) extends STNode {
+  override def toLua(indent: Int): String =
+    if (fields.isEmpty) ""
+    else fields.map((f) => f.toLua(indent)).reduceLeft((res, f) => s"$res,\n$f")
 
-  override def toLua(indent: Int): String = ???
+  lazy val toList = fields.map((f) => (f.id, f.salType))
 }
 
-case class RecordNode(fields: FieldsNode) extends STNode {
-  override lazy val salType = ???
+case class RecordNode(id: String, fields: FieldsNode) extends STNode {
+  override lazy val salType = types.RecordType(id, fields.toList)
 
-  override def toLua(indent: Int): String = ???
+  override def toLua(indent: Int): String = {
+    val prefix = super.toLua(indent)
+    s"$prefix$id = {\n${fields.toLua(indent + 1)}\n$prefix}"
+  }
 }
 
 case class AccessNode(rec: String, field: String, res: types.Type) extends STNode {
-  override lazy val salType = ???
+  override lazy val salType = res
+
+  override def toLua(indent: Int): String = s"$rec.$field"
+}
+
+case class InitializerNode(val param: (Option[String], ExpressionNode)) extends STNode {
+  override lazy val salType = param._2.salType
 
   override def toLua(indent: Int): String = ???
 }
 
-case class InitializerNode(params: List[(Some[String], ExpressionNode)]) extends STNode {
-  override lazy val salType = ???
+case class CreateNode(rec: types.RecordType, initializers: List[InitializerNode]) extends STNode {
+  override lazy val salType = rec
 
-  override def toLua(indent: Int): String = ???
-}
+  override def toLua(indent: Int): String = {
+    val prefix = super.toLua(indent)
+    if (rec.fields.isEmpty) s"$prefix{}"
+    else {
+      val namedInit = initializers.filter((i) => i.param._1 match {
+        case Some(_) => true
+        case _ => false
+      }).map((i) => (i.param._1.get, i.param._2)).toMap
 
-case class CreateNode(initializer: InitializerNode) extends STNode {
-  override lazy val salType = ???
+      val defaultInit = initializers.filter((i) => i.param._1 match {
+        case Some(_) => false
+        case _ => true
+      }).map((i) => i.param._2).iterator
 
-  override def toLua(indent: Int): String = ???
+      val body = rec.fields.map((f) =>
+        if (namedInit.contains(f._1)) s"$prefix  ${f._1} = ${namedInit(f._1).toLua(0)}"
+        else s"$prefix  ${f._1} = ${defaultInit.next()}"
+      )
+
+      s"$prefix{\n${body.reduceLeft((r, f) => s"$r,\n$f")}\n$prefix}"
+    }
+  }
 }

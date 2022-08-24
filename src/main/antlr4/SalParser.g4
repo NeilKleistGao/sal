@@ -23,7 +23,7 @@ allTypes: typeName | typeName ARROW_OP allTypes | LEFT_PARENTHESE allTypes RIGHT
 value: VAL_KW ID COLON_OP allTypes ASSIGN_OP expression |
        VAL_KW ID ASSIGN_OP expression;
 
-expression: lit | ID | application | access;
+expression: lit | ID | application | access | create;
 
 functionBody: block | expression;
 
@@ -42,10 +42,10 @@ function: FUN_KW ID params COLON_OP allTypes ASSIGN_OP functionBody |
 application: ID LEFT_PARENTHESE RIGHT_PARENTHESE |
              ID LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE;
 
-record: REC_KW LEFT_BRACES RIGHT_BRACES |
-        REC_KW LEFT_BRACES fields RIGHT_BRACES;
+record: REC_KW ID LEFT_BRACES RIGHT_BRACES |
+        REC_KW ID LEFT_BRACES fields RIGHT_BRACES;
 
-access: ID DOT_OP ID (DOT_OP ID)*;
+access: ID DOT_OP ID;
 
 initializer: ID ASSIGN_OP expression | expression;
 
