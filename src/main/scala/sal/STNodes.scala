@@ -213,7 +213,8 @@ case class CreateNode(rec: types.RecordType, initializers: List[InitializerNode]
 
       val body = rec.fields.map((f) =>
         if (namedInit.contains(f._1)) s"$prefix  ${f._1} = ${namedInit(f._1).toLua(0)}"
-        else s"$prefix  ${f._1} = ${defaultInit.next()}"
+        else if (defaultInit.hasNext) s"$prefix  ${f._1} = ${defaultInit.next()}"
+        else s"$prefix  ${f._1} = ${rec.name}.${f._1}"
       )
 
       s"$prefix{\n${body.reduceLeft((r, f) => s"$r,\n$f")}\n$prefix}"
