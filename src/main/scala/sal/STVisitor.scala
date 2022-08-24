@@ -26,6 +26,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   override def visitStatement(ctx: SalParser.StatementContext): StatementNode =
     if (ctx.value != null) StatementNode(visitValue(ctx.value))
     else if (ctx.application != null) StatementNode(visitApplication(ctx.application))
+    else if (ctx.record != null) StatementNode(visitRecord(ctx.record))
     else StatementNode(visitFunction(ctx.function))
 
   override def visitTypeName(ctx: SalParser.TypeNameContext): TypeNameNode =
@@ -65,6 +66,8 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   override def visitExpression(ctx: SalParser.ExpressionContext): ExpressionNode =
     if (ctx.lit != null) ExpressionNode(visitLit(ctx.lit))
     else if (ctx.application != null) ExpressionNode(visitApplication(ctx.application))
+    else if (ctx.access != null) ExpressionNode(visitAccess(ctx.access))
+    else if (ctx.create != null) ExpressionNode(visitCreate(ctx.create))
     else {
       val name = ctx.ID().getText()
       ExpressionNode(VariableNode(name, typeCtx.query(name)))
@@ -161,6 +164,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   override def visitRecord(ctx: SalParser.RecordContext): RecordNode =
     if (ctx.fields != null) RecordNode(ctx.ID().getText(), visitFields(ctx.fields))
     else RecordNode(ctx.ID().getText(), FieldsNode(List()))
+    
 
   override def visitAccess(ctx: SalParser.AccessContext): AccessNode = {
     val recName = ctx.ID(0).getText()

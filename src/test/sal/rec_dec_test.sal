@@ -1,0 +1,3 @@
+rec Empty {}
+
+rec Num { x: int, y: float }

@@ -170,7 +170,7 @@ case class FieldsNode(fields: List[FieldNode]) extends STNode {
   lazy val toList = fields.map((f) => (f.id, f.salType))
 }
 
-case class RecordNode(id: String, fields: FieldsNode) extends STNode {
+case class RecordNode(id: String, fields: FieldsNode) extends STNode with StatementType {
   override lazy val salType = types.RecordType(id, fields.toList)
 
   override def toLua(indent: Int): String = {
@@ -179,7 +179,7 @@ case class RecordNode(id: String, fields: FieldsNode) extends STNode {
   }
 }
 
-case class AccessNode(rec: String, field: String, res: types.Type) extends STNode {
+case class AccessNode(rec: String, field: String, res: types.Type) extends STNode with ExpressionType {
   override lazy val salType = res
 
   override def toLua(indent: Int): String = s"$rec.$field"
@@ -191,7 +191,7 @@ case class InitializerNode(val param: (Option[String], ExpressionNode)) extends 
   override def toLua(indent: Int): String = ???
 }
 
-case class CreateNode(rec: types.RecordType, initializers: List[InitializerNode]) extends STNode {
+case class CreateNode(rec: types.RecordType, initializers: List[InitializerNode]) extends STNode with ExpressionType {
   override lazy val salType = rec
 
   override def toLua(indent: Int): String = {
