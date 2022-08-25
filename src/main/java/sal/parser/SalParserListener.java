@@ -130,6 +130,26 @@ public interface SalParserListener extends ParseTreeListener {
 	 */
 	void exitParams(SalParser.ParamsContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SalParser#field}.
+	 * @param ctx the parse tree
+	 */
+	void enterField(SalParser.FieldContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SalParser#field}.
+	 * @param ctx the parse tree
+	 */
+	void exitField(SalParser.FieldContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SalParser#fields}.
+	 * @param ctx the parse tree
+	 */
+	void enterFields(SalParser.FieldsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SalParser#fields}.
+	 * @param ctx the parse tree
+	 */
+	void exitFields(SalParser.FieldsContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SalParser#function}.
 	 * @param ctx the parse tree
 	 */
@@ -149,4 +169,44 @@ public interface SalParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitApplication(SalParser.ApplicationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SalParser#record}.
+	 * @param ctx the parse tree
+	 */
+	void enterRecord(SalParser.RecordContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SalParser#record}.
+	 * @param ctx the parse tree
+	 */
+	void exitRecord(SalParser.RecordContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SalParser#access}.
+	 * @param ctx the parse tree
+	 */
+	void enterAccess(SalParser.AccessContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SalParser#access}.
+	 * @param ctx the parse tree
+	 */
+	void exitAccess(SalParser.AccessContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SalParser#initializer}.
+	 * @param ctx the parse tree
+	 */
+	void enterInitializer(SalParser.InitializerContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SalParser#initializer}.
+	 * @param ctx the parse tree
+	 */
+	void exitInitializer(SalParser.InitializerContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SalParser#create}.
+	 * @param ctx the parse tree
+	 */
+	void enterCreate(SalParser.CreateContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SalParser#create}.
+	 * @param ctx the parse tree
+	 */
+	void exitCreate(SalParser.CreateContext ctx);
 }

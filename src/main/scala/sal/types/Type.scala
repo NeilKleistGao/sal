@@ -29,3 +29,17 @@ case class FunctionType(param: Type, res: Type) extends Type {
     case _ => s"$param -> $res"
   }
 }
+
+case class RecordType(val name: String, val fields: List[(String, Type)]) extends Type {
+  override def ===(other: Type): Boolean = other match {
+    case RecordType(nm, _) => name.equals(nm)
+    case BuiltInType(nm) if (nm.equals("anything")) => true
+    case _ => false
+  }
+
+  override def toString(): String = s"rec $name"
+
+  private lazy val map = fields.map((f) => (f._1, f._2)).toMap
+
+  def get(field: String) = map.getOrElse(field, throw sal.SalException(s"$name doesn't have $field."))
+}

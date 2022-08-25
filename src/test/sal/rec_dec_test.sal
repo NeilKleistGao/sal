@@ -1,0 +1,32 @@
+rec Empty {}
+
+rec Num { x: int, y: float }
+
+rec WithDefault { s: string = "ez"}
+
+rec Interface {
+  fun f(x: int, y: int) = 42
+}
+
+val ez = new WithDefault{}
+val func: Interface = new Interface{}
+val n1 = new Num{1, 2.0}
+val n2 = new Num{1}
+val n3 = new Num{x = 3, y = 4.0}
+val n4 = new Num{y = 3.0, x = 4}
+val n5 = new Num{x = 3, 4.0}
+val n6 = new Num{y = 3.0, 4}
+val n7 = new Num{x = 5}
+val n8 = new Num{y = 6.0}
+
+val x1 = n1.x
+val y1 = n1.y
+
+val f = func.f
+
+rec GG {
+  g: int -> int
+}
+
+fun gf(x: int) = 42
+val gg = new GG{ g = gf }

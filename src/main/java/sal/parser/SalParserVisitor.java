@@ -85,6 +85,18 @@ public interface SalParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParams(SalParser.ParamsContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SalParser#field}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitField(SalParser.FieldContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#fields}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFields(SalParser.FieldsContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SalParser#function}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -96,4 +108,28 @@ public interface SalParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitApplication(SalParser.ApplicationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#record}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRecord(SalParser.RecordContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#access}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAccess(SalParser.AccessContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#initializer}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInitializer(SalParser.InitializerContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#create}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCreate(SalParser.CreateContext ctx);
 }

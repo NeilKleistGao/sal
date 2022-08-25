@@ -7,6 +7,8 @@ class Context(parent: Option[Context]) {
     "print" -> FunctionType(BuiltInType("anything"), BuiltInType("void"))
   )
 
+  private val newTypes = HashMap[String, RecordType]()
+
   def derive() = new Context(Some(this))
 
   def +=(info: (String, Type)) =
@@ -33,6 +35,13 @@ class Context(parent: Option[Context]) {
     map.getOrElse(name, parent match {
       case Some(p) => p.query(name)
       case _ => throw sal.SalException(s"unknown variable $name.")
+    })
+
+  def :=(rec: RecordType): Unit = newTypes.put(rec.name, rec)
+  def ?(typeName: String): Type =
+    newTypes.getOrElse(typeName, parent match {
+      case Some(p) => p?typeName
+      case _ => throw sal.SalException(s"unknown type $typeName.")
     })
 }
 

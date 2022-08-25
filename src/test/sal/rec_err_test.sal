@@ -1,0 +1,34 @@
+rec Foo {
+  x: int = 1,
+  x: int = 2
+}
+
+rec Bar {
+  x: int
+}
+
+val bar = new Bar{x = 1}
+print(bar.y)
+
+val s: string = bar.x
+val b: bool = new Bar{x = 2}
+
+rec FooBar {
+  x: int = "123"
+}
+
+rec Num {
+  x: int,
+  y: float
+}
+
+val n1 = new Num{1, 2, 3}
+val n2 = new Num{x = "abc"}
+val n3: Num = new Bar{x = 1}
+
+rec M {
+  fun f() = 42
+}
+
+fun mf() = false
+val m = new M{ f = mf }
