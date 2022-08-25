@@ -234,15 +234,20 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val id = ctx.ID().getText()
     try {
       typeCtx?id match {
-        case rt: types.RecordType =>
-          CreateNode(rt, ctx.initializer.asScala.toList.map((i) => visitInitializer(i)))
+        case rt: types.RecordType => {
+          val inits = ctx.initializer.asScala.toList.map((i) => visitInitializer(i))
+          if (inits.length > rt.fields.length)
+            throw SalException(s"too many arguments when creating $id") // format later
+          CreateNode(rt, inits)
+        }
+          
         case _ => throw SalException(s"$id is not a record.") // format later
       }
     }
     catch {
       case SalException(info) => {
         errors.append(SalException.format(info, ctx.getStart().getLine()))
-        CreateNode(types.RecordType("", List()), ctx.initializer.asScala.toList.map((i) => visitInitializer(i))) // shield other type checking.
+        CreateNode(types.RecordType("", List()), List()) // shield other type checking.
       }
     }
   } 

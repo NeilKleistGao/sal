@@ -16,3 +16,10 @@ val b: bool = new Bar{x = 2}
 rec FooBar {
   x: int = "123"
 }
+
+rec Num {
+  x: int,
+  y: float
+}
+
+val n1 = new Num{1, 2, 3}
