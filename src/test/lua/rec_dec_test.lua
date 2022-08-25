@@ -22,7 +22,7 @@ local func = {
 } --[[type: rec Interface]]
 local n1 = {
   x = 1,
-  y = 2
+  y = 2.0
 } --[[type: rec Num]]
 local n2 = {
   x = 1,
@@ -30,19 +30,19 @@ local n2 = {
 } --[[type: rec Num]]
 local n3 = {
   x = 3,
-  y = 4
+  y = 4.0
 } --[[type: rec Num]]
 local n4 = {
   x = 4,
-  y = 3
+  y = 3.0
 } --[[type: rec Num]]
 local n5 = {
   x = 3,
-  y = 4
+  y = 4.0
 } --[[type: rec Num]]
 local n6 = {
   x = 4,
-  y = 3
+  y = 3.0
 } --[[type: rec Num]]
 local n7 = {
   x = 5,
@@ -50,7 +50,7 @@ local n7 = {
 } --[[type: rec Num]]
 local n8 = {
   x = Num.x,
-  y = 6
+  y = 6.0
 } --[[type: rec Num]]
 local x1 = n1.x --[[type: int]]
 local y1 = n1.y --[[type: float]]

@@ -238,6 +238,29 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
           val inits = ctx.initializer.asScala.toList.map((i) => visitInitializer(i))
           if (inits.length > rt.fields.length)
             throw SalException(s"too many arguments when creating $id") // format later
+
+          val namedInit = inits.filter((i) => i.param._1 match {
+            case Some(_) => true
+            case _ => false
+          }).map((i) => (i.param._1.get, i.param._2)).toMap
+        
+          val defaultInit = inits.filter((i) => i.param._1 match {
+            case Some(_) => false
+            case _ => true
+          }).map((i) => i.param._2).iterator
+
+          rt.fields.foreach((f) =>
+            if (namedInit.contains(f._1)) {
+              if (namedInit(f._1).salType !== f._2)
+                throw SalException(s"${f._1} requires ${f._2}, but got ${namedInit(f._1).salType}") // format later
+            }
+            else if (defaultInit.hasNext) {
+              val node = defaultInit.next()
+              if (node.salType !== f._2)
+                throw SalException(s"${f._1} requires ${f._2}, but got ${node.salType}") // format later
+            }
+          )
+
           CreateNode(rt, inits)
         }
           
