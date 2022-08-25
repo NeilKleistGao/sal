@@ -2,3 +2,13 @@ rec Foo {
   x: int = 1,
   x: int = 2
 }
+
+rec Bar {
+  x: int
+}
+
+val bar = new Bar{x = 1}
+print(bar.y)
+
+val s: string = bar.x
+val b: bool = new Bar{x = 2}
