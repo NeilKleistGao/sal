@@ -10,3 +10,5 @@ rec Interface {
 
 val ez = new WithDefault{}
 val func: Interface = new Interface{}
+val n1 = new Num{1, 2}
+val n2 = new Num{1}
