@@ -155,7 +155,10 @@ case class ApplicationNode(func: String, params: List[ExpressionNode], retType: 
 }
 
 case class FieldNode(val id: String, field: STNode with FieldType, default: Option[ExpressionNode] = None) extends STNode {
-  override lazy val salType = field.salType
+  override lazy val salType = field match {
+    case f: FunctionNode => f.functionType
+    case _ => field.salType
+  }
   override def toLua(indent: Int): String = field match {
     case t: TypeNameNode => default match {
       case Some(v) => s"${super.toLua(indent)}$id = ${v.toLua(0)}"

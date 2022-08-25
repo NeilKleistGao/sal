@@ -25,3 +25,10 @@ rec Num {
 val n1 = new Num{1, 2, 3}
 val n2 = new Num{x = "abc"}
 val n3: Num = new Bar{x = 1}
+
+rec M {
+  fun f() = 42
+}
+
+fun mf() = false
+val m = new M{ f = mf }
