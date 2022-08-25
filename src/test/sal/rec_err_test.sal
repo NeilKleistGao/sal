@@ -12,3 +12,7 @@ print(bar.y)
 
 val s: string = bar.x
 val b: bool = new Bar{x = 2}
+
+rec FooBar {
+  x: int = "123"
+}

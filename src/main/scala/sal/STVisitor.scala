@@ -173,7 +173,15 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       FieldNode("", func)
     }
     else if (ctx.expression == null) FieldNode(ctx.ID().getText(), visitAllTypes(ctx.allTypes))
-    else FieldNode(ctx.ID().getText(), visitAllTypes(ctx.allTypes), Some(visitExpression(ctx.expression)))
+    else {
+      val name = ctx.ID().getText()
+      val tp = visitAllTypes(ctx.allTypes)
+      val init = visitExpression(ctx.expression)
+      if (tp.salType !== init.salType)
+        errors.append(SalException.format(s"field $name requires ${tp.salType}, but got ${init.salType}", ctx.getStart().getLine()))
+      
+      FieldNode(name, tp, Some(init))
+    }
 
   override def visitFields(ctx: SalParser.FieldsContext) = {
     val list = ctx.field.asScala.toList.map((f) => visitField(f))

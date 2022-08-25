@@ -3,4 +3,5 @@
   line 11: Bar doesn't have y.
   line 13: s got int, but string is required.
   line 14: b got rec Bar, but bool is required.
+  line 17: field x requires int, but got string
 ]]
