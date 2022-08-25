@@ -161,7 +161,8 @@ case class FieldNode(val id: String, field: STNode with FieldType, default: Opti
       case Some(v) => s"${super.toLua(indent)}$id = ${v.toLua(0)}"
       case _ => s"${super.toLua(indent)}$id = nil"
     }
-    case f: FunctionNode => s"${super.toLua(indent)}$id =\n${f.toLua(indent + 1)}"
+    case FunctionNode(id, params, res, body) =>
+      s"${super.toLua(indent)}$id =\n${FunctionNode("", params, res, body).toLua(indent + 1)}"
   }
 }
 

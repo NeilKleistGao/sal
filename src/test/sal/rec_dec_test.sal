@@ -3,3 +3,7 @@ rec Empty {}
 rec Num { x: int, y: float }
 
 rec WithDefault { s: string = "ez"}
+
+rec Interface {
+  fun f(x: int, y: int) = 42
+}

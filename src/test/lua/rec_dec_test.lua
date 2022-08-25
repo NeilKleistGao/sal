@@ -8,3 +8,9 @@ Num = {
 WithDefault = {
   s = "ez"
 }
+Interface = {
+  f =
+    function (x, y) --[[type: int -> int -> int]]
+      return 42
+    end
+}
