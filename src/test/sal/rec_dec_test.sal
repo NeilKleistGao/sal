@@ -18,3 +18,8 @@ val n5 = new Num{x = 3, 4}
 val n6 = new Num{y = 3, 4}
 val n7 = new Num{x = 5}
 val n8 = new Num{y = 6}
+
+val x1 = n1.x
+val y1 = n1.y
+
+val f = func.f

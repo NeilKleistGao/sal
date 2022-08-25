@@ -121,7 +121,7 @@ case class FunctionBodyNode(body: STNode with FunctionBodyType) extends STNode {
   }
 }
 
-case class FunctionNode(id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode)
+case class FunctionNode(val id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode)
   extends STNode with StatementType with FieldType {
   override lazy val salType = types.voidType
     

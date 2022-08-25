@@ -52,3 +52,6 @@ local n8 = {
   x = Num.x,
   y = 6
 } --[[type: rec Num]]
+local x1 = n1.x --[[type: int]]
+local y1 = n1.y --[[type: float]]
+local f = func.f --[[type: void]]
