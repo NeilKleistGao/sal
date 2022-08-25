@@ -55,3 +55,12 @@ local n8 = {
 local x1 = n1.x --[[type: int]]
 local y1 = n1.y --[[type: float]]
 local f = func.f --[[type: int -> int -> int]]
+GG = {
+  g = nil
+}
+function gf(x) --[[type: int -> int]]
+  return 42
+end
+local gg = {
+  g = gf
+} --[[type: rec GG]]

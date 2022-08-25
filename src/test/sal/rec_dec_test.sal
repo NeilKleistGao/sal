@@ -23,3 +23,10 @@ val x1 = n1.x
 val y1 = n1.y
 
 val f = func.f
+
+rec GG {
+  g: int -> int
+}
+
+fun gf(x: int) = 42
+val gg = new GG{ g = gf }
