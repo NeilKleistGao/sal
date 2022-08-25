@@ -33,7 +33,19 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     TypeNameNode(types.BuiltInType(ctx.getText()))
 
   override def visitAllTypes(ctx: SalParser.AllTypesContext): TypeNameNode =
-    if (ctx.ARROW_OP() != null)
+    if (ctx.ID() != null) {
+      val typeName = ctx.ID().getText()
+      val tp: types.Type = try
+        typeCtx?typeName // it doesn't format automatically.
+      catch {
+        case SalException(info) => {
+          errors.append(SalException.format(info, ctx.getStart().getLine()))
+          types.anythingType
+        }
+      }
+      TypeNameNode(tp)
+    }
+    else if (ctx.ARROW_OP() != null)
       if (ctx.typeName != null)
         TypeNameNode(types.FunctionType(visitTypeName(ctx.typeName).salType, visitAllTypes(ctx.allTypes(0)).salType))
       else
@@ -162,11 +174,15 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   override def visitFields(ctx: SalParser.FieldsContext) =
     FieldsNode(ctx.field.asScala.toList.map((f) => visitField(f)))
 
-  override def visitRecord(ctx: SalParser.RecordContext): RecordNode =
-    if (ctx.fields != null) RecordNode(ctx.ID().getText(), visitFields(ctx.fields))
-    else RecordNode(ctx.ID().getText(), FieldsNode(List()))
-    
+  override def visitRecord(ctx: SalParser.RecordContext) = {
+    val newType: RecordNode = 
+      if (ctx.fields != null) RecordNode(ctx.ID().getText(), visitFields(ctx.fields))
+      else RecordNode(ctx.ID().getText(), FieldsNode(List()))
 
+    typeCtx := newType.salType
+    newType
+  }
+    
   override def visitAccess(ctx: SalParser.AccessContext): AccessNode = {
     val recName = ctx.ID(0).getText()
     val fieldName = ctx.ID(1).getText()
@@ -192,7 +208,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   override def visitCreate(ctx: SalParser.CreateContext): CreateNode = {
     val id = ctx.ID().getText()
     try {
-      typeCtx.query(id) match {
+      typeCtx?id match {
         case rt: types.RecordType =>
           CreateNode(rt, ctx.initializer.asScala.toList.map((i) => visitInitializer(i)))
         case _ => throw SalException(s"$id is not a record.") // format later

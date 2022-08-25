@@ -14,3 +14,6 @@ Interface = {
       return 42
     end
 }
+local ez = {
+  s = WithDefault.s
+} --[[type: rec WithDefault]]
