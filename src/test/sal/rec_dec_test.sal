@@ -12,3 +12,9 @@ val ez = new WithDefault{}
 val func: Interface = new Interface{}
 val n1 = new Num{1, 2}
 val n2 = new Num{1}
+val n3 = new Num{x = 3, y = 4}
+val n4 = new Num{y = 3, x = 4}
+val n5 = new Num{x = 3, 4}
+val n6 = new Num{y = 3, 4}
+val n7 = new Num{x = 5}
+val n8 = new Num{y = 6}

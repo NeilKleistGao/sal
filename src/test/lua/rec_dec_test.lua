@@ -28,3 +28,27 @@ local n2 = {
   x = 1,
   y = Num.y
 } --[[type: rec Num]]
+local n3 = {
+  x = 3,
+  y = 4
+} --[[type: rec Num]]
+local n4 = {
+  x = 4,
+  y = 3
+} --[[type: rec Num]]
+local n5 = {
+  x = 3,
+  y = 4
+} --[[type: rec Num]]
+local n6 = {
+  x = 4,
+  y = 3
+} --[[type: rec Num]]
+local n7 = {
+  x = 5,
+  y = Num.y
+} --[[type: rec Num]]
+local n8 = {
+  x = Num.x,
+  y = 6
+} --[[type: rec Num]]
