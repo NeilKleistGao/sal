@@ -17,3 +17,6 @@ Interface = {
 local ez = {
   s = WithDefault.s
 } --[[type: rec WithDefault]]
+local func = {
+  f = Interface.f
+} --[[type: rec Interface]]

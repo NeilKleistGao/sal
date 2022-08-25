@@ -9,3 +9,4 @@ rec Interface {
 }
 
 val ez = new WithDefault{}
+val func: Interface = new Interface{}

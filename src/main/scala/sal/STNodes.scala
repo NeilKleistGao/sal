@@ -171,7 +171,10 @@ case class FieldsNode(fields: List[FieldNode]) extends STNode {
     if (fields.isEmpty) ""
     else fields.map((f) => f.toLua(indent)).reduceLeft((res, f) => s"$res,\n$f")
 
-  lazy val toList = fields.map((f) => (f.id, f.salType))
+  lazy val toList = fields.map((f) => f.field match {
+    case FunctionNode(name, _, _, _) => (name, f.salType)
+    case _ => (f.id, f.salType)
+  })
 }
 
 case class RecordNode(id: String, fields: FieldsNode) extends STNode with StatementType {
