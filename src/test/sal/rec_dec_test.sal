@@ -30,3 +30,6 @@ rec GG {
 
 fun gf(x: int) = 42
 val gg = new GG{ g = gf }
+
+fun getX(num: Num) = num.x
+fun createNum(x: int, y: float) = new Num{x, y}

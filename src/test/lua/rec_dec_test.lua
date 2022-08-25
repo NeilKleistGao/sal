@@ -64,3 +64,12 @@ end
 local gg = {
   g = gf
 } --[[type: rec GG]]
+function getX(num) --[[type: rec Num -> int]]
+  return num.x
+end
+function createNum(x, y) --[[type: int -> float -> rec Num]]
+  return {
+  x = x,
+  y = y
+}
+end
