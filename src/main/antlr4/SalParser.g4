@@ -23,7 +23,14 @@ allTypes: typeName | typeName ARROW_OP allTypes | LEFT_PARENTHESE allTypes RIGHT
 value: VAL_KW ID COLON_OP allTypes ASSIGN_OP expression |
        VAL_KW ID ASSIGN_OP expression;
 
-expression: lit | ID | application | access | create;
+expression: lit | ID | application | access | create                |
+             (LOGIC_NOT_OP | BIT_NOT_OP) expression                 |
+             expression (LEFT_SHIFT_OP | RIGHT_SHIFT_OP) expression |
+             expression BIT_AND_OP expression                       |
+             expression BIT_XOR_OP expression                       |
+             expression BIT_OR_OP expression                        |
+             expression LOGIC_AND_OP expression                     |
+             expression LOGIC_OR_OP expression;
 
 functionBody: block | expression;
 
