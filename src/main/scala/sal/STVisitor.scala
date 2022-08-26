@@ -80,10 +80,17 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     else if (ctx.application != null) ExpressionNode(visitApplication(ctx.application))
     else if (ctx.access != null) ExpressionNode(visitAccess(ctx.access))
     else if (ctx.create != null) ExpressionNode(visitCreate(ctx.create))
-    else {
+    else if (ctx.ID() != null) {
       val name = ctx.ID().getText()
       ExpressionNode(VariableNode(name, typeCtx.query(name)))
-    } 
+    }
+    else {
+      import Operator._;
+
+      val op = OperatorParser(ctx)
+      if (op == Operator.BitwiseNot || op == Operator.LogicNot) ExpressionNode(UnOpExpression(visitExpression(ctx.expression(0)), op))
+      else ExpressionNode(BiOpExpression(visitExpression(ctx.expression(0)), visitExpression(ctx.expression(1)), op))
+    }
 
   override def visitBlockInner(ctx: SalParser.BlockInnerContext): STNode with BlockInnerType =
     if (ctx.statement != null) visitStatement(ctx.statement)
