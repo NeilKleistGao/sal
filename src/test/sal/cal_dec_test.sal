@@ -1,0 +1,10 @@
+val x = true && false
+val y = x || true
+val z = !y
+
+val w = 2 << 3
+val m = 9 >> 1
+val n = w & m
+val p = w | m
+val q = w ^ m
+val r = ~q
