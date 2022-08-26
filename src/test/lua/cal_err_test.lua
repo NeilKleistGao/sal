@@ -10,4 +10,7 @@
   line 9: operator BitwiseNot is int -> int, but the parameter is float
   line 11: xx got bool, but string is required.
   line 12: yy got int, but float is required.
+  line 14: and is a preserved keyword in lua.
+  line 15: or is a preserved keyword in lua.
+  line 16: not is a preserved keyword in lua.
 ]]

@@ -5,6 +5,8 @@ sealed trait Type {
   def !==(other: Type): Boolean = ! ===(other)
 }
 
+case object PreservedKeyword extends Type
+
 case class BuiltInType(name: String) extends Type {
   override def ===(other: Type): Boolean = other match {
     case BuiltInType(nm) if (nm.equals("anything")) => true

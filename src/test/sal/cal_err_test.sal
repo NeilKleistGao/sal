@@ -10,3 +10,7 @@ val r = ~2.2
 
 val xx: string = true || false
 val yy: float = 4 | 5
+
+fun and(x: bool, y: bool) = x && y
+fun or(x: bool, y: bool) = x || y
+fun not(x: bool) = !x

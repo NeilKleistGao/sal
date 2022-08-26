@@ -130,7 +130,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val tp = if(ctx.allTypes != null) visitAllTypes(ctx.allTypes) else TypeNameNode(types.anythingType)
     try { typeCtx += (name, tp.salType) }
     catch {
-      case SalException(info) => throw SalException(info, ctx.getStart().getLine())
+      case SalException(info) => errors.append(SalException.format(info, ctx.getStart().getLine()))
     }
     ParamNode(name, tp)
   }
@@ -156,7 +156,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     typeCtx = stack.pop()
     try { typeCtx += (name, res.functionType) }
     catch {
-      case SalException(info) => throw SalException(info, ctx.getStart().getLine())
+      case SalException(info) => errors.append(SalException.format(info, ctx.getStart().getLine()))
     }
     res
   }
