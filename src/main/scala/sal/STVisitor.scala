@@ -88,8 +88,28 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       import Operator._;
 
       val op = OperatorParser(ctx)
-      if (op == Operator.BitwiseNot || op == Operator.LogicNot) ExpressionNode(UnOpExpression(visitExpression(ctx.expression(0)), op))
-      else ExpressionNode(BiOpExpression(visitExpression(ctx.expression(0)), visitExpression(ctx.expression(1)), op))
+      val opType = try { typeCtx.query(op) }
+        catch {
+          case SalException(info) => {
+            errors.append(SalException.format(info, ctx.getStart().getLine()))
+            types.anythingType // shield other type checking.
+          }
+        }
+
+      if (op == Operator.BitwiseNot || op == Operator.LogicNot) {
+        val v = visitExpression(ctx.expression(0))
+        if (opType !== types.FunctionType(v.salType, types.anythingType))
+          errors.append(SalException.format(s"operator $op is $opType, but the parameter is ${v.salType}", ctx.getStart().getLine()))
+        ExpressionNode(UnOpExpression(v, op))
+      }
+      else {
+        val lhs = visitExpression(ctx.expression(0))
+        val rhs = visitExpression(ctx.expression(1))
+        if (opType !== types.FunctionType(lhs.salType, types.FunctionType(rhs.salType, types.anythingType)))
+          errors.append(SalException.format(s"operator $op is $opType, but parameters are ${lhs.salType} and ${rhs.salType}",
+            ctx.getStart().getLine()))
+        ExpressionNode(BiOpExpression(lhs, rhs, op))
+      }
     }
 
   override def visitBlockInner(ctx: SalParser.BlockInnerContext): STNode with BlockInnerType =
