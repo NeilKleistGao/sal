@@ -21,3 +21,19 @@ object OperatorParser {
     else if (ctx.LOGIC_AND_OP() != null) LogicAnd
     else LogicOr
 }
+
+object OperatorTranslator {
+  import Operator._
+
+  def apply(op: Operator): String = op match {
+    case LogicNot => "not"
+    case BitwiseNot => "~"
+    case LeftShift => "<<"
+    case RightShift => ">>"
+    case BitwiseAnd => "&"
+    case BitwiseXor => "~"
+    case BitwiseOr => "|"
+    case LogicAnd => "and"
+    case LogicOr => "or"
+  }
+}
