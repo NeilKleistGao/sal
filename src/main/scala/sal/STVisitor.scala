@@ -80,10 +80,37 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     else if (ctx.application != null) ExpressionNode(visitApplication(ctx.application))
     else if (ctx.access != null) ExpressionNode(visitAccess(ctx.access))
     else if (ctx.create != null) ExpressionNode(visitCreate(ctx.create))
-    else {
+    else if (ctx.ID() != null) {
       val name = ctx.ID().getText()
       ExpressionNode(VariableNode(name, typeCtx.query(name)))
-    } 
+    }
+    else {
+      import Operator._;
+
+      val op = OperatorParser(ctx)
+      val opType = (try { typeCtx.query(op) }
+        catch {
+          case SalException(info) => {
+            errors.append(SalException.format(info, ctx.getStart().getLine()))
+            types.FunctionType(types.anythingType, types.anythingType) // shield other type checking.
+          }
+        }).asInstanceOf[types.FunctionType]
+
+      if (op == Operator.BitwiseNot || op == Operator.LogicNot) {
+        val v = visitExpression(ctx.expression(0))
+        if (opType !== types.FunctionType(v.salType, types.anythingType))
+          errors.append(SalException.format(s"operator $op is $opType, but the parameter is ${v.salType}", ctx.getStart().getLine()))
+        ExpressionNode(UnOpExpression(v, op, opType.resType))
+      }
+      else {
+        val lhs = visitExpression(ctx.expression(0))
+        val rhs = visitExpression(ctx.expression(1))
+        if (opType !== types.FunctionType(lhs.salType, types.FunctionType(rhs.salType, types.anythingType)))
+          errors.append(SalException.format(s"operator $op is $opType, but parameters are ${lhs.salType} and ${rhs.salType}",
+            ctx.getStart().getLine()))
+        ExpressionNode(BiOpExpression(lhs, rhs, op, opType.resType))
+      }
+    }
 
   override def visitBlockInner(ctx: SalParser.BlockInnerContext): STNode with BlockInnerType =
     if (ctx.statement != null) visitStatement(ctx.statement)
@@ -103,7 +130,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val tp = if(ctx.allTypes != null) visitAllTypes(ctx.allTypes) else TypeNameNode(types.anythingType)
     try { typeCtx += (name, tp.salType) }
     catch {
-      case SalException(info) => throw SalException(info, ctx.getStart().getLine())
+      case SalException(info) => errors.append(SalException.format(info, ctx.getStart().getLine()))
     }
     ParamNode(name, tp)
   }
@@ -129,7 +156,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     typeCtx = stack.pop()
     try { typeCtx += (name, res.functionType) }
     catch {
-      case SalException(info) => throw SalException(info, ctx.getStart().getLine())
+      case SalException(info) => errors.append(SalException.format(info, ctx.getStart().getLine()))
     }
     res
   }

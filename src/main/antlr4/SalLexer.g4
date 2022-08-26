@@ -33,5 +33,14 @@ ASSIGN_OP: '=';
 COMMA_OP: ',';
 ARROW_OP: '->';
 DOT_OP: '.';
+BIT_AND_OP: '&';
+BIT_OR_OP: '|';
+BIT_NOT_OP: '~';
+BIT_XOR_OP: '^';
+LEFT_SHIFT_OP: '<<';
+RIGHT_SHIFT_OP: '>>';
+LOGIC_AND_OP: '&&';
+LOGIC_OR_OP: '||';
+LOGIC_NOT_OP: '!';
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;

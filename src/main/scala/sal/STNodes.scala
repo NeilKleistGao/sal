@@ -1,5 +1,7 @@
 package sal
 
+import Operator._;
+
 sealed trait STNode {
   lazy val salType: types.Type = ???
   def toLua(indent: Int): String = {
@@ -227,4 +229,16 @@ case class CreateNode(rec: types.RecordType, initializers: List[InitializerNode]
       s"$prefix{\n${body.reduceLeft((r, f) => s"$r,\n$f")}\n$prefix}"
     }
   }
+}
+
+case class BiOpExpression(lhs: ExpressionNode, rhs: ExpressionNode, op: Operator, res: types.Type) extends STNode with ExpressionType {
+  override lazy val salType = res
+
+  override def toLua(indent: Int): String = s"(${lhs.toLua(0)}) ${OperatorTranslator(op)} (${rhs.toLua(0)})"
+}
+
+case class UnOpExpression(v: ExpressionNode, op: Operator, res: types.Type) extends STNode with ExpressionType {
+  override lazy val salType = res
+
+  override def toLua(indent: Int): String = s"${OperatorTranslator(op)} (${v.toLua(0)})"
 }

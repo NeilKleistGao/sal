@@ -1,0 +1,16 @@
+val x = true && 42
+val y = false || "abc"
+val z = !3.14
+val w = 1.1 << 2
+val m = 1.1 >> 2
+val n = 1.1 & 2.2
+val p = 1.1 | 2.2
+val q = 1.1 ^ 2.2
+val r = ~2.2
+
+val xx: string = true || false
+val yy: float = 4 | 5
+
+fun and(x: bool, y: bool) = x && y
+fun or(x: bool, y: bool) = x || y
+fun not(x: bool) = !x

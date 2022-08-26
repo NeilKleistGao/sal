@@ -1,10 +1,27 @@
 package sal.types
+import sal.types._
 
 import scala.collection.mutable.HashMap
 
 class Context(parent: Option[Context]) {
   private val map = HashMap[String, Type](
-    "print" -> FunctionType(BuiltInType("anything"), BuiltInType("void"))
+    "print" -> FunctionType(anythingType, voidType),
+    "and" -> PreservedKeyword,
+    "or" -> PreservedKeyword,
+    "not" -> PreservedKeyword
+  )
+
+  import sal.Operator._
+  private val operatos = HashMap[Operator, Type](
+    LogicNot -> FunctionType(boolType, boolType),
+    BitwiseNot -> FunctionType(intType, intType),
+    LeftShift -> FunctionType(intType, FunctionType(intType, intType)),
+    RightShift -> FunctionType(intType, FunctionType(intType, intType)),
+    BitwiseAnd -> FunctionType(intType, FunctionType(intType, intType)),
+    BitwiseXor -> FunctionType(intType, FunctionType(intType, intType)),
+    BitwiseOr -> FunctionType(intType, FunctionType(intType, intType)),
+    LogicAnd -> FunctionType(boolType, FunctionType(boolType, boolType)),
+    LogicOr -> FunctionType(boolType, FunctionType(boolType, boolType)),
   )
 
   private val newTypes = HashMap[String, RecordType]()
@@ -12,7 +29,10 @@ class Context(parent: Option[Context]) {
   def derive() = new Context(Some(this))
 
   def +=(info: (String, Type)) =
-    if (map.contains(info._1)) throw sal.SalException(s"duplicate variable ${info._1}.")
+    if (map.contains(info._1)) map(info._1) match {
+      case PreservedKeyword => throw sal.SalException(s"${info._1} is a preserved keyword in lua.")
+      case _ => throw sal.SalException(s"duplicate variable ${info._1}.")
+    }
     else map.put(info._1, info._2)
 
   def require(name: String, req: Type): Boolean =
@@ -35,6 +55,12 @@ class Context(parent: Option[Context]) {
     map.getOrElse(name, parent match {
       case Some(p) => p.query(name)
       case _ => throw sal.SalException(s"unknown variable $name.")
+    })
+
+  def query(op: Operator): Type =
+    operatos.getOrElse(op, parent match {
+      case Some(p) => p.query(op)
+      case _ => throw sal.SalException(s"unknown operator $op.")
     })
 
   def :=(rec: RecordType): Unit = newTypes.put(rec.name, rec)

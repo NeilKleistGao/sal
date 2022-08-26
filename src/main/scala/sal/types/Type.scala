@@ -5,6 +5,8 @@ sealed trait Type {
   def !==(other: Type): Boolean = ! ===(other)
 }
 
+case object PreservedKeyword extends Type
+
 case class BuiltInType(name: String) extends Type {
   override def ===(other: Type): Boolean = other match {
     case BuiltInType(nm) if (nm.equals("anything")) => true
@@ -27,6 +29,11 @@ case class FunctionType(param: Type, res: Type) extends Type {
   override def toString(): String = param match {
     case f: FunctionType => s"($param) -> $res"
     case _ => s"$param -> $res"
+  }
+
+  lazy val resType: Type = res match {
+    case f: FunctionType => f.resType
+    case _ => res
   }
 }
 
