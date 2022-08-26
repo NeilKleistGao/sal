@@ -88,19 +88,19 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       import Operator._;
 
       val op = OperatorParser(ctx)
-      val opType = try { typeCtx.query(op) }
+      val opType = (try { typeCtx.query(op) }
         catch {
           case SalException(info) => {
             errors.append(SalException.format(info, ctx.getStart().getLine()))
-            types.anythingType // shield other type checking.
+            types.FunctionType(types.anythingType, types.anythingType) // shield other type checking.
           }
-        }
+        }).asInstanceOf[types.FunctionType]
 
       if (op == Operator.BitwiseNot || op == Operator.LogicNot) {
         val v = visitExpression(ctx.expression(0))
         if (opType !== types.FunctionType(v.salType, types.anythingType))
           errors.append(SalException.format(s"operator $op is $opType, but the parameter is ${v.salType}", ctx.getStart().getLine()))
-        ExpressionNode(UnOpExpression(v, op))
+        ExpressionNode(UnOpExpression(v, op, opType.resType))
       }
       else {
         val lhs = visitExpression(ctx.expression(0))
@@ -108,7 +108,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
         if (opType !== types.FunctionType(lhs.salType, types.FunctionType(rhs.salType, types.anythingType)))
           errors.append(SalException.format(s"operator $op is $opType, but parameters are ${lhs.salType} and ${rhs.salType}",
             ctx.getStart().getLine()))
-        ExpressionNode(BiOpExpression(lhs, rhs, op))
+        ExpressionNode(BiOpExpression(lhs, rhs, op, opType.resType))
       }
     }
 

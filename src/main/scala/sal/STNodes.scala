@@ -231,14 +231,14 @@ case class CreateNode(rec: types.RecordType, initializers: List[InitializerNode]
   }
 }
 
-case class BiOpExpression(lhs: ExpressionNode, rhs: ExpressionNode, op: Operator) extends STNode with ExpressionType {
-  override lazy val salType = lhs.salType
+case class BiOpExpression(lhs: ExpressionNode, rhs: ExpressionNode, op: Operator, res: types.Type) extends STNode with ExpressionType {
+  override lazy val salType = res
 
   override def toLua(indent: Int): String = s"(${lhs.toLua(0)}) ${OperatorTranslator(op)} (${rhs.toLua(0)})"
 }
 
-case class UnOpExpression(v: ExpressionNode, op: Operator) extends STNode with ExpressionType {
-  override lazy val salType = v.salType
+case class UnOpExpression(v: ExpressionNode, op: Operator, res: types.Type) extends STNode with ExpressionType {
+  override lazy val salType = res
 
   override def toLua(indent: Int): String = s"${OperatorTranslator(op)} (${v.toLua(0)})"
 }

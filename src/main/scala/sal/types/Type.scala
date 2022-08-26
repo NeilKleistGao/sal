@@ -28,6 +28,11 @@ case class FunctionType(param: Type, res: Type) extends Type {
     case f: FunctionType => s"($param) -> $res"
     case _ => s"$param -> $res"
   }
+
+  lazy val resType: Type = res match {
+    case f: FunctionType => f.resType
+    case _ => res
+  }
 }
 
 case class RecordType(val name: String, val fields: List[(String, Type)]) extends Type {
