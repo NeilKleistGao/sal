@@ -12,7 +12,7 @@ end
 function g() --[[type: void -> float]]
   return 3.14
 end
-local pi = g() --[[type: float]]
+local pi = (g)() --[[type: float]]
 function h(x, y) --[[type: string -> bool -> string -> bool]]
   local res = nil
   function hh(xx) --[[type: string -> bool]]
@@ -22,5 +22,5 @@ function h(x, y) --[[type: string -> bool -> string -> bool]]
   return res
 end
 local hh = h --[[type: string -> bool -> string -> bool]]
-local hhh = function(p, p_) return h("rua", p, p_) end --[[type: bool -> string -> bool]]
-local hhhh = function(p) return hh("rua", false, p) end --[[type: string -> bool]]
+local hhh = function(p) return (h)("rua", p) end --[[type: bool -> string -> bool]]
+local hhhh = (hh)("rua", false) --[[type: string -> bool]]

@@ -46,7 +46,7 @@ case class VariableNode(name: String, tp: types.Type) extends STNode with Expres
   override def toLua(indent: Int): String = name
 }
 
-case class ExpressionNode(exp: STNode with ExpressionType) extends STNode with FunctionBodyType with BlockInnerType {
+case class ExpressionNode(val exp: STNode with ExpressionType) extends STNode with FunctionBodyType with BlockInnerType {
   override def toLua(indent: Int): String = exp.toLua(indent)
 
   override lazy val salType = exp.salType
@@ -133,25 +133,26 @@ case class FunctionNode(val id: String, params: ParamsNode, res: TypeNameNode, b
   }
 
   val functionType =
-    if (params.params.isEmpty) types.FunctionType(types.voidType, res.salType)
-    else params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t))
+    if (params.params.isEmpty) types.FunctionType(types.voidType, res.salType, 0)
+    else params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t, params.params.length))
 }
 
-case class ApplicationNode(func: String, params: List[ExpressionNode], retType: types.Type, rest: List[String]) 
+case class ApplicationNode(func: ExpressionNode, params: List[ExpressionNode], retType: types.Type, rest: List[String]) 
   extends STNode with ExpressionType with StatementType {
   override lazy val salType = retType
 
   override def toLua(indent: Int): String = {
     val luaParams = params.foldLeft("")((r, p) => s"$r, ${p.toLua(0)}")
     val prefix = super.toLua(indent)
+    val funcName = func.toLua(0)
 
     if (rest.isEmpty)
-      if (luaParams.isEmpty()) s"$prefix$func()"
-      else s"$prefix$func(${luaParams.substring(2)})"
+      if (luaParams.isEmpty()) s"$prefix($funcName)()"
+      else s"$prefix($funcName)(${luaParams.substring(2)})"
     else {
       val newList = rest.foldLeft("")((r, p) => s"$r, $p").substring(2)
-      if (luaParams.isEmpty()) s"${prefix}function($newList) return $func($newList) end"
-      else s"${prefix}function($newList) return $func(${luaParams.substring(2)}, $newList) end"
+      if (luaParams.isEmpty()) s"${prefix}function($newList) return ($funcName)()($newList) end"
+      else s"${prefix}function($newList) return ($funcName)(${luaParams.substring(2)}, $newList) end"
     }
   }
 }
@@ -191,10 +192,10 @@ case class RecordNode(id: String, fields: FieldsNode) extends STNode with Statem
   }
 }
 
-case class AccessNode(rec: String, field: String, res: types.Type) extends STNode with ExpressionType {
+case class AccessNode(rec: ExpressionNode, field: String, res: types.Type) extends STNode with ExpressionType {
   override lazy val salType = res
 
-  override def toLua(indent: Int): String = s"$rec.$field"
+  override def toLua(indent: Int): String = s"(${rec.toLua(indent)}).$field"
 }
 
 case class InitializerNode(val param: (Option[String], ExpressionNode)) extends STNode {

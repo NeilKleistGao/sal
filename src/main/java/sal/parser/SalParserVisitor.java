@@ -115,12 +115,6 @@ public interface SalParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitRecord(SalParser.RecordContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SalParser#access}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAccess(SalParser.AccessContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link SalParser#initializer}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

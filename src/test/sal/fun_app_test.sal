@@ -30,3 +30,15 @@ val barbar: int -> void = foofoo(p)
 fun n(x: int, y: int, z: int): int = 42
 val v42: int = n(1, 2, 3)
 val v42f: int -> int = n(4, 5)
+
+val mf = m()(42)
+
+fun temp(x: int) = {
+  fun gg(y: int, z: int) = y | z & x
+  gg(2)
+}
+
+val temptemp = temp(1)(3)
+
+fun triple(x, y, z) = {}
+triple(1)(2)(3)
