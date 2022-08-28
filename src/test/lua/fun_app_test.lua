@@ -19,7 +19,7 @@ function m() --[[type: void -> int -> int]]
   res = f
   return res
 end
-local innerF = function(p) return (m)()(p) end --[[type: int -> int]]
+local innerF = (m)() --[[type: int -> int]]
 local res = (innerF)(42) --[[type: int]]
 function foo(x, y, z) --[[type: int -> int -> int -> void]]
   local res = nil
@@ -38,4 +38,13 @@ function n(x, y, z) --[[type: int -> int -> int -> int]]
 end
 local v42 = (n)(1, 2, 3) --[[type: int]]
 local v42f = function(p_) return (n)(4, 5, p_) end --[[type: int -> int]]
-local mf = (function(p_) return (m)()(p_) end)(42) --[[type: int]]
+local mf = ((m)())(42) --[[type: int]]
+function temp(x) --[[type: int -> int -> int]]
+  local res = nil
+  function gg(y, z) --[[type: int -> int -> int]]
+    return (y) | ((z) & (x))
+  end
+  res = function(p) return (gg)(2, p) end
+  return res
+end
+local temptemp = ((temp)(1))(3) --[[type: int]]

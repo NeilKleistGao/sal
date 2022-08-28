@@ -172,7 +172,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val funcType = func.salType
 
     def matchType(fun: types.Type, index: Int): types.Type = fun match {
-      case types.FunctionType(p, r) =>
+      case types.FunctionType(p, r, _) =>
         if (p === types.voidType && params.isEmpty) r
         else if (index == params.length - 1)
           if (p === params(index).salType) r
@@ -188,14 +188,21 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       catch {
         case SalException(info) => errors.append(info); types.anythingType // shield other type checking.
       }
-    def generateRestParams(fun: types.Type): List[String] = fun match {
-      case types.FunctionType(p, r) => List(typeCtx.alloc("p", p)) ::: generateRestParams(r)
-      case _ => List()
-    }
 
-    val rest = generateRestParams(retType)
-    rest.foreach((nm) => typeCtx -= nm)
-    ApplicationNode(func, params, retType, rest)
+    funcType match {
+      case f: types.FunctionType => {
+        val parametersNeed = funcType.asInstanceOf[types.FunctionType].paramsCount
+        def generateRestParams(fun: types.Type, index: Int): List[String] = fun match {
+          case types.FunctionType(p, r, _) if (index < parametersNeed) => List(typeCtx.alloc("p", p)) ::: generateRestParams(r, index + 1)
+          case _ => List()
+        }
+      
+        val rest = generateRestParams(retType, params.length)
+        rest.foreach((nm) => typeCtx -= nm)
+        ApplicationNode(func, params, retType, rest)
+      }
+      case _ => ApplicationNode(func, params, retType, List())
+    }
   }
 
   override def visitApplication(ctx: SalParser.ApplicationContext) =

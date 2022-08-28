@@ -133,8 +133,8 @@ case class FunctionNode(val id: String, params: ParamsNode, res: TypeNameNode, b
   }
 
   val functionType =
-    if (params.params.isEmpty) types.FunctionType(types.voidType, res.salType)
-    else params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t))
+    if (params.params.isEmpty) types.FunctionType(types.voidType, res.salType, 0)
+    else params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t, params.params.length))
 }
 
 case class ApplicationNode(func: ExpressionNode, params: List[ExpressionNode], retType: types.Type, rest: List[String]) 

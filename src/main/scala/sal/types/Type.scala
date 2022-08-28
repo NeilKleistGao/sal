@@ -19,9 +19,9 @@ case class BuiltInType(name: String) extends Type {
 }
 
 
-case class FunctionType(param: Type, res: Type) extends Type {
+case class FunctionType(param: Type, res: Type, val paramsCount: Int = -1) extends Type {
   override def ===(other: Type): Boolean = other match {
-    case FunctionType(p, r) => p === param && r === res
+    case FunctionType(p, r, _) => p === param && r === res
     case BuiltInType(nm) if (nm.equals("anything")) => true
     case _ => false
   }
