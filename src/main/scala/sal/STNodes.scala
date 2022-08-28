@@ -151,7 +151,7 @@ case class ApplicationNode(func: ExpressionNode, params: List[ExpressionNode], r
       else s"$prefix($funcName)(${luaParams.substring(2)})"
     else {
       val newList = rest.foldLeft("")((r, p) => s"$r, $p").substring(2)
-      if (luaParams.isEmpty()) s"${prefix}function($newList) return ($funcName)($newList) end"
+      if (luaParams.isEmpty()) s"${prefix}function($newList) return ($funcName)()($newList) end"
       else s"${prefix}function($newList) return ($funcName)(${luaParams.substring(2)}, $newList) end"
     }
   }
