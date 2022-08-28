@@ -52,9 +52,9 @@ local n8 = {
   x = Num.x,
   y = 6.0
 } --[[type: rec Num]]
-local x1 = n1.x --[[type: int]]
-local y1 = n1.y --[[type: float]]
-local f = func.f --[[type: int -> int -> int]]
+local x1 = (n1).x --[[type: int]]
+local y1 = (n1).y --[[type: float]]
+local f = (func).f --[[type: int -> int -> int]]
 GG = {
   g = nil
 }
@@ -65,7 +65,7 @@ local gg = {
   g = gf
 } --[[type: rec GG]]
 function getX(num) --[[type: rec Num -> int]]
-  return num.x
+  return (num).x
 end
 function createNum(x, y) --[[type: int -> float -> rec Num]]
   return {
@@ -73,3 +73,6 @@ function createNum(x, y) --[[type: int -> float -> rec Num]]
   y = y
 }
 end
+local ggg = (({
+  g = gf
+}).g)(1) --[[type: int]]

@@ -195,7 +195,7 @@ case class RecordNode(id: String, fields: FieldsNode) extends STNode with Statem
 case class AccessNode(rec: ExpressionNode, field: String, res: types.Type) extends STNode with ExpressionType {
   override lazy val salType = res
 
-  override def toLua(indent: Int): String = s"${rec.toLua(indent)}.$field"
+  override def toLua(indent: Int): String = s"(${rec.toLua(indent)}).$field"
 }
 
 case class InitializerNode(val param: (Option[String], ExpressionNode)) extends STNode {
