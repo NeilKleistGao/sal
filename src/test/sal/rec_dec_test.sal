@@ -35,3 +35,9 @@ fun getX(num: Num) = num.x
 fun createNum(x: int, y: float) = new Num{x, y}
 
 val ggg = (new GG{ g = gf}).g(1)
+
+rec GGinGG {
+  gg: GG
+}
+
+val still42 = (new GGinGG{ new GG{ g = gf } }).gg.g(42)

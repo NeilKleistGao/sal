@@ -76,3 +76,11 @@ end
 local ggg = (({
   g = gf
 }).g)(1) --[[type: int]]
+GGinGG = {
+  gg = nil
+}
+local still42 = ((({
+  gg = {
+  g = gf
+}
+}).gg).g)(42) --[[type: int]]
