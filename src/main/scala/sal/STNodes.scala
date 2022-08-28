@@ -137,29 +137,24 @@ case class FunctionNode(val id: String, params: ParamsNode, res: TypeNameNode, b
     else params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t))
 }
 
-case class ApplicationNode(func: ExpressionNode, params: List[ExpressionNode], retType: types.Type, rest: List[String], tempName: String = "") 
+case class ApplicationNode(func: ExpressionNode, params: List[ExpressionNode], retType: types.Type, rest: List[String]) 
   extends STNode with ExpressionType with StatementType {
   override lazy val salType = retType
 
-  private def translateCall(funcName: String, indent: Int) = {
+  override def toLua(indent: Int): String = {
     val luaParams = params.foldLeft("")((r, p) => s"$r, ${p.toLua(0)}")
     val prefix = super.toLua(indent)
+    val funcName = func.toLua(0)
 
     if (rest.isEmpty)
-      if (luaParams.isEmpty()) s"$prefix$funcName()"
-      else s"$prefix$funcName(${luaParams.substring(2)})"
+      if (luaParams.isEmpty()) s"$prefix($funcName)()"
+      else s"$prefix($funcName)(${luaParams.substring(2)})"
     else {
       val newList = rest.foldLeft("")((r, p) => s"$r, $p").substring(2)
-      if (luaParams.isEmpty()) s"${prefix}function($newList) return $funcName($newList) end"
-      else s"${prefix}function($newList) return $funcName(${luaParams.substring(2)}, $newList) end"
+      if (luaParams.isEmpty()) s"${prefix}function($newList) return ($funcName)($newList) end"
+      else s"${prefix}function($newList) return ($funcName)(${luaParams.substring(2)}, $newList) end"
     }
   }
-
-  override def toLua(indent: Int): String = func.exp match {
-    case v: VariableNode => translateCall(v.toLua(0), indent)
-    case _ =>
-      s"${super.toLua(indent)}local $tempName = ${func.toLua(0)}\n${translateCall(tempName, indent)}"
-  } 
 }
 
 case class FieldNode(val id: String, field: STNode with FieldType, default: Option[ExpressionNode] = None) extends STNode {
