@@ -180,16 +180,6 @@ public interface SalParserListener extends ParseTreeListener {
 	 */
 	void exitRecord(SalParser.RecordContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SalParser#access}.
-	 * @param ctx the parse tree
-	 */
-	void enterAccess(SalParser.AccessContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SalParser#access}.
-	 * @param ctx the parse tree
-	 */
-	void exitAccess(SalParser.AccessContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link SalParser#initializer}.
 	 * @param ctx the parse tree
 	 */

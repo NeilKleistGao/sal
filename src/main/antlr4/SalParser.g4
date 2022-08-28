@@ -23,13 +23,16 @@ allTypes: typeName | typeName ARROW_OP allTypes | LEFT_PARENTHESE allTypes RIGHT
 value: VAL_KW ID COLON_OP allTypes ASSIGN_OP expression |
        VAL_KW ID ASSIGN_OP expression;
 
-expression: lit | ID | application | access | create                |
-             (LOGIC_NOT_OP | BIT_NOT_OP) expression                 |
-             expression (LEFT_SHIFT_OP | RIGHT_SHIFT_OP) expression |
-             expression BIT_AND_OP expression                       |
-             expression BIT_XOR_OP expression                       |
-             expression BIT_OR_OP expression                        |
-             expression LOGIC_AND_OP expression                     |
+expression: lit | ID | create | expression LEFT_PARENTHESE RIGHT_PARENTHESE                | // application
+             expression LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE |
+             expression DOT_OP ID                                                          | // access
+             LEFT_PARENTHESE expression RIGHT_PARENTHESE                                   |
+             (LOGIC_NOT_OP | BIT_NOT_OP) expression                                        |
+             expression (LEFT_SHIFT_OP | RIGHT_SHIFT_OP) expression                        |
+             expression BIT_AND_OP expression                                              |
+             expression BIT_XOR_OP expression                                              |
+             expression BIT_OR_OP expression                                               |
+             expression LOGIC_AND_OP expression                                            |
              expression LOGIC_OR_OP expression;
 
 functionBody: block | expression;
@@ -46,13 +49,11 @@ fields: field (COMMA_OP field)*;
 function: FUN_KW ID params COLON_OP allTypes ASSIGN_OP functionBody |
           FUN_KW ID params ASSIGN_OP functionBody;
 
-application: ID LEFT_PARENTHESE RIGHT_PARENTHESE |
-             ID LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE;
+application: expression LEFT_PARENTHESE RIGHT_PARENTHESE |
+             expression LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE;
 
 record: REC_KW ID LEFT_BRACES RIGHT_BRACES |
         REC_KW ID LEFT_BRACES fields RIGHT_BRACES;
-
-access: ID DOT_OP ID;
 
 initializer: ID ASSIGN_OP expression | expression;
 
