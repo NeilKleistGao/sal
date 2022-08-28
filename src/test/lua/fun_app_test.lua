@@ -48,3 +48,8 @@ function temp(x) --[[type: int -> int -> int]]
   return res
 end
 local temptemp = ((temp)(1))(3) --[[type: int]]
+function triple(x, y, z) --[[type: anything -> anything -> anything -> void]]
+  local res = nil
+  return res
+end
+(function(p_) return (function(p_, p__) return (triple)(1, p_, p__) end)(2, p_) end)(3)
