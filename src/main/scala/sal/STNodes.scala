@@ -4,7 +4,7 @@ import Operator._;
 import types._;
 
 sealed trait STNode {
-  lazy val salType: types.Type = ???
+  lazy val salType: Type = ???
   def toLua(indent: Int): String = ???
 }
 
@@ -34,19 +34,19 @@ case class LitNode(value: String) extends STNode with ExpressionType {
 }
 
 object LitNode {
-  private def getLitType(value: String): types.Type =
-    if (value.contains("\"")) types.stringType
-    else if (value.equals("true") || value.equals("false")) types.boolType
-    else if (value.contains(".")) types.floatType
-    else if (value.equals("nix")) types.anythingType
-    else types.intType
+  private def getLitType(value: String): Type =
+    if (value.contains("\"")) stringType
+    else if (value.equals("true") || value.equals("false")) boolType
+    else if (value.contains(".")) floatType
+    else if (value.equals("nix")) anythingType
+    else intType
 }
 
-case class TypeNameNode(tp: types.Type) extends STNode with FieldType {
+case class TypeNameNode(tp: Type) extends STNode with FieldType {
   override lazy val salType = tp
 }
 
-case class VariableNode(name: String, tp: types.Type) extends STNode with ExpressionType {
+case class VariableNode(name: String, tp: Type) extends STNode with ExpressionType {
   override lazy val salType = tp
   override def toLua(indent: Int): String = name
 }
@@ -60,7 +60,7 @@ case class ExpressionNode(val exp: STNode with ExpressionType) extends STNode wi
 case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends STNode with StatementType {
   override def toLua(indent: Int): String = s"${Prefix(indent)}local $id = ${expr.toLua(0)} ${PrettyTypePrinter(tp.salType)}"
 
-  override lazy val salType = types.voidType
+  override lazy val salType = voidType
 }
 
 case class StatementNode(s: STNode with StatementType) extends STNode with BlockInnerType {
@@ -73,7 +73,7 @@ case class ProgramNode(states: List[StatementNode]) extends STNode with ResultNo
   override def toLua(indent: Int): String =
     states.foldLeft("")((res, s) => s"$res${s.toLua(0)}\n")
 
-  override lazy val salType = types.voidType
+  override lazy val salType = voidType
 }
 
 case class ErrorNode(errInfo: String) extends ResultNode {
@@ -93,7 +93,7 @@ case class ParamsNode(val params: List[ParamNode]) extends STNode {
 
 case class BlockNode(stats: List[STNode with BlockInnerType], res: String) extends STNode with FunctionBodyType {
   override lazy val salType =
-    if (stats.isEmpty) types.voidType
+    if (stats.isEmpty) voidType
     else stats.last.salType
 
   private def translateBlock(lst: List[STNode with BlockInnerType], indent: Int): String =
@@ -105,7 +105,7 @@ case class BlockNode(stats: List[STNode with BlockInnerType], res: String) exten
   override def toLua(indent: Int): String =
     if (stats.isEmpty) ""
     else salType match {
-      case types.BuiltInType(name) if (name.equals("void")) =>
+      case BuiltInType(name) if (name.equals("void")) =>
         translateBlock(stats, indent)
       case _ => {
         val body = translateBlock(stats.dropRight(1), indent)
@@ -126,17 +126,17 @@ case class FunctionBodyNode(body: STNode with FunctionBodyType) extends STNode {
 
 case class FunctionNode(val id: String, params: ParamsNode, res: TypeNameNode, body: FunctionBodyNode)
   extends STNode with StatementType with FieldType {
-  override lazy val salType = types.voidType
+  override lazy val salType = voidType
     
   override def toLua(indent: Int): String =
     s"${Prefix(indent)}function $id(${params.toLua(0)}) ${PrettyTypePrinter(functionType)}\n${body.toLua(indent + 1)}\n${Prefix(indent)}end"
 
   val functionType =
-    if (params.params.isEmpty) types.FunctionType(types.voidType, res.salType, 0)
-    else params.params.foldRight(res.salType)((p, t) => types.FunctionType(p.salType, t, params.params.length))
+    if (params.params.isEmpty) FunctionType(voidType, res.salType, 0)
+    else params.params.foldRight(res.salType)((p, t) => FunctionType(p.salType, t, params.params.length))
 }
 
-case class ApplicationNode(func: ExpressionNode, params: List[ExpressionNode], retType: types.Type, rest: List[String]) 
+case class ApplicationNode(func: ExpressionNode, params: List[ExpressionNode], retType: Type, rest: List[String]) 
   extends STNode with ExpressionType with StatementType {
   override lazy val salType = retType
 
@@ -181,13 +181,13 @@ case class FieldsNode(fields: List[FieldNode]) extends STNode {
 }
 
 case class RecordNode(id: String, fields: FieldsNode) extends STNode with StatementType {
-  override lazy val salType = types.RecordType(id, fields.toList)
+  override lazy val salType = RecordType(id, fields.toList)
 
   override def toLua(indent: Int): String =
     s"${Prefix(indent)}$id = {\n${fields.toLua(indent + 1)}\n${Prefix(indent)}}"
 }
 
-case class AccessNode(rec: ExpressionNode, field: String, res: types.Type) extends STNode with ExpressionType {
+case class AccessNode(rec: ExpressionNode, field: String, res: Type) extends STNode with ExpressionType {
   override lazy val salType = res
 
   override def toLua(indent: Int): String = s"(${rec.toLua(indent)}).$field"
@@ -197,7 +197,7 @@ case class InitializerNode(val param: (Option[String], ExpressionNode)) extends 
   override lazy val salType = param._2.salType
 }
 
-case class CreateNode(rec: types.RecordType, initializers: List[InitializerNode]) extends STNode with ExpressionType {
+case class CreateNode(rec: RecordType, initializers: List[InitializerNode]) extends STNode with ExpressionType {
   override lazy val salType = rec
 
   override def toLua(indent: Int): String =
@@ -216,13 +216,13 @@ case class CreateNode(rec: types.RecordType, initializers: List[InitializerNode]
     }
 }
 
-case class BiOpExpression(lhs: ExpressionNode, rhs: ExpressionNode, op: Operator, res: types.Type) extends STNode with ExpressionType {
+case class BiOpExpression(lhs: ExpressionNode, rhs: ExpressionNode, op: Operator, res: Type) extends STNode with ExpressionType {
   override lazy val salType = res
 
   override def toLua(indent: Int): String = s"(${lhs.toLua(0)}) ${OperatorTranslator(op)} (${rhs.toLua(0)})"
 }
 
-case class UnOpExpression(v: ExpressionNode, op: Operator, res: types.Type) extends STNode with ExpressionType {
+case class UnOpExpression(v: ExpressionNode, op: Operator, res: Type) extends STNode with ExpressionType {
   override lazy val salType = res
 
   override def toLua(indent: Int): String = s"${OperatorTranslator(op)} (${v.toLua(0)})"
