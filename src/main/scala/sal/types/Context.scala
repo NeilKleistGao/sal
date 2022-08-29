@@ -11,19 +11,6 @@ class Context(parent: Option[Context]) {
     "not" -> PreservedKeyword
   )
 
-  import sal.Operator._
-  private val operatos = HashMap[Operator, Type](
-    LogicNot -> FunctionType(boolType, boolType),
-    BitwiseNot -> FunctionType(intType, intType),
-    LeftShift -> FunctionType(intType, FunctionType(intType, intType)),
-    RightShift -> FunctionType(intType, FunctionType(intType, intType)),
-    BitwiseAnd -> FunctionType(intType, FunctionType(intType, intType)),
-    BitwiseXor -> FunctionType(intType, FunctionType(intType, intType)),
-    BitwiseOr -> FunctionType(intType, FunctionType(intType, intType)),
-    LogicAnd -> FunctionType(boolType, FunctionType(boolType, boolType)),
-    LogicOr -> FunctionType(boolType, FunctionType(boolType, boolType)),
-  )
-
   private val newTypes = HashMap[String, RecordType]()
 
   def derive() = new Context(Some(this))
@@ -57,11 +44,8 @@ class Context(parent: Option[Context]) {
       case _ => throw sal.SalException(s"unknown variable $name.")
     })
 
-  def query(op: Operator): Type =
-    operatos.getOrElse(op, parent match {
-      case Some(p) => p.query(op)
-      case _ => throw sal.SalException(s"unknown operator $op.")
-    })
+  def query(op: sal.Operator.Operator): Type =
+    Context.operatos.getOrElse(op, throw sal.SalException(s"unknown operator $op."))
 
   def :=(rec: RecordType): Unit = newTypes.put(rec.name, rec)
   def ?(typeName: String): Type =
@@ -73,4 +57,17 @@ class Context(parent: Option[Context]) {
 
 object Context {
   def apply() = new Context(None)
+
+  import sal.Operator._
+  private val operatos = HashMap[Operator, Type](
+    LogicNot -> FunctionType(boolType, boolType),
+    BitwiseNot -> FunctionType(intType, intType),
+    LeftShift -> FunctionType(intType, FunctionType(intType, intType)),
+    RightShift -> FunctionType(intType, FunctionType(intType, intType)),
+    BitwiseAnd -> FunctionType(intType, FunctionType(intType, intType)),
+    BitwiseXor -> FunctionType(intType, FunctionType(intType, intType)),
+    BitwiseOr -> FunctionType(intType, FunctionType(intType, intType)),
+    LogicAnd -> FunctionType(boolType, FunctionType(boolType, boolType)),
+    LogicOr -> FunctionType(boolType, FunctionType(boolType, boolType)),
+  )
 }
