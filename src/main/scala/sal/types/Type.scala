@@ -5,6 +5,10 @@ sealed trait Type {
   def !==(other: Type): Boolean = ! ===(other)
 }
 
+object PrettyTypePrinter {
+  def apply(tp: Type): String = s"--[[type: ${tp}]]"
+}
+
 case object PreservedKeyword extends Type
 
 case class BuiltInType(name: String) extends Type {
