@@ -2,7 +2,7 @@ package sal
 
 import org.antlr.v4.runtime.{CharStreams}
 import scala.util.Try
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import java.lang.StringBuilder
 import scala.collection.mutable.Stack
 

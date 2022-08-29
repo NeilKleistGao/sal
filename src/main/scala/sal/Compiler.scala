@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import java.io.BufferedWriter
 
 class Compiler(filename: String) {
-  private lazy val result = compile
+  private lazy val result = compile()
 
   private def compile(): ResultNode = {
    val reader =
