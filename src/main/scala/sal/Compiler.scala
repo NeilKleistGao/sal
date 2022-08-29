@@ -11,13 +11,10 @@ class Compiler(filename: String) {
    val reader =
     try { new BufferedReader(new FileReader(filename)) }
     catch {
-      case e: java.io.IOException => {
-        System.err.println(s"Error: Can't Open File $filename")
-        null
-      }
+      case e: java.io.IOException => null
     }
 
-    if (reader == null) null
+    if (reader == null) ErrorNode(s"\n  Error: Can't Open File $filename.\n")
     else {
       val content = readFromFile(reader)
       val stream = CharStreams.fromString(content)
@@ -28,7 +25,7 @@ class Compiler(filename: String) {
         STVisitor().visit(parser.program).asInstanceOf[ProgramNode]
       catch {
         case SalException(info) => ErrorNode(info)
-        case _: Throwable => ErrorNode("\n  unknown error.\n")
+        case _: Throwable => ErrorNode("\n  grammar error.\n")
       }
     }
   }
@@ -50,9 +47,8 @@ class Compiler(filename: String) {
       writer.close()
     }
     catch {
-      case e: java.io.IOException => {
-        System.err.println(s"Error: Can't Write File $outputname")
-      }
+      case e: java.io.IOException =>
+        System.err.println(s"Error: Can't Write File $outputname.")
     }
   }
 }
