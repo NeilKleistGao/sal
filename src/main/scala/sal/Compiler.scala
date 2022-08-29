@@ -16,7 +16,7 @@ class Compiler(filename: String) {
 
     if (reader == null) ErrorNode(s"\n  Error: Can't Open File $filename.\n")
     else {
-      val content = readFromFile(reader)
+      val content = Compiler.readFromFile(reader)
       val stream = CharStreams.fromString(content)
       val lexer = new sal.parser.SalLexer(stream)
       val tokens = new CommonTokenStream(lexer)
@@ -28,12 +28,6 @@ class Compiler(filename: String) {
         case _: Throwable => ErrorNode("\n  grammar error.\n")
       }
     }
-  }
-
-  private def readFromFile(reader: BufferedReader, prev: String = ""): String = {
-    val line = reader.readLine()
-    if (line == null) prev
-    else readFromFile(reader, s"$prev$line\n")
   }
 
   // TODO: add more test parameters
@@ -55,4 +49,10 @@ class Compiler(filename: String) {
 
 object Compiler {
   def apply(filename: String) = new Compiler(filename)
+
+  private def readFromFile(reader: BufferedReader, prev: String = ""): String = {
+    val line = reader.readLine()
+    if (line == null) prev
+    else readFromFile(reader, s"$prev$line\n")
+  }
 }
