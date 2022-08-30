@@ -64,5 +64,5 @@ case class UnionType(lhs: Type, rhs: Type) extends Type {
 
   override def toString(): String = s"$lhs | $rhs"
 
-  def >(other: Type) = (other === lhs) || (other === rhs)
+  def :>(other: Type) = (other === lhs) || (other === rhs)
 } 
