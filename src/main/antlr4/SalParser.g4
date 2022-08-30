@@ -17,8 +17,8 @@ blockInner: statement | expression;
 block: LEFT_BRACES (blockInner)* RIGHT_BRACES;
 
 typeName: INT_KW | FLOAT_KW | BOOL_KW | STRING_KW | VOID_KW | ANY_KW;
-allTypes: typeName | typeName ARROW_OP allTypes | LEFT_PARENTHESE allTypes RIGHT_PARENTHESE |
-          LEFT_PARENTHESE allTypes RIGHT_PARENTHESE ARROW_OP allTypes | ID;
+allTypes: LEFT_PARENTHESE allTypes RIGHT_PARENTHESE |
+          allTypes BIT_OR_OP allTypes |<assoc=right> allTypes ARROW_OP allTypes | ID | typeName;
 
 value: VAL_KW ID COLON_OP allTypes ASSIGN_OP expression |
        VAL_KW ID ASSIGN_OP expression;
