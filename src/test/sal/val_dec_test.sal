@@ -13,3 +13,5 @@ val d: anything = 6.28
 
 val n1: anything = nix
 val n2: int = nix
+
+val u: int | float = 6.28
