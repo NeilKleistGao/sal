@@ -54,3 +54,15 @@ case class RecordType(val name: String, val fields: List[(String, Type)]) extend
 
   def get(field: String) = map.getOrElse(field, throw sal.SalException(s"$name doesn't have $field."))
 }
+
+case class UnionType(lhs: Type, rhs: Type) extends Type {
+    override def ===(other: Type): Boolean = other match {
+    case UnionType(l, r) => ((l === lhs) && (r === rhs)) || ((r === lhs) && (l === rhs))
+    case BuiltInType(nm) if (nm.equals("anything")) => true
+    case _ => false
+  }
+
+  override def toString(): String = s"$lhs | $rhs"
+
+  def >(other: Type) = (other === lhs) || (other === rhs)
+} 
