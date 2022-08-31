@@ -22,3 +22,20 @@ else if (y) {
 else {
   print("z")
 }
+
+val num = if (true) { 42 } else { 1 }
+val str = if (x) {
+    "res: " + "x"
+  }
+  else if (y) {
+    "res: " + "y"
+  }
+  else {
+    "res: " + "z"
+  }
+
+if (true) {
+  false
+}
+
+if (true) {1} else if (false) {2}
