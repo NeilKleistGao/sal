@@ -60,8 +60,19 @@ object Context {
 
   import sal.Operator._
   private val operatos = HashMap[Operator, Type](
+    Pow -> FunctionType(numberType, FunctionType(numberType, numberType)),
     LogicNot -> FunctionType(boolType, boolType),
     BitwiseNot -> FunctionType(intType, intType),
+    Mul -> FunctionType(intType, FunctionType(intType, intType)),
+    FMul -> FunctionType(intType, FunctionType(intType, intType)),
+    Div -> FunctionType(intType, FunctionType(intType, intType)),
+    FDiv -> FunctionType(numberType, FunctionType(numberType, numberType)),
+    Mod -> FunctionType(intType, FunctionType(intType, intType)),
+    Add -> FunctionType(intType, FunctionType(intType, intType)),
+    FAdd -> FunctionType(numberType, FunctionType(numberType, numberType)),
+    SAdd -> FunctionType(stringType, FunctionType(stringType, stringType)),
+    Sub -> FunctionType(intType, FunctionType(intType, intType)),
+    FSub -> FunctionType(intType, FunctionType(intType, intType)),
     LeftShift -> FunctionType(intType, FunctionType(intType, intType)),
     RightShift -> FunctionType(intType, FunctionType(intType, intType)),
     BitwiseAnd -> FunctionType(intType, FunctionType(intType, intType)),

@@ -28,15 +28,41 @@ object OperatorParser {
     else LogicOr
 
 
-
+  def convert(op: Operator, lhs: types.Type, rhs: types.Type): Operator = op match {
+    case Mul =>
+      if ((lhs === types.floatType) || (rhs === types.floatType)) FMul
+      else Mul
+    case Div =>
+      if ((lhs === types.floatType) || (rhs === types.floatType)) FDiv
+      else Div
+    case Add =>
+      if ((lhs === types.floatType) || (rhs === types.floatType)) FAdd
+      else if ((lhs === types.stringType) && (rhs === types.stringType)) SAdd
+      else Add
+    case Sub =>
+      if ((lhs === types.floatType) || (rhs === types.floatType)) FSub
+      else Sub
+    case _ => op
+  }
 }
 
 object OperatorTranslator {
   import Operator._
 
   def apply(op: Operator): String = op match {
+    case Pow => "^"
     case LogicNot => "not"
     case BitwiseNot => "~"
+    case Mul => "*"
+    case FMul => "*"
+    case Div => "//"
+    case FDiv => "/"
+    case Mod => "%"
+    case Add => "+"
+    case FAdd => "+"
+    case SAdd => ".."
+    case Sub => "-"
+    case FSub => "-"
     case LeftShift => "<<"
     case RightShift => ">>"
     case BitwiseAnd => "&"
