@@ -14,3 +14,7 @@ val yy: float = 4 | 5
 fun and(x: bool, y: bool) = x && y
 fun or(x: bool, y: bool) = x || y
 fun not(x: bool) = !x
+
+val a: int = 5.0 / 2
+val b = "abc" + 4
+val c = 1.2 % 5
