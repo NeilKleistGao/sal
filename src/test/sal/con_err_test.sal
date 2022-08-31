@@ -1,0 +1,4 @@
+val x: int = if (true) {"string"} else {"string"}
+
+if (42) {42}
+if (true) {true} else if (42) {false}

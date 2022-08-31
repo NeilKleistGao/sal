@@ -49,3 +49,12 @@ if (true) then
 elseif (false) then
   if_res______ = 2
 end
+local wtf = (function()
+  local if_res_______ = nil
+  if (true) then
+    if_res_______ = 42
+  else
+    if_res_______ = "42"
+  end
+  return if_res_______
+end)() --[[type: anything]]
