@@ -3,6 +3,8 @@ package sal.types
 sealed trait Type {
   def ===(other: Type): Boolean = ???
   def !==(other: Type): Boolean = ! ===(other)
+
+  def -->(res: Type) = FunctionType(this, res)
 }
 
 object PrettyTypePrinter {
