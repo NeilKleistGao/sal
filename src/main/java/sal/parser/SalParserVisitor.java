@@ -126,4 +126,22 @@ public interface SalParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCreate(SalParser.CreateContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#ifCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfCondition(SalParser.IfConditionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#elseIfCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElseIfCondition(SalParser.ElseIfConditionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#elseBlock}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElseBlock(SalParser.ElseBlockContext ctx);
 }
