@@ -14,6 +14,8 @@ VOID_KW: 'void';
 ANY_KW: 'anything';
 REC_KW: 'rec';
 NEW_KW: 'new';
+IF_KW: 'if';
+ELSE_KW: 'else';
 
 TRUE_LIT: 'true';
 FALSE_LIT: 'false';

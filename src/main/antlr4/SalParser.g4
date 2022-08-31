@@ -62,3 +62,7 @@ initializer: ID ASSIGN_OP expression | expression;
 
 create: NEW_KW ID LEFT_BRACES RIGHT_BRACES |
         NEW_KW ID LEFT_BRACES initializer (COMMA_OP initializer)* RIGHT_BRACES;
+
+ifCondition: IF_KW LEFT_PARENTHESE expression RIGHT_PARENTHESE block (elseIfCondition)* elseBlock?;
+elseIfCondition: ELSE_KW IF_KW LEFT_PARENTHESE expression RIGHT_PARENTHESE block;
+elseBlock: ELSE_KW block;
