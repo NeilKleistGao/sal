@@ -42,5 +42,11 @@ RIGHT_SHIFT_OP: '>>';
 LOGIC_AND_OP: '&&';
 LOGIC_OR_OP: '||';
 LOGIC_NOT_OP: '!';
+ADD: '+';
+SUB: '-';
+MUL: '*';
+DIV: '/';
+MOD: '%';
+POW: '^^';
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
