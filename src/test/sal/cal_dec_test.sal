@@ -8,3 +8,12 @@ val n = w & m
 val p = w | m
 val q = w ^ m
 val r = ~q
+
+val a = 1 + 2 - 3
+val b = 3 * 4 % 5
+val c = 2.3 * 1.2
+val d = 5 / 2
+val e = 5.0 / 2
+val f = 5 / 2.0
+val g = 12 % 5
+val h = "abc" + "def"

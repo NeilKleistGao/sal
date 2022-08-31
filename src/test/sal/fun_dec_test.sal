@@ -58,3 +58,6 @@ val mmm3: (int) -> (float -> string) = m
 val pHigh: (int -> int) -> int -> int = high
 val pHigh2: void -> void -> string = high2
 val pHigh3: (int -> int) -> (int -> int) = high
+
+fun overload(x: int | float, y: bool): float = 1.0
+val overF = overload(2, false)

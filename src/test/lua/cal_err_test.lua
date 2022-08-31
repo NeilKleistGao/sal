@@ -13,4 +13,7 @@
   line 14: and is a preserved keyword in lua.
   line 15: or is a preserved keyword in lua.
   line 16: not is a preserved keyword in lua.
+  line 18: a got float, but int is required.
+  line 19: operator Add is int -> int -> int, but parameters are string and int
+  line 20: operator Mod is int -> int -> int, but parameters are float and int
 ]]

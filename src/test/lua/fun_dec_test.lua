@@ -78,3 +78,7 @@ local mmm3 = m --[[type: int -> float -> string]]
 local pHigh = high --[[type: (int -> int) -> int -> int]]
 local pHigh2 = high2 --[[type: void -> void -> string]]
 local pHigh3 = high --[[type: (int -> int) -> int -> int]]
+function overload(x, y) --[[type: int | float -> bool -> float]]
+  return 1.0
+end
+local overF = (overload)(2, false) --[[type: float]]

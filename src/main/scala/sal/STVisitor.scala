@@ -38,7 +38,12 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     TypeNameNode(BuiltInType(ctx.getText()))
 
   override def visitAllTypes(ctx: SalParser.AllTypesContext): TypeNameNode =
-    if (ctx.ID() != null) {
+    if (ctx.LEFT_PARENTHESE() != null) visitAllTypes(ctx.allTypes(0))
+    else if (ctx.ARROW_OP() != null)
+      TypeNameNode(FunctionType(visitAllTypes(ctx.allTypes(0)).salType, visitAllTypes(ctx.allTypes(1)).salType))
+    else if (ctx.BIT_OR_OP() != null)
+      TypeNameNode(UnionType(visitAllTypes(ctx.allTypes(0)).salType, visitAllTypes(ctx.allTypes(1)).salType))
+    else if (ctx.ID() != null) {
       val typeName = ctx.ID().getText()
       val tp: Type = try typeCtx?typeName // it doesn't format automatically.
       catch {
@@ -49,14 +54,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       }
       TypeNameNode(tp)
     }
-    else if (ctx.ARROW_OP() != null)
-      if (ctx.typeName != null)
-        TypeNameNode(FunctionType(visitTypeName(ctx.typeName).salType, visitAllTypes(ctx.allTypes(0)).salType))
-      else
-        TypeNameNode(FunctionType(visitAllTypes(ctx.allTypes(0)).salType, visitAllTypes(ctx.allTypes(1)).salType))
-    else
-      if (ctx.LEFT_PARENTHESE() != null) visitAllTypes(ctx.allTypes(0))
-      else visitTypeName(ctx.typeName)
+    else visitTypeName(ctx.typeName)
 
   override def visitValue(ctx: SalParser.ValueContext) = {
     val name = ctx.ID().getText()
@@ -111,9 +109,11 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       else {
         val lhs = visitExpression(ctx.expression(0))
         val rhs = visitExpression(ctx.expression(1))
-        if (opType !== FunctionType(lhs.salType, FunctionType(rhs.salType, anythingType)))
-          report(s"operator $op is $opType, but parameters are ${lhs.salType} and ${rhs.salType}", at(ctx))
-        ExpressionNode(BiOpExpression(lhs, rhs, op, opType.resType))
+        val trueOp = OperatorParser.convert(op, lhs.salType, rhs.salType)
+        val trueOpType = typeCtx.query(trueOp).asInstanceOf[FunctionType]
+        if (trueOpType !== FunctionType(lhs.salType, FunctionType(rhs.salType, anythingType)))
+          report(s"operator $trueOp is $trueOpType, but parameters are ${lhs.salType} and ${rhs.salType}", at(ctx))
+        ExpressionNode(BiOpExpression(lhs, rhs, trueOp, trueOpType.resType))
       }
     }
 

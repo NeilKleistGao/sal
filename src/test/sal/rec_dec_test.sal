@@ -41,3 +41,11 @@ rec GGinGG {
 }
 
 val still42 = (new GGinGG{ new GG{ g = gf } }).gg.g(42)
+
+rec Union1 {
+  value: string | int | bool | float = ""
+}
+
+rec Union2 {
+  value: string | int | bool | float = 42
+}

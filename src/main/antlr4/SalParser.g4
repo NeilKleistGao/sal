@@ -17,8 +17,8 @@ blockInner: statement | expression;
 block: LEFT_BRACES (blockInner)* RIGHT_BRACES;
 
 typeName: INT_KW | FLOAT_KW | BOOL_KW | STRING_KW | VOID_KW | ANY_KW;
-allTypes: typeName | typeName ARROW_OP allTypes | LEFT_PARENTHESE allTypes RIGHT_PARENTHESE |
-          LEFT_PARENTHESE allTypes RIGHT_PARENTHESE ARROW_OP allTypes | ID;
+allTypes: LEFT_PARENTHESE allTypes RIGHT_PARENTHESE |
+          allTypes BIT_OR_OP allTypes |<assoc=right> allTypes ARROW_OP allTypes | ID | typeName;
 
 value: VAL_KW ID COLON_OP allTypes ASSIGN_OP expression |
        VAL_KW ID ASSIGN_OP expression;
@@ -27,7 +27,10 @@ expression: lit | ID | create | expression LEFT_PARENTHESE RIGHT_PARENTHESE     
              expression LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE |
              expression DOT_OP ID                                                          | // access
              LEFT_PARENTHESE expression RIGHT_PARENTHESE                                   |
+             expression POW_OP expression                                                  |
              (LOGIC_NOT_OP | BIT_NOT_OP) expression                                        |
+             expression (MUL_OP | DIV_OP | MOD_OP) expression                              |
+             expression (ADD_OP | SUB_OP) expression                                       |
              expression (LEFT_SHIFT_OP | RIGHT_SHIFT_OP) expression                        |
              expression BIT_AND_OP expression                                              |
              expression BIT_XOR_OP expression                                              |
