@@ -25,7 +25,8 @@ public class SalLexer extends Lexer {
 		WS=19, NUMBER=20, COLON_OP=21, ASSIGN_OP=22, COMMA_OP=23, ARROW_OP=24, 
 		DOT_OP=25, BIT_AND_OP=26, BIT_OR_OP=27, BIT_NOT_OP=28, BIT_XOR_OP=29, 
 		LEFT_SHIFT_OP=30, RIGHT_SHIFT_OP=31, LOGIC_AND_OP=32, LOGIC_OR_OP=33, 
-		LOGIC_NOT_OP=34, ADD=35, SUB=36, MUL=37, DIV=38, MOD=39, POW=40, ID=41;
+		LOGIC_NOT_OP=34, ADD_OP=35, SUB_OP=36, MUL_OP=37, DIV_OP=38, MOD_OP=39, 
+		POW_OP=40, ID=41;
 	public static String[] channelNames = {
 		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
 	};
@@ -41,8 +42,8 @@ public class SalLexer extends Lexer {
 			"LEFT_BRACES", "RIGHT_BRACES", "LEFT_PARENTHESE", "RIGHT_PARENTHESE", 
 			"WS", "NUMBER", "COLON_OP", "ASSIGN_OP", "COMMA_OP", "ARROW_OP", "DOT_OP", 
 			"BIT_AND_OP", "BIT_OR_OP", "BIT_NOT_OP", "BIT_XOR_OP", "LEFT_SHIFT_OP", 
-			"RIGHT_SHIFT_OP", "LOGIC_AND_OP", "LOGIC_OR_OP", "LOGIC_NOT_OP", "ADD", 
-			"SUB", "MUL", "DIV", "MOD", "POW", "ID"
+			"RIGHT_SHIFT_OP", "LOGIC_AND_OP", "LOGIC_OR_OP", "LOGIC_NOT_OP", "ADD_OP", 
+			"SUB_OP", "MUL_OP", "DIV_OP", "MOD_OP", "POW_OP", "ID"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -64,8 +65,8 @@ public class SalLexer extends Lexer {
 			"STRING_LIT", "LEFT_BRACES", "RIGHT_BRACES", "LEFT_PARENTHESE", "RIGHT_PARENTHESE", 
 			"WS", "NUMBER", "COLON_OP", "ASSIGN_OP", "COMMA_OP", "ARROW_OP", "DOT_OP", 
 			"BIT_AND_OP", "BIT_OR_OP", "BIT_NOT_OP", "BIT_XOR_OP", "LEFT_SHIFT_OP", 
-			"RIGHT_SHIFT_OP", "LOGIC_AND_OP", "LOGIC_OR_OP", "LOGIC_NOT_OP", "ADD", 
-			"SUB", "MUL", "DIV", "MOD", "POW", "ID"
+			"RIGHT_SHIFT_OP", "LOGIC_AND_OP", "LOGIC_OR_OP", "LOGIC_NOT_OP", "ADD_OP", 
+			"SUB_OP", "MUL_OP", "DIV_OP", "MOD_OP", "POW_OP", "ID"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();

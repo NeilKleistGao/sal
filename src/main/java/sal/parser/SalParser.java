@@ -25,7 +25,8 @@ public class SalParser extends Parser {
 		WS=19, NUMBER=20, COLON_OP=21, ASSIGN_OP=22, COMMA_OP=23, ARROW_OP=24, 
 		DOT_OP=25, BIT_AND_OP=26, BIT_OR_OP=27, BIT_NOT_OP=28, BIT_XOR_OP=29, 
 		LEFT_SHIFT_OP=30, RIGHT_SHIFT_OP=31, LOGIC_AND_OP=32, LOGIC_OR_OP=33, 
-		LOGIC_NOT_OP=34, ADD=35, SUB=36, MUL=37, DIV=38, MOD=39, POW=40, ID=41;
+		LOGIC_NOT_OP=34, ADD_OP=35, SUB_OP=36, MUL_OP=37, DIV_OP=38, MOD_OP=39, 
+		POW_OP=40, ID=41;
 	public static final int
 		RULE_lit = 0, RULE_program = 1, RULE_statement = 2, RULE_blockInner = 3, 
 		RULE_block = 4, RULE_typeName = 5, RULE_allTypes = 6, RULE_value = 7, 
@@ -58,8 +59,8 @@ public class SalParser extends Parser {
 			"STRING_LIT", "LEFT_BRACES", "RIGHT_BRACES", "LEFT_PARENTHESE", "RIGHT_PARENTHESE", 
 			"WS", "NUMBER", "COLON_OP", "ASSIGN_OP", "COMMA_OP", "ARROW_OP", "DOT_OP", 
 			"BIT_AND_OP", "BIT_OR_OP", "BIT_NOT_OP", "BIT_XOR_OP", "LEFT_SHIFT_OP", 
-			"RIGHT_SHIFT_OP", "LOGIC_AND_OP", "LOGIC_OR_OP", "LOGIC_NOT_OP", "ADD", 
-			"SUB", "MUL", "DIV", "MOD", "POW", "ID"
+			"RIGHT_SHIFT_OP", "LOGIC_AND_OP", "LOGIC_OR_OP", "LOGIC_NOT_OP", "ADD_OP", 
+			"SUB_OP", "MUL_OP", "DIV_OP", "MOD_OP", "POW_OP", "ID"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -740,12 +741,12 @@ public class SalParser extends Parser {
 		public TerminalNode RIGHT_PARENTHESE() { return getToken(SalParser.RIGHT_PARENTHESE, 0); }
 		public TerminalNode LOGIC_NOT_OP() { return getToken(SalParser.LOGIC_NOT_OP, 0); }
 		public TerminalNode BIT_NOT_OP() { return getToken(SalParser.BIT_NOT_OP, 0); }
-		public TerminalNode POW() { return getToken(SalParser.POW, 0); }
-		public TerminalNode MUL() { return getToken(SalParser.MUL, 0); }
-		public TerminalNode DIV() { return getToken(SalParser.DIV, 0); }
-		public TerminalNode MOD() { return getToken(SalParser.MOD, 0); }
-		public TerminalNode ADD() { return getToken(SalParser.ADD, 0); }
-		public TerminalNode SUB() { return getToken(SalParser.SUB, 0); }
+		public TerminalNode POW_OP() { return getToken(SalParser.POW_OP, 0); }
+		public TerminalNode MUL_OP() { return getToken(SalParser.MUL_OP, 0); }
+		public TerminalNode DIV_OP() { return getToken(SalParser.DIV_OP, 0); }
+		public TerminalNode MOD_OP() { return getToken(SalParser.MOD_OP, 0); }
+		public TerminalNode ADD_OP() { return getToken(SalParser.ADD_OP, 0); }
+		public TerminalNode SUB_OP() { return getToken(SalParser.SUB_OP, 0); }
 		public TerminalNode LEFT_SHIFT_OP() { return getToken(SalParser.LEFT_SHIFT_OP, 0); }
 		public TerminalNode RIGHT_SHIFT_OP() { return getToken(SalParser.RIGHT_SHIFT_OP, 0); }
 		public TerminalNode BIT_AND_OP() { return getToken(SalParser.BIT_AND_OP, 0); }
@@ -867,7 +868,7 @@ public class SalParser extends Parser {
 						setState(114);
 						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
 						setState(115);
-						match(POW);
+						match(POW_OP);
 						setState(116);
 						expression(11);
 						}
@@ -880,7 +881,7 @@ public class SalParser extends Parser {
 						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
 						setState(118);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MUL) | (1L << DIV) | (1L << MOD))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MUL_OP) | (1L << DIV_OP) | (1L << MOD_OP))) != 0)) ) {
 						_errHandler.recoverInline(this);
 						}
 						else {
@@ -900,7 +901,7 @@ public class SalParser extends Parser {
 						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
 						setState(121);
 						_la = _input.LA(1);
-						if ( !(_la==ADD || _la==SUB) ) {
+						if ( !(_la==ADD_OP || _la==SUB_OP) ) {
 						_errHandler.recoverInline(this);
 						}
 						else {

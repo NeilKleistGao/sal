@@ -27,10 +27,10 @@ expression: lit | ID | create | expression LEFT_PARENTHESE RIGHT_PARENTHESE     
              expression LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE |
              expression DOT_OP ID                                                          | // access
              LEFT_PARENTHESE expression RIGHT_PARENTHESE                                   |
-             expression POW expression                                                     |
+             expression POW_OP expression                                                  |
              (LOGIC_NOT_OP | BIT_NOT_OP) expression                                        |
-             expression (MUL | DIV | MOD) expression                                       |
-             expression (ADD | SUB) expression                                             |
+             expression (MUL_OP | DIV_OP | MOD_OP) expression                              |
+             expression (ADD_OP | SUB_OP) expression                                       |
              expression (LEFT_SHIFT_OP | RIGHT_SHIFT_OP) expression                        |
              expression BIT_AND_OP expression                                              |
              expression BIT_XOR_OP expression                                              |
