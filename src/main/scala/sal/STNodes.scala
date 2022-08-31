@@ -235,15 +235,16 @@ case class UnOpExpression(v: ExpressionNode, op: Operator, res: Type) extends ST
   override def toLua(indent: Int): String = s"${OperatorTranslator(op)} (${v.toLua(0)})"
 }
 
-case class IfConditionNode(condition: ExpressionNode, block: BlockNode, elseList: List[STNode with ElseBlockType], res: String) extends STNode with ElseBlockType with ExpressionType {
+case class IfConditionNode(condition: ExpressionNode, block: BlockNode, elseList: List[STNode with ElseBlockType], res: String)
+  extends STNode with ElseBlockType with ExpressionType with StatementType {
   override lazy val salType =
     elseList.foldLeft(block.salType)((res, e) => if (res !== e.salType) anythingType else res)
 
   override def toLua(indent: Int): String = {
-    val ifLua = s"${Prefix(indent)}if (${condition.toLua(0)}) then\n${block.toLua(indent + 1)}\n"
+    val ifLua = s"${Prefix(indent)}if (${condition.toLua(0)}) then${block.toLua(indent + 1)}\n"
     val elseLua = elseList.foldLeft("")((res, e) => e match {
-      case IfConditionNode(c, b, _, _) => s"$res${Prefix(indent)}elseif (${c.toLua(0)}) then\n${b.toLua(indent + 1)}\n"
-      case elseBlock: BlockNode => s"$res${Prefix(indent)}else\n${elseBlock.toLua(indent + 1)}\n"
+      case IfConditionNode(c, b, _, _) => s"$res${Prefix(indent)}elseif (${c.toLua(0)}) then${b.toLua(indent + 1)}\n"
+      case elseBlock: BlockNode => s"$res${Prefix(indent)}else${elseBlock.toLua(indent + 1)}\n"
     })
 
     s"${Prefix(indent)}local $res = nil\n$ifLua$elseLua${Prefix(indent)}end"

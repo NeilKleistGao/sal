@@ -32,6 +32,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     if (ctx.value != null) StatementNode(visitValue(ctx.value))
     else if (ctx.application != null) StatementNode(visitApplication(ctx.application))
     else if (ctx.record != null) StatementNode(visitRecord(ctx.record))
+    else if (ctx.ifCondition != null) StatementNode(visitIfCondition(ctx.ifCondition))
     else StatementNode(visitFunction(ctx.function))
 
   override def visitTypeName(ctx: SalParser.TypeNameContext): TypeNameNode =
@@ -86,6 +87,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     }
     else if (ctx.DOT_OP() != null) ExpressionNode(visitAccess(ctx))
     else if (ctx.create != null) ExpressionNode(visitCreate(ctx.create))
+    else if (ctx.ifCondition != null) ExpressionNode(visitIfCondition(ctx.ifCondition))
     else if (ctx.ID() != null) {
       val name = ctx.ID().getText()
       ExpressionNode(VariableNode(name, typeCtx.query(name)))

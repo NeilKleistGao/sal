@@ -32,6 +32,7 @@ object DiffTest {
     "rec_err_test",
     "val_dec_test",
     "val_err_test",
-    "val_inf_test"
+    "val_inf_test",
+    "con_dec_test"
   )
 }
