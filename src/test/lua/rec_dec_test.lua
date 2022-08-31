@@ -84,3 +84,9 @@ local still42 = ((({
   g = gf
 }
 }).gg).g)(42) --[[type: int]]
+Union1 = {
+  value = ""
+}
+Union2 = {
+  value = 42
+}
