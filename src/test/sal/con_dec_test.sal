@@ -4,3 +4,21 @@ if (true) {
 else {
   print("world")
 }
+
+if (false) {
+  val x = 41
+  print(x)
+}
+
+val x = false
+val y = true
+
+if (x) {
+  print("x")
+}
+else if (y) {
+  print("y")
+}
+else {
+  print("z")
+}
