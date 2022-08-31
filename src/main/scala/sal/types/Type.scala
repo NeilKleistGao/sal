@@ -15,6 +15,7 @@ case class BuiltInType(name: String) extends Type {
   override def ===(other: Type): Boolean = other match {
     case BuiltInType(nm) if (nm.equals("anything")) => true
     case BuiltInType(nm) if (!name.equals("anything")) => nm.equals(name)
+    case u: UnionType => u :> this
     case _ if (name.equals("anything")) => true
     case _ => false
   }
@@ -27,6 +28,7 @@ case class FunctionType(param: Type, res: Type, val paramsCount: Int = -1) exten
   override def ===(other: Type): Boolean = other match {
     case FunctionType(p, r, _) => p === param && r === res
     case BuiltInType(nm) if (nm.equals("anything")) => true
+    case u: UnionType => u :> this
     case _ => false
   }
 
@@ -45,6 +47,7 @@ case class RecordType(val name: String, val fields: List[(String, Type)]) extend
   override def ===(other: Type): Boolean = other match {
     case RecordType(nm, _) => name.equals(nm)
     case BuiltInType(nm) if (nm.equals("anything")) => true
+    case u: UnionType => u :> this
     case _ => false
   }
 
@@ -59,7 +62,7 @@ case class UnionType(lhs: Type, rhs: Type) extends Type {
     override def ===(other: Type): Boolean = other match {
     case UnionType(l, r) => ((l === lhs) && (r === rhs)) || ((r === lhs) && (l === rhs))
     case BuiltInType(nm) if (nm.equals("anything")) => true
-    case _ => false
+    case _ => :>(other)
   }
 
   override def toString(): String = s"$lhs | $rhs"
