@@ -109,10 +109,11 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       else {
         val lhs = visitExpression(ctx.expression(0))
         val rhs = visitExpression(ctx.expression(1))
-        val trueOpType = typeCtx.query(OperatorParser.convert(op, lhs.salType, rhs.salType)).asInstanceOf[FunctionType]
+        val trueOp = OperatorParser.convert(op, lhs.salType, rhs.salType)
+        val trueOpType = typeCtx.query(trueOp).asInstanceOf[FunctionType]
         if (trueOpType !== FunctionType(lhs.salType, FunctionType(rhs.salType, anythingType)))
-          report(s"operator $op is $trueOpType, but parameters are ${lhs.salType} and ${rhs.salType}", at(ctx))
-        ExpressionNode(BiOpExpression(lhs, rhs, op, trueOpType.resType))
+          report(s"operator $trueOp is $trueOpType, but parameters are ${lhs.salType} and ${rhs.salType}", at(ctx))
+        ExpressionNode(BiOpExpression(lhs, rhs, trueOp, trueOpType.resType))
       }
     }
 
