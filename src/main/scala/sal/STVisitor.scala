@@ -248,7 +248,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     newType
   }
     
-  def visitAccess(ctx: SalParser.ExpressionContext): AccessNode = {
+  private def visitAccess(ctx: SalParser.ExpressionContext): AccessNode = {
     val rec = visitExpression(ctx.expression(0))
     val fieldName = ctx.ID().getText()
 
@@ -303,7 +303,52 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
         CreateNode(RecordType("", List()), List()) // shield other type checking.
       }
     }
-  } 
+  }
+
+  override def visitIfCondition(ctx: SalParser.IfConditionContext) = {
+    val condition = visitExpression(ctx.expression)
+    if (condition.salType !== boolType)
+      report(s"if/else if requires bool, but got ${condition.salType}", at(ctx))
+
+    stack.push(typeCtx)
+    typeCtx = typeCtx.derive()
+    val block = visitBlock(ctx.block)
+    typeCtx = stack.pop()
+    
+    val elseIfList: List[STNode with ElseBlockType] =
+      if (ctx.elseIfCondition == null) List()
+      else ctx.elseIfCondition.asScala.toList.map((b) => visitElseIfCondition(b))
+    
+    val elseList: List[STNode with ElseBlockType] =
+      if (ctx.elseBlock == null) elseIfList else elseIfList :+ visitElseBlock(ctx.elseBlock)
+    val resType = IfConditionNode(condition, block, elseList, "").salType
+    val resName = typeCtx.alloc("if_res", resType)
+
+    IfConditionNode(condition, block.rename(resName), elseList.map((i) => i match {
+      case IfConditionNode(cond, block, _, _) => IfConditionNode(cond, block.rename(resName), List(), "")
+      case b: BlockNode => b.rename(resName)
+    }), resName)
+  }
+
+	override def visitElseIfCondition(ctx: SalParser.ElseIfConditionContext) = {
+    val condition = visitExpression(ctx.expression)
+    if (condition.salType !== boolType)
+      report(s"if/else if requires bool, but got ${condition.salType}", at(ctx))
+
+    stack.push(typeCtx)
+    typeCtx = typeCtx.derive()
+    val res = IfConditionNode(condition, visitBlock(ctx.block), List(), "")
+    typeCtx = stack.pop()
+    res
+  }
+
+	override def visitElseBlock(ctx: SalParser.ElseBlockContext) = {
+    stack.push(typeCtx)
+    typeCtx = typeCtx.derive()
+    val res = visitBlock(ctx.block)
+    typeCtx = stack.pop()
+    res
+  }
 }
 
 object STVisitor {

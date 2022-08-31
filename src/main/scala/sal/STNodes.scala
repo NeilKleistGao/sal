@@ -53,7 +53,11 @@ case class VariableNode(name: String, tp: Type) extends STNode with ExpressionTy
 }
 
 case class ExpressionNode(val exp: STNode with ExpressionType) extends STNode with FunctionBodyType with BlockInnerType {
-  override def toLua(indent: Int): String = exp.toLua(indent)
+  override def toLua(indent: Int): String = exp match {
+    case c @ IfConditionNode(_, _, _, res) =>
+      s"${Prefix(indent)}(function()\n${c.toLua(indent + 1)}\n${Prefix(indent + 1)}return $res\n${Prefix(indent)}end)()"
+    case _ => exp.toLua(indent)
+  }
 
   override lazy val salType = exp.salType
 }
@@ -92,7 +96,7 @@ case class ParamsNode(val params: List[ParamNode]) extends STNode {
     else params.map((p) => p.toLua(0)).reduceLeft((r, p) => s"$r, $p")
 }
 
-case class BlockNode(stats: List[STNode with BlockInnerType], res: String) extends STNode with FunctionBodyType with ElseBlockType {
+case class BlockNode(stats: List[STNode with BlockInnerType], val res: String) extends STNode with FunctionBodyType with ElseBlockType {
   override lazy val salType =
     if (stats.isEmpty) voidType
     else stats.last.salType
@@ -113,6 +117,8 @@ case class BlockNode(stats: List[STNode with BlockInnerType], res: String) exten
         s"$body\n${Prefix(indent)}$res = ${stats.last.toLua(0)}"
       }
     }
+
+  def rename(newName: String) = BlockNode(stats, newName)
 }
 
 case class FunctionBodyNode(body: STNode with FunctionBodyType) extends STNode {
@@ -229,17 +235,17 @@ case class UnOpExpression(v: ExpressionNode, op: Operator, res: Type) extends ST
   override def toLua(indent: Int): String = s"${OperatorTranslator(op)} (${v.toLua(0)})"
 }
 
-case class IfConditionNode(condition: ExpressionNode, block: BlockNode, elseList: List[STNode with ElseBlockType]) extends STNode with ElseBlockType {
+case class IfConditionNode(condition: ExpressionNode, block: BlockNode, elseList: List[STNode with ElseBlockType], res: String) extends STNode with ElseBlockType with ExpressionType {
   override lazy val salType =
     elseList.foldLeft(block.salType)((res, e) => if (res !== e.salType) anythingType else res)
 
   override def toLua(indent: Int): String = {
     val ifLua = s"${Prefix(indent)}if (${condition.toLua(0)}) then\n${block.toLua(indent + 1)}\n"
     val elseLua = elseList.foldLeft("")((res, e) => e match {
-      case IfConditionNode(c, b, _) => s"$res${Prefix(indent)}elseif (${c.toLua(0)}) then\n${b.toLua(indent + 1)}\n"
+      case IfConditionNode(c, b, _, _) => s"$res${Prefix(indent)}elseif (${c.toLua(0)}) then\n${b.toLua(indent + 1)}\n"
       case elseBlock: BlockNode => s"$res${Prefix(indent)}else\n${elseBlock.toLua(indent + 1)}\n"
     })
 
-    s"$ifLua$elseLua${Prefix(indent)}end"
+    s"${Prefix(indent)}local $res = nil\n$ifLua$elseLua${Prefix(indent)}end"
   }
 }
