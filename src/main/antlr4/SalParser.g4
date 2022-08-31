@@ -10,7 +10,7 @@ lit: NUMBER | TRUE_LIT | FALSE_LIT | STRING_LIT | NIX_LIT;
 
 program: statement* EOF;
 
-statement: value | function | application | record; // here, application is for void function application
+statement: value | function | application | record | ifCondition; // here, application is for void function application
 
 blockInner: statement | expression;
 
@@ -23,7 +23,8 @@ allTypes: LEFT_PARENTHESE allTypes RIGHT_PARENTHESE |
 value: VAL_KW ID COLON_OP allTypes ASSIGN_OP expression |
        VAL_KW ID ASSIGN_OP expression;
 
-expression: lit | ID | create | expression LEFT_PARENTHESE RIGHT_PARENTHESE                | // application
+expression: lit | ID | create | ifCondition |
+             expression LEFT_PARENTHESE RIGHT_PARENTHESE                                   | // application
              expression LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE |
              expression DOT_OP ID                                                          | // access
              LEFT_PARENTHESE expression RIGHT_PARENTHESE                                   |
