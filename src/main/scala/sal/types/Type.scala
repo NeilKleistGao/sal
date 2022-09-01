@@ -5,6 +5,7 @@ sealed trait Type {
   def !==(other: Type): Boolean = ! ===(other)
 
   def -->(res: Type) = FunctionType(this, res)
+  def \/(other: Type) = UnionType(this, other)
 
   def as(target: Type): Boolean = ===(target)
 }

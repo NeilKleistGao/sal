@@ -5,10 +5,14 @@ import scala.collection.mutable.HashMap
 
 class Context(parent: Option[Context]) {
   private val map = HashMap[String, Type](
-    "print" -> FunctionType(anythingType, voidType),
+    "print" -> (anythingType --> voidType),
+    "tostring" -> (anythingType --> stringType),
+    "tonumber" -> (anythingType --> (intType \/ floatType)),
+
     "and" -> PreservedKeyword,
     "or" -> PreservedKeyword,
-    "not" -> PreservedKeyword
+    "not" -> PreservedKeyword,
+    "nil" -> PreservedKeyword,
   )
 
   private val newTypes = HashMap[String, RecordType]()
