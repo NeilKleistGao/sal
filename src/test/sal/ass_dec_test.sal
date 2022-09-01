@@ -1,0 +1,14 @@
+val x: anything = 42
+val y = x as int
+val x2: anything = 3.14 + 6.28
+val y2 = x2 as float
+val x3 = "xxx"
+val y3 = x3 as string
+
+fun add(x: int, y: int) = x + y
+val f: anything = add
+val add2 = f as (int -> int -> int)
+
+val n: (string | bool) = nix
+val s = n as string
+val b = n as bool
