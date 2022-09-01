@@ -154,12 +154,15 @@ case class ApplicationNode(func: ExpressionNode, params: List[ExpressionNode], r
     val luaParams =
       if (params.isEmpty) ""
       else params.map((p) => p.toLua(0)).reduceLeft((r, p) => s"$r, $p")
-    val funcName = func.toLua(0)
+    val funcName = func.exp match {
+      case v: VariableNode => v.toLua(0)
+      case _ => s"(${func.toLua(0)})"
+    }
 
-    if (rest.isEmpty) s"${Prefix(indent)}($funcName)(${luaParams})"
+    if (rest.isEmpty) s"${Prefix(indent)}$funcName(${luaParams})"
     else {
       val newList = rest.reduceLeft((r, p) => s"$r, $p")
-      s"${Prefix(indent)}function($newList) return ($funcName)(${luaParams}, $newList) end"
+      s"${Prefix(indent)}function($newList) return $funcName(${luaParams}, $newList) end"
     }
   }
 }
