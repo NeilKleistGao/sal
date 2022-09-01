@@ -5,6 +5,8 @@ sealed trait Type {
   def !==(other: Type): Boolean = ! ===(other)
 
   def -->(res: Type) = FunctionType(this, res)
+
+  def as(target: Type): Boolean = ===(target)
 }
 
 object PrettyTypePrinter {
@@ -23,6 +25,10 @@ case class BuiltInType(name: String) extends Type {
   }
 
   override def toString(): String = name
+
+  override def as(target: Type): Boolean =
+    if (name == "anyting") true
+    else super.as(target)
 }
 
 
@@ -70,4 +76,8 @@ case class UnionType(lhs: Type, rhs: Type) extends Type {
   override def toString(): String = s"$lhs | $rhs"
 
   def :>(other: Type) = (other === lhs) || (other === rhs)
+
+  override def as(target: Type): Boolean =
+    if (:>(target)) true
+    else super.as(target)
 } 
