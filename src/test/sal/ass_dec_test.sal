@@ -16,3 +16,5 @@ val b = n as bool
 val s42 = tostring(x)
 val pi = tonumber("3.14159265") as float
 val c = tonumber("42") as int - tonumber(13) as int
+
+print(type(c))

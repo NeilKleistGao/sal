@@ -15,3 +15,4 @@ local b = n --[[type: bool]]
 local s42 = (tostring)(x) --[[type: string]]
 local pi = (tonumber)("3.14159265") --[[type: float]]
 local c = ((tonumber)("42")) - ((tonumber)(13)) --[[type: int]]
+print(type(c))

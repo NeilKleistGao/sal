@@ -8,6 +8,7 @@ class Context(parent: Option[Context]) {
     "print" -> (anythingType --> voidType),
     "tostring" -> (anythingType --> stringType),
     "tonumber" -> (anythingType --> (intType \/ floatType)),
+    "type" -> (anythingType --> stringType),
 
     "and" -> PreservedKeyword,
     "or" -> PreservedKeyword,
