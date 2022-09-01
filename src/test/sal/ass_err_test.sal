@@ -1,0 +1,8 @@
+val x = "abc"
+val y = x as int
+
+fun add(x: int, y: int) = x + y
+val fadd = add as (float -> float -> float)
+
+val x2: (int | float) = nix
+val y2 = x2 as string
