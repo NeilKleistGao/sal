@@ -85,6 +85,16 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       else
         ExpressionNode(visitApplicationInExpression(ctx))
     }
+    else if (ctx.allTypes != null) {
+      val exp = visitExpression(ctx.expression(0))
+      val target = visitAllTypes(ctx.allTypes).salType
+      if (exp.salType.as(target))
+        ExpressionNode(exp.exp, Some(target))
+      else {
+        report(s"${exp.salType} can't be asserted as ${target}", at(ctx))
+        exp // shield other type checking.
+      }
+    }
     else if (ctx.DOT_OP() != null) ExpressionNode(visitAccess(ctx))
     else if (ctx.create != null) ExpressionNode(visitCreate(ctx.create))
     else if (ctx.ifCondition != null) ExpressionNode(visitIfCondition(ctx.ifCondition))

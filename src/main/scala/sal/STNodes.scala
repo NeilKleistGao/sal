@@ -52,14 +52,17 @@ case class VariableNode(name: String, tp: Type) extends STNode with ExpressionTy
   override def toLua(indent: Int): String = name
 }
 
-case class ExpressionNode(val exp: STNode with ExpressionType) extends STNode with FunctionBodyType with BlockInnerType {
+case class ExpressionNode(val exp: STNode with ExpressionType, tp: Option[Type] = None) extends STNode with FunctionBodyType with BlockInnerType {
   override def toLua(indent: Int): String = exp match {
     case c @ IfConditionNode(_, _, _, res) =>
       s"${Prefix(indent)}(function()\n${c.toLua(indent + 1)}\n${Prefix(indent + 1)}return $res\n${Prefix(indent)}end)()"
     case _ => exp.toLua(indent)
   }
 
-  override lazy val salType = exp.salType
+  override lazy val salType = tp match {
+    case Some(t) => t
+    case _ => exp.salType
+  }
 }
 
 case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends STNode with StatementType {
