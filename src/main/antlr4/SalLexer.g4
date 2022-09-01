@@ -16,6 +16,7 @@ REC_KW: 'rec';
 NEW_KW: 'new';
 IF_KW: 'if';
 ELSE_KW: 'else';
+AS_KW: 'as';
 
 TRUE_LIT: 'true';
 FALSE_LIT: 'false';
