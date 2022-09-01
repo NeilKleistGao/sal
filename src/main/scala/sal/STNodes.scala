@@ -52,14 +52,17 @@ case class VariableNode(name: String, tp: Type) extends STNode with ExpressionTy
   override def toLua(indent: Int): String = name
 }
 
-case class ExpressionNode(val exp: STNode with ExpressionType) extends STNode with FunctionBodyType with BlockInnerType {
+case class ExpressionNode(val exp: STNode with ExpressionType, tp: Option[Type] = None) extends STNode with FunctionBodyType with BlockInnerType {
   override def toLua(indent: Int): String = exp match {
     case c @ IfConditionNode(_, _, _, res) =>
       s"${Prefix(indent)}(function()\n${c.toLua(indent + 1)}\n${Prefix(indent + 1)}return $res\n${Prefix(indent)}end)()"
     case _ => exp.toLua(indent)
   }
 
-  override lazy val salType = exp.salType
+  override lazy val salType = tp match {
+    case Some(t) => t
+    case _ => exp.salType
+  }
 }
 
 case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends STNode with StatementType {
@@ -151,12 +154,15 @@ case class ApplicationNode(func: ExpressionNode, params: List[ExpressionNode], r
     val luaParams =
       if (params.isEmpty) ""
       else params.map((p) => p.toLua(0)).reduceLeft((r, p) => s"$r, $p")
-    val funcName = func.toLua(0)
+    val funcName = func.exp match {
+      case v: VariableNode => v.toLua(0)
+      case _ => s"(${func.toLua(0)})"
+    }
 
-    if (rest.isEmpty) s"${Prefix(indent)}($funcName)(${luaParams})"
+    if (rest.isEmpty) s"${Prefix(indent)}$funcName(${luaParams})"
     else {
       val newList = rest.reduceLeft((r, p) => s"$r, $p")
-      s"${Prefix(indent)}function($newList) return ($funcName)(${luaParams}, $newList) end"
+      s"${Prefix(indent)}function($newList) return $funcName(${luaParams}, $newList) end"
     }
   }
 }
