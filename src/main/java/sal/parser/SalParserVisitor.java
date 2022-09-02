@@ -144,4 +144,10 @@ public interface SalParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitElseBlock(SalParser.ElseBlockContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#lambda}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLambda(SalParser.LambdaContext ctx);
 }

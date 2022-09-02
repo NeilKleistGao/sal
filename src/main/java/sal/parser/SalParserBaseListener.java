@@ -277,6 +277,18 @@ public class SalParserBaseListener implements SalParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitElseBlock(SalParser.ElseBlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLambda(SalParser.LambdaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLambda(SalParser.LambdaContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
