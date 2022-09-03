@@ -1,0 +1,2 @@
+val x: string = fun() = "abc"
+val y = fun(x: bool): float = x
