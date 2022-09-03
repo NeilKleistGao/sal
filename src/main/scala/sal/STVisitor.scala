@@ -95,6 +95,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
         exp // shield other type checking.
       }
     }
+    else if (ctx.lambda != null) ExpressionNode(visitLambda(ctx.lambda))
     else if (ctx.DOT_OP() != null) ExpressionNode(visitAccess(ctx))
     else if (ctx.create != null) ExpressionNode(visitCreate(ctx.create))
     else if (ctx.ifCondition != null) ExpressionNode(visitIfCondition(ctx.ifCondition))
@@ -360,6 +361,20 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val res = visitBlock(ctx.block)
     typeCtx = stack.pop()
     res
+  }
+
+  override def visitLambda(ctx: SalParser.LambdaContext) = {
+    stack.push(typeCtx)
+    typeCtx = typeCtx.derive()
+
+    val params = visitParams(ctx.params)
+    val exp = visitExpression(ctx.expression)
+    val retType = if (ctx.allTypes != null) visitAllTypes(ctx.allTypes) else TypeNameNode(exp.salType)
+    if (retType.salType !== exp.salType)
+      report(s"return value of lambda got ${exp.salType}, but ${retType.salType} is required.", at(ctx))
+
+    typeCtx = stack.pop()
+    LambdaNode(params, retType, exp)
   }
 }
 

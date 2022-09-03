@@ -256,3 +256,16 @@ case class IfConditionNode(condition: ExpressionNode, block: BlockNode, elseList
     s"${Prefix(indent)}local $res = nil\n$ifLua$elseLua${Prefix(indent)}end"
   }
 }
+
+case class LambdaNode(params: ParamsNode, res: TypeNameNode, exp: ExpressionNode) extends STNode with ExpressionType {
+  override lazy val salType =
+    if (params.params.isEmpty) FunctionType(voidType, res.salType, 0)
+    else params.params.foldRight(res.salType)((p, t) => FunctionType(p.salType, t, params.params.length))
+    
+  override def toLua(indent: Int): String = res.salType match {
+    case BuiltInType(typename) if (typename.equals("void")) =>
+      s"${Prefix(indent)}(function (${params.toLua(0)}) ${exp.toLua(0)} end)"
+    case _ => s"${Prefix(indent)}(function (${params.toLua(0)}) return ${exp.toLua(0)} end)"
+  }
+    
+}

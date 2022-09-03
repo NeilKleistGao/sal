@@ -23,7 +23,7 @@ allTypes: LEFT_PARENTHESE allTypes RIGHT_PARENTHESE |
 value: VAL_KW ID COLON_OP allTypes ASSIGN_OP expression |
        VAL_KW ID ASSIGN_OP expression;
 
-expression: lit | ID | create | ifCondition | expression AS_KW allTypes |
+expression: lit | ID | create | ifCondition | expression AS_KW allTypes | lambda |
              expression LEFT_PARENTHESE RIGHT_PARENTHESE                                   | // application
              expression LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE |
              expression DOT_OP ID                                                          | // access
@@ -67,3 +67,6 @@ create: NEW_KW ID LEFT_BRACES RIGHT_BRACES |
 ifCondition: IF_KW LEFT_PARENTHESE expression RIGHT_PARENTHESE block (elseIfCondition)* elseBlock?;
 elseIfCondition: ELSE_KW IF_KW LEFT_PARENTHESE expression RIGHT_PARENTHESE block;
 elseBlock: ELSE_KW block;
+
+lambda: FUN_KW params COLON_OP allTypes ASSIGN_OP expression |
+        FUN_KW params ASSIGN_OP expression;
