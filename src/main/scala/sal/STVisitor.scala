@@ -11,9 +11,10 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   import types._
   import scala.language.postfixOps
 
-  private var typeCtx = Context()
+  implicit private var typeCtx = Context()
   private val stack = Stack[Context]()
   private val errors = new StringBuilder("\n")
+  private val typer = Typer()
 
   private def report(s: String) = errors.append(s)
   private def report(s: String, line: Int) = errors.append(SalException.format(s, line))
@@ -23,9 +24,10 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
   override def visitProgram(ctx: SalParser.ProgramContext) = {
     val list = ctx.statement.asScala.toList.map((s) => visitStatement(s))
-    if (errors.length() <= 1)
-      ProgramNode(list)
-    else throw SalException(errors.toString())
+    typer.getErrorMessage() match {
+      case Some(err) => throw SalException(err.toString())
+      case _ => ProgramNode(list)
+    }
   }
 
   override def visitStatement(ctx: SalParser.StatementContext): StatementNode =
@@ -46,14 +48,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       TypeNameNode(UnionType(visitAllTypes(ctx.allTypes(0)).salType, visitAllTypes(ctx.allTypes(1)).salType))
     else if (ctx.ID() != null) {
       val typeName = ctx.ID().getText()
-      val tp: Type = try typeCtx?typeName // it doesn't format automatically.
-      catch {
-        case SalException(info) => {
-          report(info, at(ctx))
-          anythingType  // shield other type checking.
-        }
-      }
-      TypeNameNode(tp)
+      TypeNameNode(typer.getTypeName(ctx, typeName))
     }
     else visitTypeName(ctx.typeName)
 
@@ -61,17 +56,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val name = ctx.ID().getText()
     val exp = visitExpression(ctx.expression)
     val tp = if (ctx.allTypes != null) visitAllTypes(ctx.allTypes) else TypeNameNode(exp.salType)
-
-    try
-      typeCtx += (name, tp.salType) // it doesn't format automatically.
-    catch {
-      case SalException(info) => report(info, at(ctx))
-      case _: Throwable => report("unknown error.", at(ctx))
-    }
-
-    if (!typeCtx.require(name, exp.salType))
-      report(s"$name got ${exp.salType}, but ${tp.salType} is required.", at(ctx))
-
+    typer.addType(ctx, name, tp.salType, exp.salType)
     ValueNode(name, tp, exp)
   }
 
@@ -88,12 +73,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     else if (ctx.allTypes != null) {
       val exp = visitExpression(ctx.expression(0))
       val target = visitAllTypes(ctx.allTypes).salType
-      if (exp.salType.as(target))
-        ExpressionNode(exp.exp, Some(target))
-      else {
-        report(s"${exp.salType} can't be asserted as ${target}", at(ctx))
-        exp // shield other type checking.
-      }
+      ExpressionNode(exp.exp, Some(typer.assertType(ctx, exp.salType, target)))
     }
     else if (ctx.lambda != null) ExpressionNode(visitLambda(ctx.lambda))
     else if (ctx.DOT_OP() != null) ExpressionNode(visitAccess(ctx))
@@ -107,16 +87,11 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       import Operator._;
 
       val op = OperatorParser(ctx)
-      val opType = (try typeCtx.query(op)
-        catch {
-          case SalException(info) =>
-            report(info, at(ctx)); FunctionType(anythingType, anythingType) // shield other type checking.
-        }).asInstanceOf[FunctionType]
+      val opType = typer.getOperatorType(ctx, op)
 
       if (op == Operator.BitwiseNot || op == Operator.LogicNot) {
         val v = visitExpression(ctx.expression(0))
-        if (opType !== FunctionType(v.salType, anythingType))
-          report(s"operator $op is $opType, but the parameter is ${v.salType}", at(ctx))
+        typer.checkOperatorParameters(ctx, op, v.salType, opType)
         ExpressionNode(UnOpExpression(v, op, opType.resType))
       }
       else {
@@ -124,8 +99,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
         val rhs = visitExpression(ctx.expression(1))
         val trueOp = OperatorParser.convert(op, lhs.salType, rhs.salType)
         val trueOpType = typeCtx.query(trueOp).asInstanceOf[FunctionType]
-        if (trueOpType !== FunctionType(lhs.salType, FunctionType(rhs.salType, anythingType)))
-          report(s"operator $trueOp is $trueOpType, but parameters are ${lhs.salType} and ${rhs.salType}", at(ctx))
+        typer.checkOperatorParameters(ctx, trueOp, lhs.salType, rhs.salType, trueOpType)
         ExpressionNode(BiOpExpression(lhs, rhs, trueOp, trueOpType.resType))
       }
     }
@@ -146,10 +120,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   override def visitParam(ctx: SalParser.ParamContext) = {
     val name = ctx.ID().getText()
     val tp = if(ctx.allTypes != null) visitAllTypes(ctx.allTypes) else TypeNameNode(anythingType)
-    try typeCtx += (name, tp.salType)
-    catch {
-      case SalException(info) => report(info, at(ctx))
-    }
+    typer.addType(ctx, name, tp.salType, anythingType)
     ParamNode(name, tp)
   }
 
@@ -164,38 +135,15 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val params = visitParams(ctx.params)
     val body = visitFunctionBody(ctx.functionBody)
     val retType = if (ctx.allTypes != null) visitAllTypes(ctx.allTypes) else TypeNameNode(body.salType)
-    if (retType.salType !== body.salType)
-      report(s"return value of $name got ${body.salType}, but ${retType.salType} is required.", at(ctx))
-
     val res = FunctionNode(name, params, retType, body)
     typeCtx = stack.pop()
-    try typeCtx += (name, res.functionType)
-    catch {
-      case SalException(info) => report(info, at(ctx))
-    }
+    typer.addFunction(ctx, name, retType.salType, body.salType, res.functionType)
     res
   }
 
-  private def parseApplication(func: ExpressionNode, params: List[ExpressionNode], line: Int): ApplicationNode = {
+  private def parseApplication(ctx: ParserRuleContext, func: ExpressionNode, params: List[ExpressionNode]): ApplicationNode = {
     val funcType = func.salType
-
-    def matchType(fun: Type, index: Int): Type = fun match {
-      case FunctionType(p, r, _) =>
-        if (p === voidType && params.isEmpty) r
-        else if (index == params.length - 1)
-          if (p === params(index).salType) r
-          else throw SalException(s"${func.toLua(0)}'s parameters[$index] requires $p, but got ${params(index).salType}.", line)
-        else
-          if (p === params(index).salType) matchType(r, index + 1)
-          else throw SalException(s"${func.toLua(0)}'s parameters[$index] requires $p, but got ${params(index).salType}.", line)
-      case _ => throw SalException(s"${func.toLua(0)} is not a function.", line)
-    }
-
-    val retType =
-      try matchType(funcType, 0)
-      catch {
-        case SalException(info) => report(info); anythingType // shield other type checking.
-      }
+    val retType = typer.getApplicationType(ctx, func, funcType, params)
 
     funcType match {
       case f: FunctionType => {
@@ -213,12 +161,12 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   }
 
   override def visitApplication(ctx: SalParser.ApplicationContext) =
-    parseApplication(visitExpression(ctx.expression(0)),
-      ctx.expression.asScala.toList.drop(1).map((e) => visitExpression(e)), at(ctx))
+    parseApplication(ctx, visitExpression(ctx.expression(0)),
+      ctx.expression.asScala.toList.drop(1).map((e) => visitExpression(e)))
 
   private def visitApplicationInExpression(ctx: SalParser.ExpressionContext) =
-    parseApplication(visitExpression(ctx.expression(0)),
-      ctx.expression.asScala.toList.drop(1).map((e) => visitExpression(e)), at(ctx))
+    parseApplication(ctx, visitExpression(ctx.expression(0)),
+      ctx.expression.asScala.toList.drop(1).map((e) => visitExpression(e)))
 
   override def visitField(ctx: SalParser.FieldContext): FieldNode =
     if (ctx.function != null) {
@@ -231,8 +179,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       val name = ctx.ID().getText()
       val tp = visitAllTypes(ctx.allTypes)
       val init = visitExpression(ctx.expression)
-      if (tp.salType !== init.salType)
-        report(s"field $name requires ${tp.salType}, but got ${init.salType}", at(ctx))
+      typer.checkField(ctx, name, tp.salType, init.salType)
       
       FieldNode(name, tp, Some(init))
     }
@@ -241,13 +188,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val list = ctx.field.asScala.toList.map((f) => visitField(f))
     stack.push(typeCtx)
     typeCtx = typeCtx.derive()
-
-    try
-      list.foreach((n) => typeCtx += (n.id, n.salType))
-    catch {
-      case SalException(info) => report(info, at(ctx))
-    }
-
+    typer.addFields(ctx, list)
     typeCtx = stack.pop()
     FieldsNode(list)
   }
@@ -265,17 +206,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val rec = visitExpression(ctx.expression(0))
     val fieldName = ctx.ID().getText()
 
-    try
-      rec.salType match {
-        case rt: RecordType => AccessNode(rec, fieldName, rt.get(fieldName))
-        case _ => throw SalException(s"${rec.toLua(0)} is not a record.") // format later
-      }
-    catch {
-      case SalException(info) => {
-        report(info, at(ctx))
-        AccessNode(rec, fieldName, anythingType) // shield other type checking.
-      }
-    }
+    AccessNode(rec, fieldName, typer.getFieldType(ctx, rec, fieldName, rec.salType))
   }
 
   override def visitInitializer(ctx: SalParser.InitializerContext): InitializerNode =
@@ -284,44 +215,14 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
   override def visitCreate(ctx: SalParser.CreateContext): CreateNode = {
     val id = ctx.ID().getText()
-    try typeCtx?id match {
-      case rt @ RecordType(_, fields) => {
-        val inits = ctx.initializer.asScala.toList.map((i) => visitInitializer(i))
-        if (inits.length > rt.fields.length)
-          throw SalException(s"too many arguments when creating $id") // format later
-
-        val namedInit = inits.filter((i) => !i.param._1.isEmpty).map((i) => (i.param._1.get, i.param._2)).toMap
-        val defaultInit = inits.filter((i) => i.param._1.isEmpty).map((i) => i.param._2).iterator
-
-        fields.foreach((f) =>
-          if (namedInit.contains(f._1)) {
-            if (namedInit(f._1).salType !== f._2)
-              throw SalException(s"${f._1} requires ${f._2}, but got ${namedInit(f._1).salType}") // format later
-          }
-          else if (defaultInit.hasNext) {
-            val node = defaultInit.next()
-            if (node.salType !== f._2)
-              throw SalException(s"${f._1} requires ${f._2}, but got ${node.salType}") // format later
-          }
-        )
-
-        CreateNode(rt, inits)
-      }
-        
-      case _ => throw SalException(s"$id is not a record.") // format later
-    }
-    catch {
-      case SalException(info) => {
-        report(info, at(ctx))
-        CreateNode(RecordType("", List()), List()) // shield other type checking.
-      }
-    }
+    val initList = ctx.initializer.asScala.toList.map((i) => visitInitializer(i))
+    val initializer = typer.getInitializer(ctx, id, initList)
+    CreateNode(initializer._1, initializer._2)
   }
 
   override def visitIfCondition(ctx: SalParser.IfConditionContext) = {
     val condition = visitExpression(ctx.expression)
-    if (condition.salType !== boolType)
-      report(s"if/else if requires bool, but got ${condition.salType}", at(ctx))
+    typer.checkIfElse(ctx, condition.salType)
 
     stack.push(typeCtx)
     typeCtx = typeCtx.derive()
@@ -345,8 +246,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
 	override def visitElseIfCondition(ctx: SalParser.ElseIfConditionContext) = {
     val condition = visitExpression(ctx.expression)
-    if (condition.salType !== boolType)
-      report(s"if/else if requires bool, but got ${condition.salType}", at(ctx))
+    typer.checkIfElse(ctx, condition.salType)
 
     stack.push(typeCtx)
     typeCtx = typeCtx.derive()
@@ -370,8 +270,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     val params = visitParams(ctx.params)
     val exp = visitExpression(ctx.expression)
     val retType = if (ctx.allTypes != null) visitAllTypes(ctx.allTypes) else TypeNameNode(exp.salType)
-    if (retType.salType !== exp.salType)
-      report(s"return value of lambda got ${exp.salType}, but ${retType.salType} is required.", at(ctx))
+    typer.checkLambda(ctx, exp.salType, retType.salType)
 
     typeCtx = stack.pop()
     LambdaNode(params, retType, exp)

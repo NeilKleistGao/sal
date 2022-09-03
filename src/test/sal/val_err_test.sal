@@ -4,3 +4,4 @@ val z: string = true
 val x: int = 42
 
 val w: int | float = false
+val pi: number = 3.14

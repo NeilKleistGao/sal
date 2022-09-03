@@ -32,3 +32,5 @@ rec M {
 
 fun mf() = false
 val m = new M{ f = mf }
+
+val k = new K{}

@@ -8,4 +8,5 @@
   line 26: x requires int, but got string
   line 27: n3 got rec Bar, but rec Num is required.
   line 34: f requires void -> int, but got void -> bool
+  line 36: unknown type K.
 ]]
