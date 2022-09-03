@@ -1,3 +1,5 @@
 val f1 = fun(x: int, y: int) = x + y
 val f2 = fun() = 42
 val f3 = fun(x: string) = print(x)
+val f4 = fun(x: int) = fun(y: float) = x + y
+val f5 = fun(x) = x
