@@ -68,5 +68,5 @@ ifCondition: IF_KW LEFT_PARENTHESE expression RIGHT_PARENTHESE block (elseIfCond
 elseIfCondition: ELSE_KW IF_KW LEFT_PARENTHESE expression RIGHT_PARENTHESE block;
 elseBlock: ELSE_KW block;
 
-lambda: FUN_KW ID params COLON_OP allTypes ASSIGN_OP expression |
-        FUN_KW ID params ASSIGN_OP expression;
+lambda: FUN_KW params COLON_OP allTypes ASSIGN_OP expression |
+        FUN_KW params ASSIGN_OP expression;
