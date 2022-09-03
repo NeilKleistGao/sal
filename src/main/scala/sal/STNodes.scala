@@ -262,6 +262,9 @@ case class LambdaNode(params: ParamsNode, res: TypeNameNode, exp: ExpressionNode
     if (params.params.isEmpty) FunctionType(voidType, res.salType, 0)
     else params.params.foldRight(res.salType)((p, t) => FunctionType(p.salType, t, params.params.length))
     
-  override def toLua(indent: Int): String =
-    s"${Prefix(indent)}(function (${params.toLua(0)}) return ${exp.toLua(0)} end)"
+  override def toLua(indent: Int): String = res.salType match {
+    case v: BuiltInType if (v === voidType) => s"${Prefix(indent)}(function (${params.toLua(0)}) ${exp.toLua(0)} end)"
+    case _ => s"${Prefix(indent)}(function (${params.toLua(0)}) return ${exp.toLua(0)} end)"
+  }
+    
 }
