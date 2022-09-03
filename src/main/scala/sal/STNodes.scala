@@ -257,7 +257,7 @@ case class IfConditionNode(condition: ExpressionNode, block: BlockNode, elseList
   }
 }
 
-case class LambdaNode(params: ParamsNode, res: TypeNameNode, exp: STNode with ExpressionType) extends STNode with ExpressionType {
+case class LambdaNode(params: ParamsNode, res: TypeNameNode, exp: ExpressionNode) extends STNode with ExpressionType {
   override lazy val salType =
     if (params.params.isEmpty) FunctionType(voidType, res.salType, 0)
     else params.params.foldRight(res.salType)((p, t) => FunctionType(p.salType, t, params.params.length))
