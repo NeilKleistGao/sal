@@ -18,3 +18,6 @@ fun not(x: bool) = !x
 val a: int = 5.0 / 2
 val b = "abc" + 4
 val c = 1.2 % 5
+
+val wtf = nix + 42
+val wtf2 = !nix
