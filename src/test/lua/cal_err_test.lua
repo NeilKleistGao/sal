@@ -16,4 +16,6 @@
   line 18: a got float, but int is required.
   line 19: operator Add is int -> int -> int, but parameters are string and int
   line 20: operator Mod is int -> int -> int, but parameters are float and int
+  line 22: can't use nix as operands.
+  line 23: can't use nix as operands.
 ]]

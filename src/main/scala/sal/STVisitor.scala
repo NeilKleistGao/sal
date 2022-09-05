@@ -92,6 +92,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       if (op == Operator.BitwiseNot || op == Operator.LogicNot) {
         val v = visitExpression(ctx.expression(0))
         typer.checkOperatorParameters(ctx, op, v.salType, opType)
+        typer.excludeNix(ctx, v)
         ExpressionNode(UnOpExpression(v, op, opType.resType))
       }
       else {
@@ -100,6 +101,8 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
         val trueOp = OperatorParser.convert(op, lhs.salType, rhs.salType)
         val trueOpType = typeCtx.query(trueOp).asInstanceOf[FunctionType]
         typer.checkOperatorParameters(ctx, trueOp, lhs.salType, rhs.salType, trueOpType)
+        typer.excludeNix(ctx, lhs)
+        typer.excludeNix(ctx, rhs)
         ExpressionNode(BiOpExpression(lhs, rhs, trueOp, trueOpType.resType))
       }
     }

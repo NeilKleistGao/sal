@@ -20,3 +20,4 @@ val b = "abc" + 4
 val c = 1.2 % 5
 
 val wtf = nix + 42
+val wtf2 = !nix

@@ -3,7 +3,7 @@ package sal.types
 import org.antlr.v4.runtime.{ParserRuleContext}
 import java.lang.StringBuilder
 import sal.types._
-import sal.{SalException, ExpressionNode, FieldNode, InitializerNode}
+import sal.{SalException, ExpressionNode, FieldNode, InitializerNode, LitNode, UnOpExpression, BiOpExpression}
 
 class Typer {
   import Typer._
@@ -147,6 +147,16 @@ class Typer {
   def checkLambda(ctx: ParserRuleContext, expType: Type, retType: Type) =
     if (retType !== expType)
       report(s"return value of lambda got $expType, but $retType is required.", at(ctx))
+
+  def excludeNix(ctx: ParserRuleContext, node: ExpressionNode): Unit = node.exp match {
+    case UnOpExpression(exp, _, _) => excludeNix(ctx, exp)
+    case BiOpExpression(lhs, rhs, _, _) => {
+      excludeNix(ctx, lhs)
+      excludeNix(ctx, rhs)
+    }
+    case LitNode(lit) if (lit.equals("nix")) => report(s"can't use nix as operands.", at(ctx))
+    case _ => {}
+  }
 }
 
 object Typer {
