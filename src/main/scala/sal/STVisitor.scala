@@ -224,7 +224,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   }
 
   override def visitIfCondition(ctx: SalParser.IfConditionContext) = {
-    val condition = visitExpression(ctx.expression)
+    val condition = visitExpression(ctx.expression(0))
     typer.checkIfElse(ctx, condition.salType)
 
     stack.push(typeCtx)
@@ -248,7 +248,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   }
 
 	override def visitElseIfCondition(ctx: SalParser.ElseIfConditionContext) = {
-    val condition = visitExpression(ctx.expression)
+    val condition = visitExpression(ctx.expression(0))
     typer.checkIfElse(ctx, condition.salType)
 
     stack.push(typeCtx)
