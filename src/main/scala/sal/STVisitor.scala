@@ -229,7 +229,8 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
     stack.push(typeCtx)
     typeCtx = typeCtx.derive()
-    val block = visitBlock(ctx.block)
+    val body: STNode with FunctionBodyType =
+      if (ctx.block != null) visitBlock(ctx.block) else visitExpression(ctx.expression(1))
     typeCtx = stack.pop()
     
     val elseIfList: List[STNode with ElseBlockType] =
@@ -238,12 +239,21 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     
     val elseList: List[STNode with ElseBlockType] =
       if (ctx.elseBlock == null) elseIfList else elseIfList :+ visitElseBlock(ctx.elseBlock)
-    val resType = IfConditionNode(condition, block, elseList, "").salType
+    val resType = IfConditionNode(condition, body, elseList, "").salType
     val resName = typeCtx.alloc("if_res", resType)
 
-    IfConditionNode(condition, block.rename(resName), elseList.map((i) => i match {
-      case IfConditionNode(cond, block, _, _) => IfConditionNode(cond, block.rename(resName), List(), "")
+    val finalBody = body match {
       case b: BlockNode => b.rename(resName)
+      case _ => body
+    }
+
+    IfConditionNode(condition, finalBody, elseList.map((i) => i match {
+      case IfConditionNode(cond, body, _, _) => body match {
+        case b: BlockNode => IfConditionNode(cond, b.rename(resName), List(), "")
+        case _ => IfConditionNode(cond, body, List(), "")
+      }
+      case b: BlockNode => b.rename(resName)
+      case _ => i
     }), resName)
   }
 
@@ -253,7 +263,9 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
     stack.push(typeCtx)
     typeCtx = typeCtx.derive()
-    val res = IfConditionNode(condition, visitBlock(ctx.block), List(), "")
+    val res =
+      if (ctx.block != null) IfConditionNode(condition, visitBlock(ctx.block), List(), "")
+      else IfConditionNode(condition, visitExpression(ctx.expression(1)), List(), "")
     typeCtx = stack.pop()
     res
   }
@@ -261,7 +273,9 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 	override def visitElseBlock(ctx: SalParser.ElseBlockContext) = {
     stack.push(typeCtx)
     typeCtx = typeCtx.derive()
-    val res = visitBlock(ctx.block)
+    val res =
+      if (ctx.block != null) visitBlock(ctx.block)
+      else visitExpression(ctx.expression)
     typeCtx = stack.pop()
     res
   }
