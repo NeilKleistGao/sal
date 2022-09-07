@@ -247,7 +247,7 @@ case class IfConditionNode(condition: ExpressionNode, body: STNode with Function
     elseList.foldLeft(body.salType)((res, e) => if (res !== e.salType) anythingType else res)
 
   override def toLua(indent: Int): String = {
-    val ifLua = s"${Prefix(indent)}if (${condition.toLua(0)}) then${body.toLua(indent + 1)}\n"
+    val ifLua = s"${Prefix(indent)}if (${condition.toLua(0)}) then${translateBody(body, indent + 1)}\n"
     val elseLua = elseList.foldLeft("")((els, e) => e match {
       case IfConditionNode(c, b, _, _) => s"$els${Prefix(indent)}elseif (${c.toLua(0)}) then${translateBody(b, indent + 1)}\n"
       case elseBlock: STNode with FunctionBodyType => s"$els${Prefix(indent)}else${translateBody(elseBlock, indent + 1)}\n"
@@ -258,7 +258,7 @@ case class IfConditionNode(condition: ExpressionNode, body: STNode with Function
 
   private def translateBody(body: STNode with FunctionBodyType, indent: Int) = body match {
     case block: BlockNode => block.toLua(indent)
-    case exp: ExpressionNode => s"${Prefix(indent)}$res = ${exp.toLua(0)}"
+    case exp: ExpressionNode => s"\n${Prefix(indent)}$res = ${exp.toLua(0)}"
   }
 }
 
