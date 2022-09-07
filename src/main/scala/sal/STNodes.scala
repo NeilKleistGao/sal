@@ -52,7 +52,7 @@ case class VariableNode(name: String, tp: Type) extends STNode with ExpressionTy
   override def toLua(indent: Int): String = name
 }
 
-case class ExpressionNode(val exp: STNode with ExpressionType, tp: Option[Type] = None) extends STNode with FunctionBodyType with BlockInnerType {
+case class ExpressionNode(val exp: STNode with ExpressionType, tp: Option[Type] = None) extends STNode with FunctionBodyType with BlockInnerType with ElseBlockType {
   override def toLua(indent: Int): String = exp match {
     case c @ IfConditionNode(_, _, _, res) =>
       s"${Prefix(indent)}(function()\n${c.toLua(indent + 1)}\n${Prefix(indent + 1)}return $res\n${Prefix(indent)}end)()"
@@ -241,19 +241,24 @@ case class UnOpExpression(v: ExpressionNode, op: Operator, res: Type) extends ST
   override def toLua(indent: Int): String = s"${OperatorTranslator(op)} (${v.toLua(0)})"
 }
 
-case class IfConditionNode(condition: ExpressionNode, block: BlockNode, elseList: List[STNode with ElseBlockType], res: String)
+case class IfConditionNode(condition: ExpressionNode, body: STNode with FunctionBodyType, elseList: List[STNode with ElseBlockType], res: String)
   extends STNode with ElseBlockType with ExpressionType with StatementType {
   override lazy val salType =
-    elseList.foldLeft(block.salType)((res, e) => if (res !== e.salType) anythingType else res)
+    elseList.foldLeft(body.salType)((res, e) => if (res !== e.salType) anythingType else res)
 
   override def toLua(indent: Int): String = {
-    val ifLua = s"${Prefix(indent)}if (${condition.toLua(0)}) then${block.toLua(indent + 1)}\n"
-    val elseLua = elseList.foldLeft("")((res, e) => e match {
-      case IfConditionNode(c, b, _, _) => s"$res${Prefix(indent)}elseif (${c.toLua(0)}) then${b.toLua(indent + 1)}\n"
-      case elseBlock: BlockNode => s"$res${Prefix(indent)}else${elseBlock.toLua(indent + 1)}\n"
+    val ifLua = s"${Prefix(indent)}if (${condition.toLua(0)}) then${translateBody(body, indent + 1)}\n"
+    val elseLua = elseList.foldLeft("")((els, e) => e match {
+      case IfConditionNode(c, b, _, _) => s"$els${Prefix(indent)}elseif (${c.toLua(0)}) then${translateBody(b, indent + 1)}\n"
+      case elseBlock: STNode with FunctionBodyType => s"$els${Prefix(indent)}else${translateBody(elseBlock, indent + 1)}\n"
     })
 
     s"${Prefix(indent)}local $res = nil\n$ifLua$elseLua${Prefix(indent)}end"
+  }
+
+  private def translateBody(body: STNode with FunctionBodyType, indent: Int) = body match {
+    case block: BlockNode => block.toLua(indent)
+    case exp: ExpressionNode => s"\n${Prefix(indent)}$res = ${exp.toLua(0)}"
   }
 }
 

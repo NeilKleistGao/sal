@@ -23,21 +23,14 @@ else {
   print("z")
 }
 
-val num = if (true) { 42 } else { 1 }
-val str = if (x) {
-    "res: " + "x"
-  }
-  else if (y) {
-    "res: " + "y"
-  }
-  else {
-    "res: " + "z"
-  }
+val num = if (true) 42 else 1
+val str =
+  if (x) "res: " + "x"
+  else if (y) "res: " + "y"
+  else "res: " + "z"
 
-if (true) {
-  false
-}
+if (true) false
 
-if (true) {1} else if (false) {2}
+if (true) 1 else if (false) 2
 
-val wtf = if (true) {42} else {"42"}
+val wtf = if (true) 42 else "42"
