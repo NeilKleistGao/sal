@@ -77,8 +77,14 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       val target = visitAllTypes(ctx.allTypes).salType
       ExpressionNode(exp.exp, Some(typer.assertType(ctx, exp.salType, target)))
     }
-    else if (ctx.LEFT_SQUARE() != null)
-      ExpressionNode(TupleNode(ctx.expression.asScala.toList.map(e => visitExpression(e))))
+    else if (ctx.LEFT_SQUARE() != null) {
+      if (ctx.COMMA_OP() != null)
+        ExpressionNode(TupleNode(ctx.expression.asScala.toList.map(e => visitExpression(e))))
+      else {
+        val index = visitLit(ctx.lit)
+        ExpressionNode(IndexedNode(visitExpression(ctx.expression(0)), index.toInt))
+      }
+    }
     else if (ctx.lambda != null) ExpressionNode(visitLambda(ctx.lambda))
     else if (ctx.DOT_OP() != null) ExpressionNode(visitAccess(ctx))
     else if (ctx.create != null) ExpressionNode(visitCreate(ctx.create))
