@@ -210,7 +210,7 @@ public class SalParser extends Parser {
 			setState(51);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VAL_KW) | (1L << FUN_KW) | (1L << REC_KW) | (1L << NEW_KW) | (1L << IF_KW) | (1L << TRUE_LIT) | (1L << FALSE_LIT) | (1L << NIX_LIT) | (1L << STRING_LIT) | (1L << LEFT_PARENTHESE) | (1L << NUMBER) | (1L << BIT_NOT_OP) | (1L << LOGIC_NOT_OP) | (1L << ID))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VAL_KW) | (1L << FUN_KW) | (1L << REC_KW) | (1L << NEW_KW) | (1L << IF_KW) | (1L << TRUE_LIT) | (1L << FALSE_LIT) | (1L << NIX_LIT) | (1L << STRING_LIT) | (1L << LEFT_PARENTHESE) | (1L << LEFT_SQUARE) | (1L << NUMBER) | (1L << BIT_NOT_OP) | (1L << LOGIC_NOT_OP) | (1L << ID))) != 0)) {
 				{
 				{
 				setState(48);
@@ -426,7 +426,7 @@ public class SalParser extends Parser {
 			setState(71);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VAL_KW) | (1L << FUN_KW) | (1L << REC_KW) | (1L << NEW_KW) | (1L << IF_KW) | (1L << TRUE_LIT) | (1L << FALSE_LIT) | (1L << NIX_LIT) | (1L << STRING_LIT) | (1L << LEFT_PARENTHESE) | (1L << NUMBER) | (1L << BIT_NOT_OP) | (1L << LOGIC_NOT_OP) | (1L << ID))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VAL_KW) | (1L << FUN_KW) | (1L << REC_KW) | (1L << NEW_KW) | (1L << IF_KW) | (1L << TRUE_LIT) | (1L << FALSE_LIT) | (1L << NIX_LIT) | (1L << STRING_LIT) | (1L << LEFT_PARENTHESE) | (1L << LEFT_SQUARE) | (1L << NUMBER) | (1L << BIT_NOT_OP) | (1L << LOGIC_NOT_OP) | (1L << ID))) != 0)) {
 				{
 				{
 				setState(68);
@@ -773,18 +773,19 @@ public class SalParser extends Parser {
 		public LambdaContext lambda() {
 			return getRuleContext(LambdaContext.class,0);
 		}
-		public TerminalNode LEFT_PARENTHESE() { return getToken(SalParser.LEFT_PARENTHESE, 0); }
+		public TerminalNode LEFT_SQUARE() { return getToken(SalParser.LEFT_SQUARE, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public TerminalNode RIGHT_BRACES() { return getToken(SalParser.RIGHT_BRACES, 0); }
+		public TerminalNode RIGHT_SQUARE() { return getToken(SalParser.RIGHT_SQUARE, 0); }
 		public List<TerminalNode> COMMA_OP() { return getTokens(SalParser.COMMA_OP); }
 		public TerminalNode COMMA_OP(int i) {
 			return getToken(SalParser.COMMA_OP, i);
 		}
+		public TerminalNode LEFT_PARENTHESE() { return getToken(SalParser.LEFT_PARENTHESE, 0); }
 		public TerminalNode RIGHT_PARENTHESE() { return getToken(SalParser.RIGHT_PARENTHESE, 0); }
 		public TerminalNode LOGIC_NOT_OP() { return getToken(SalParser.LOGIC_NOT_OP, 0); }
 		public TerminalNode BIT_NOT_OP() { return getToken(SalParser.BIT_NOT_OP, 0); }
@@ -843,41 +844,45 @@ public class SalParser extends Parser {
 			{
 			setState(143);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
-			case 1:
+			switch (_input.LA(1)) {
+			case TRUE_LIT:
+			case FALSE_LIT:
+			case NIX_LIT:
+			case STRING_LIT:
+			case NUMBER:
 				{
 				setState(122);
 				lit();
 				}
 				break;
-			case 2:
+			case ID:
 				{
 				setState(123);
 				match(ID);
 				}
 				break;
-			case 3:
+			case NEW_KW:
 				{
 				setState(124);
 				create();
 				}
 				break;
-			case 4:
+			case IF_KW:
 				{
 				setState(125);
 				ifCondition();
 				}
 				break;
-			case 5:
+			case FUN_KW:
 				{
 				setState(126);
 				lambda();
 				}
 				break;
-			case 6:
+			case LEFT_SQUARE:
 				{
 				setState(127);
-				match(LEFT_PARENTHESE);
+				match(LEFT_SQUARE);
 				setState(128);
 				expression(0);
 				setState(131); 
@@ -897,10 +902,10 @@ public class SalParser extends Parser {
 					_la = _input.LA(1);
 				} while ( _la==COMMA_OP );
 				setState(135);
-				match(RIGHT_BRACES);
+				match(RIGHT_SQUARE);
 				}
 				break;
-			case 7:
+			case LEFT_PARENTHESE:
 				{
 				setState(137);
 				match(LEFT_PARENTHESE);
@@ -910,7 +915,8 @@ public class SalParser extends Parser {
 				match(RIGHT_PARENTHESE);
 				}
 				break;
-			case 8:
+			case BIT_NOT_OP:
+			case LOGIC_NOT_OP:
 				{
 				setState(141);
 				_la = _input.LA(1);
@@ -926,6 +932,8 @@ public class SalParser extends Parser {
 				expression(9);
 				}
 				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
 			setState(195);
@@ -1205,6 +1213,7 @@ public class SalParser extends Parser {
 			case NIX_LIT:
 			case STRING_LIT:
 			case LEFT_PARENTHESE:
+			case LEFT_SQUARE:
 			case NUMBER:
 			case BIT_NOT_OP:
 			case LOGIC_NOT_OP:
@@ -2029,6 +2038,7 @@ public class SalParser extends Parser {
 			case NIX_LIT:
 			case STRING_LIT:
 			case LEFT_PARENTHESE:
+			case LEFT_SQUARE:
 			case NUMBER:
 			case BIT_NOT_OP:
 			case LOGIC_NOT_OP:
@@ -2146,6 +2156,7 @@ public class SalParser extends Parser {
 			case NIX_LIT:
 			case STRING_LIT:
 			case LEFT_PARENTHESE:
+			case LEFT_SQUARE:
 			case NUMBER:
 			case BIT_NOT_OP:
 			case LOGIC_NOT_OP:
@@ -2223,6 +2234,7 @@ public class SalParser extends Parser {
 			case NIX_LIT:
 			case STRING_LIT:
 			case LEFT_PARENTHESE:
+			case LEFT_SQUARE:
 			case NUMBER:
 			case BIT_NOT_OP:
 			case LOGIC_NOT_OP:
@@ -2482,11 +2494,11 @@ public class SalParser extends Parser {
 		"\u0000\u0000x\u000f\u0001\u0000\u0000\u0000yz\u0006\b\uffff\uffff\u0000"+
 		"z\u0090\u0003\u0000\u0000\u0000{\u0090\u0005.\u0000\u0000|\u0090\u0003"+
 		"$\u0012\u0000}\u0090\u0003&\u0013\u0000~\u0090\u0003,\u0016\u0000\u007f"+
-		"\u0080\u0005\u0014\u0000\u0000\u0080\u0083\u0003\u0010\b\u0000\u0081\u0082"+
+		"\u0080\u0005\u0016\u0000\u0000\u0080\u0083\u0003\u0010\b\u0000\u0081\u0082"+
 		"\u0005\u001c\u0000\u0000\u0082\u0084\u0003\u0010\b\u0000\u0083\u0081\u0001"+
 		"\u0000\u0000\u0000\u0084\u0085\u0001\u0000\u0000\u0000\u0085\u0083\u0001"+
 		"\u0000\u0000\u0000\u0085\u0086\u0001\u0000\u0000\u0000\u0086\u0087\u0001"+
-		"\u0000\u0000\u0000\u0087\u0088\u0005\u0013\u0000\u0000\u0088\u0090\u0001"+
+		"\u0000\u0000\u0000\u0087\u0088\u0005\u0017\u0000\u0000\u0088\u0090\u0001"+
 		"\u0000\u0000\u0000\u0089\u008a\u0005\u0014\u0000\u0000\u008a\u008b\u0003"+
 		"\u0010\b\u0000\u008b\u008c\u0005\u0015\u0000\u0000\u008c\u0090\u0001\u0000"+
 		"\u0000\u0000\u008d\u008e\u0007\u0002\u0000\u0000\u008e\u0090\u0003\u0010"+
