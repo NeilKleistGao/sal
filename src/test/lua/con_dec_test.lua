@@ -6,11 +6,11 @@ else
 end
 local if_res_ = nil
 if (false) then
-  local x = 41 --[[type: int]]
+  local x = 41 --[[type: int.]]
   print(x)
 end
-local x = false --[[type: bool]]
-local y = true --[[type: bool]]
+local x = false --[[type: bool.]]
+local y = true --[[type: bool.]]
 local if_res__ = nil
 if (x) then
   print("x")
@@ -27,7 +27,7 @@ local num = (function()
     if_res___ = 1
   end
   return if_res___
-end)() --[[type: int]]
+end)() --[[type: int.]]
 local str = (function()
   local if_res____ = nil
   if (x) then
@@ -38,7 +38,7 @@ local str = (function()
     if_res____ = ("res: ") .. ("z")
   end
   return if_res____
-end)() --[[type: string]]
+end)() --[[type: string.]]
 local if_res_____ = nil
 if (true) then
   if_res_____ = false
@@ -57,4 +57,4 @@ local wtf = (function()
     if_res_______ = "42"
   end
   return if_res_______
-end)() --[[type: anything]]
+end)() --[[type: anything.]]

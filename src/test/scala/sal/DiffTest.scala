@@ -38,6 +38,7 @@ object DiffTest {
     "ass_dec_test",
     "ass_err_test",
     "lam_dec_test",
-    "lam_err_test"
+    "lam_err_test",
+    "tup_dec_test"
   )
 }

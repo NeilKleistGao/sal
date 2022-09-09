@@ -12,7 +12,7 @@ sealed trait Type {
 }
 
 object PrettyTypePrinter {
-  def apply(tp: Type): String = s"--[[type: ${tp}]]"
+  def apply(tp: Type): String = s"--[[type: ${tp}.]]"
 }
 
 case object PreservedKeyword extends Type
