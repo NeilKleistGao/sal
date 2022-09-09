@@ -63,7 +63,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   }
 
   override def visitExpression(ctx: SalParser.ExpressionContext): ExpressionNode =
-    if (ctx.lit != null) ExpressionNode(visitLit(ctx.lit))
+    if (ctx.lit != null && ctx.LEFT_SQUARE() == null) ExpressionNode(visitLit(ctx.lit))
     else if (ctx.LEFT_PARENTHESE() != null) {
       val firstExpIndex = ctx.expression(0).getStart().getTokenIndex()
       val parentheseIndex = ctx.LEFT_PARENTHESE().getSymbol().getTokenIndex()
@@ -78,7 +78,9 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       ExpressionNode(exp.exp, Some(typer.assertType(ctx, exp.salType, target)))
     }
     else if (ctx.LEFT_SQUARE() != null) {
-      if (ctx.COMMA_OP() != null)
+      val firstExpIndex = ctx.expression(0).getStart().getTokenIndex()
+      val squareIndex = ctx.LEFT_SQUARE().getSymbol().getTokenIndex()
+      if (firstExpIndex > squareIndex)
         ExpressionNode(TupleNode(ctx.expression.asScala.toList.map(e => visitExpression(e))))
       else {
         val tup = visitExpression(ctx.expression(0))

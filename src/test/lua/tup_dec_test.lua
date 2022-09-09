@@ -6,3 +6,7 @@ end
 function throwErr(code, err) --[[type: int -> string -> [int, string].]]
   return {code, err}
 end
+local v42 = t2[2] --[[type: int.]]
+function swap(x) --[[type: [int, string] -> [string, int].]]
+  return {x[2], x[1]}
+end

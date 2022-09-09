@@ -3,3 +3,7 @@ val t2: [string, int] = ["abc", 42]
 
 fun printTuple(x: [string, int]) = print(x)
 fun throwErr(code: int, err: string) = [code, err]
+
+val v42 = t2[1]
+
+fun swap(x: [int, string]) = [x[1], x[0]]
