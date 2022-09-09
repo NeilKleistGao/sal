@@ -28,6 +28,8 @@ LEFT_BRACES: '{';
 RIGHT_BRACES: '}';
 LEFT_PARENTHESE: '(';
 RIGHT_PARENTHESE: ')';
+LEFT_SQUARE: '[';
+RIGHT_SQUARE: ']';
 
 WS: [ \t\n]+ -> skip;
 NUMBER: ('0' .. '9') + ('.' ('0' .. '9') +)?;
