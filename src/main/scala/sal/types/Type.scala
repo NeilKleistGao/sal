@@ -8,6 +8,7 @@ sealed trait Type {
   def \/(other: Type) = UnionType(this, other)
 
   def as(target: Type): Boolean = ===(target)
+  def at(index: Int): Type = ???
 }
 
 object PrettyTypePrinter {
@@ -93,4 +94,8 @@ case class TupleType(fields: List[Type]) extends Type {
 
   override def toString(): String =
     s"[${fields.map(f => f.toString()).reduceLeft((s, f) => s"$s, $f")}]"
+
+  override def at(index: Int) =
+    if (index > -1 && index < fields.length) fields(index)
+    else throw sal.SalException("tuple out of index.")
 }

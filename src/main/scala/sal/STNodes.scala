@@ -285,5 +285,8 @@ case class TupleNode(fields: List[ExpressionNode]) extends STNode with Expressio
 }
 
 case class IndexedNode(parent: ExpressionNode, index: Int) extends STNode with ExpressionType {
-  
+  override lazy val salType = parent.salType.at(index)
+
+  override def toLua(indent: Int): String =
+    s"${Prefix(indent)}${parent.toLua(0)}[${index + 1}]"
 }
