@@ -274,3 +274,10 @@ case class LambdaNode(params: ParamsNode, res: TypeNameNode, exp: ExpressionNode
   }
     
 }
+
+case class TupleNode(fields: List[ExpressionNode]) extends STNode with ExpressionType {
+  override lazy val salType = TupleType(fields.map(f => f.salType))
+
+  override def toLua(indent: Int): String =
+    s"${Prefix(indent)}{${fields.map(f => f.toLua(0)).reduceLeft((r, s) => s"$r, $s")}}"
+}

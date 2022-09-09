@@ -42,6 +42,8 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
   override def visitAllTypes(ctx: SalParser.AllTypesContext): TypeNameNode =
     if (ctx.LEFT_PARENTHESE() != null) visitAllTypes(ctx.allTypes(0))
+    else if (ctx.LEFT_SQUARE() != null)
+      TypeNameNode(TupleType(ctx.allTypes.asScala.toList.map(f => visitAllTypes(f).salType)))
     else if (ctx.ARROW_OP() != null)
       TypeNameNode(FunctionType(visitAllTypes(ctx.allTypes(0)).salType, visitAllTypes(ctx.allTypes(1)).salType))
     else if (ctx.BIT_OR_OP() != null)
@@ -75,6 +77,8 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       val target = visitAllTypes(ctx.allTypes).salType
       ExpressionNode(exp.exp, Some(typer.assertType(ctx, exp.salType, target)))
     }
+    else if (ctx.LEFT_SQUARE() != null)
+      ExpressionNode(TupleNode(ctx.expression.asScala.toList.map(e => visitExpression(e))))
     else if (ctx.lambda != null) ExpressionNode(visitLambda(ctx.lambda))
     else if (ctx.DOT_OP() != null) ExpressionNode(visitAccess(ctx))
     else if (ctx.create != null) ExpressionNode(visitCreate(ctx.create))
