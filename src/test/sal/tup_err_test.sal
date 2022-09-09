@@ -1,0 +1,4 @@
+val x: [string, string] = [1, 2]
+val y: [int, float] = [2, 3.14]
+val z = y[2]
+val w = 42[0]

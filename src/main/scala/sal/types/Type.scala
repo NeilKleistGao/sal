@@ -8,10 +8,11 @@ sealed trait Type {
   def \/(other: Type) = UnionType(this, other)
 
   def as(target: Type): Boolean = ===(target)
+  def at(index: Int): Type = ???
 }
 
 object PrettyTypePrinter {
-  def apply(tp: Type): String = s"--[[type: ${tp}]]"
+  def apply(tp: Type): String = s"--[[type: ${tp}.]]"
 }
 
 case object PreservedKeyword extends Type
@@ -68,7 +69,7 @@ case class RecordType(val name: String, val fields: List[(String, Type)]) extend
 }
 
 case class UnionType(lhs: Type, rhs: Type) extends Type {
-    override def ===(other: Type): Boolean = other match {
+  override def ===(other: Type): Boolean = other match {
     case UnionType(l, r) => ((l === lhs) && (r === rhs)) || ((r === lhs) && (l === rhs))
     case BuiltInType(nm) if (nm.equals("anything")) => true
     case _ => :>(other)
@@ -81,4 +82,18 @@ case class UnionType(lhs: Type, rhs: Type) extends Type {
   override def as(target: Type): Boolean =
     if (:>(target)) true
     else super.as(target)
-} 
+}
+
+case class TupleType(fields: List[Type]) extends Type {
+  override def ===(other: Type): Boolean = other match {
+    case TupleType(fs) if (fields.length == fs.length) =>
+      fields.zip(fs).foldLeft(true)((r, p) => r && (p._1 === p._2))
+    case BuiltInType(nm) if (nm.equals("anything")) => true
+    case _ => false
+  }
+
+  override def toString(): String =
+    s"[${fields.map(f => f.toString()).reduceLeft((s, f) => s"$s, $f")}]"
+
+  override def at(index: Int) = fields(index)
+}

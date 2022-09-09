@@ -157,6 +157,19 @@ class Typer {
     case LitNode(lit) if (lit.equals("nix")) => report(s"can't use nix as operands.", at(ctx))
     case _ => {}
   }
+
+  def checkIndex(ctx: ParserRuleContext, parentType: Type, lit: LitNode): Boolean =
+    lit.salType match {
+      case BuiltInType(name) if (name.equals("int")) => parentType match {
+        case TupleType(fields) => {
+          val index = lit.toInt
+          if (index > -1 && index < fields.length) true
+          else { report("tuple index out of range.", at(ctx)); false }
+        }
+        case _ => { report("indexing is not support.", at(ctx)); false }
+      }
+      case _ => report("only int can be used for indexing.", at(ctx)); false
+    }
 }
 
 object Typer {

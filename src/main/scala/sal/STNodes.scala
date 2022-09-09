@@ -32,6 +32,8 @@ case class LitNode(value: String) extends STNode with ExpressionType {
     else s"${Prefix(indent)}$value"
 
   override lazy val salType = LitNode.getLitType(value)
+
+  lazy val toInt = value.toInt
 }
 
 object LitNode {
@@ -273,4 +275,18 @@ case class LambdaNode(params: ParamsNode, res: TypeNameNode, exp: ExpressionNode
     case _ => s"${Prefix(indent)}(function (${params.toLua(0)}) return ${exp.toLua(0)} end)"
   }
     
+}
+
+case class TupleNode(fields: List[ExpressionNode]) extends STNode with ExpressionType {
+  override lazy val salType = TupleType(fields.map(f => f.salType))
+
+  override def toLua(indent: Int): String =
+    s"${Prefix(indent)}{${fields.map(f => f.toLua(0)).reduceLeft((r, s) => s"$r, $s")}}"
+}
+
+case class IndexedNode(parent: ExpressionNode, index: Int) extends STNode with ExpressionType {
+  override lazy val salType = parent.salType.at(index)
+
+  override def toLua(indent: Int): String =
+    s"${Prefix(indent)}${parent.toLua(0)}[${index + 1}]"
 }
