@@ -95,7 +95,5 @@ case class TupleType(fields: List[Type]) extends Type {
   override def toString(): String =
     s"[${fields.map(f => f.toString()).reduceLeft((s, f) => s"$s, $f")}]"
 
-  override def at(index: Int) =
-    if (index > -1 && index < fields.length) fields(index)
-    else throw sal.SalException("tuple out of index.")
+  override def at(index: Int) = fields(index)
 }
