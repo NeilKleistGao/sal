@@ -26,6 +26,7 @@ value: VAL_KW ID COLON_OP allTypes ASSIGN_OP expression |
 
 expression: lit | ID | create | ifCondition | expression AS_KW allTypes | lambda |
              LEFT_SQUARE expression (COMMA_OP expression)+ RIGHT_SQUARE                    | // tuple
+             expression LEFT_SQUARE expression RIGHT_SQUARE                                | // index
              expression LEFT_PARENTHESE RIGHT_PARENTHESE                                   | // application
              expression LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE |
              expression DOT_OP ID                                                          | // access
