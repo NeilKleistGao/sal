@@ -34,3 +34,6 @@ fun mf() = false
 val m = new M{ f = mf }
 
 val k = new K{}
+
+val i = new Bar{y = 2}
+val j = new Bar{1, 2, 3}

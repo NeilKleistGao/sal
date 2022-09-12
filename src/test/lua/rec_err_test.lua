@@ -9,4 +9,5 @@
   line 27: n3 got rec Bar, but rec Num is required.
   line 34: f requires void -> int, but got void -> bool
   line 36: unknown type K.
+  line 39: too many arguments when creating Bar
 ]]
