@@ -111,20 +111,22 @@ class Typer {
     try typeCtx?id match {
       case rt @ RecordType(_, fields) => {
         if (inits.length > rt.fields.length)
-          throw SalException(s"too many arguments when creating $id") // format later
+          throw SalException(s"too many arguments when creating $id.") // format later
 
         val namedInit = inits.filter((i) => !i.param._1.isEmpty).map((i) => (i.param._1.get, i.param._2)).toMap
         val defaultInit = inits.filter((i) => i.param._1.isEmpty).map((i) => i.param._2).iterator
 
+        namedInit.foreach((i) => if (!rt.contains(i._1)) throw SalException(s"${i._1} is not a member of $id."))
+
         fields.foreach((f) =>
           if (namedInit.contains(f._1)) {
             if (namedInit(f._1).salType !== f._2)
-              throw SalException(s"${f._1} requires ${f._2}, but got ${namedInit(f._1).salType}") // format later
+              throw SalException(s"${f._1} requires ${f._2}, but got ${namedInit(f._1).salType}.") // format later
           }
           else if (defaultInit.hasNext) {
             val node = defaultInit.next()
             if (node.salType !== f._2)
-              throw SalException(s"${f._1} requires ${f._2}, but got ${node.salType}") // format later
+              throw SalException(s"${f._1} requires ${f._2}, but got ${node.salType}.") // format later
           }
         )
 
