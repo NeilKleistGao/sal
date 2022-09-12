@@ -66,6 +66,7 @@ case class RecordType(val name: String, val fields: List[(String, Type)]) extend
   private lazy val map = fields.map((f) => (f._1, f._2)).toMap
 
   def get(field: String) = map.getOrElse(field, throw sal.SalException(s"$name doesn't have $field."))
+  def contains(name: String) = map.contains(name)
 }
 
 case class UnionType(lhs: Type, rhs: Type) extends Type {
