@@ -10,4 +10,5 @@
   line 34: f requires void -> int, but got void -> bool
   line 36: unknown type K.
   line 39: too many arguments when creating Bar
+  line 40: too many arguments when creating Bar
 ]]
