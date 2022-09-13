@@ -59,8 +59,7 @@ function: FUN_KW ID params COLON_OP allTypes ASSIGN_OP functionBody |
 application: expression LEFT_PARENTHESE RIGHT_PARENTHESE |
              expression LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE;
 
-record: REC_KW ID LEFT_BRACES RIGHT_BRACES |
-        REC_KW ID LEFT_BRACES fields RIGHT_BRACES;
+record: REC_KW ID LEFT_BRACES (fields)? RIGHT_BRACES;
 
 initializer: ID ASSIGN_OP expression | expression;
 
