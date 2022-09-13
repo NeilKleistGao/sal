@@ -212,9 +212,10 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   }
 
   override def visitRecord(ctx: SalParser.RecordContext) = {
+    val names = ctx.ID().asScala.toList.map(id => id.getText())
     val newType: RecordNode = 
-      if (ctx.fields != null) RecordNode(ctx.ID().getText(), visitFields(ctx.fields))
-      else RecordNode(ctx.ID().getText(), FieldsNode(List()))
+      if (ctx.fields != null) RecordNode(names(0), visitFields(ctx.fields))
+      else RecordNode(names(0), FieldsNode(List()))
 
     typeCtx := newType.salType
     newType
