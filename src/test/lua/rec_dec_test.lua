@@ -91,18 +91,18 @@ Union2 = {
   value = 42
 }
 Implement = {
-  f = nil,
+  f = Interface.f,
   x = 1,
   y = 2
 }
 Implement2 = {
-  g = nil,
-  f = nil
+  g = GG.g,
+  f = Interface.f
 }
 Implement3 = {
-  f = nil,
-  x = nil,
-  y = nil,
+  f = Implement.f,
+  x = Implement.x,
+  y = Implement.y,
   z = nil
 }
 local w33 = {

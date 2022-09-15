@@ -25,6 +25,7 @@ sealed trait BlockInnerType
 sealed trait ExpressionType
 sealed trait FieldType
 sealed trait ElseBlockType
+sealed trait FieldDefaultType
 
 case class LitNode(value: String) extends STNode with ExpressionType {
   override def toLua(indent: Int): String =
@@ -54,7 +55,8 @@ case class VariableNode(name: String, tp: Type) extends STNode with ExpressionTy
   override def toLua(indent: Int): String = name
 }
 
-case class ExpressionNode(val exp: STNode with ExpressionType, tp: Option[Type] = None) extends STNode with FunctionBodyType with BlockInnerType with ElseBlockType {
+case class ExpressionNode(val exp: STNode with ExpressionType, tp: Option[Type] = None)
+  extends STNode with FunctionBodyType with BlockInnerType with ElseBlockType with FieldDefaultType {
   override def toLua(indent: Int): String = exp match {
     case c @ IfConditionNode(_, _, _, res) =>
       s"${Prefix(indent)}(function()\n${c.toLua(indent + 1)}\n${Prefix(indent + 1)}return $res\n${Prefix(indent)}end)()"
@@ -169,14 +171,18 @@ case class ApplicationNode(func: ExpressionNode, params: List[ExpressionNode], r
   }
 }
 
-case class FieldNode(val id: String, field: STNode with FieldType, default: Option[ExpressionNode] = None) extends STNode {
+case class ReferenceNode(parent: String, member: String) extends STNode with FieldDefaultType
+case class FieldNode(val id: String, field: STNode with FieldType, default: Option[STNode with FieldDefaultType] = None) extends STNode {
   override lazy val salType = field match {
     case f: FunctionNode => f.functionType
     case _ => field.salType
   }
   override def toLua(indent: Int): String = field match {
     case t: TypeNameNode => default match {
-      case Some(v) => s"${Prefix(indent)}$id = ${v.toLua(0)}"
+      case Some(v) => v match {
+        case exp: ExpressionNode => s"${Prefix(indent)}$id = ${exp.toLua(0)}"
+        case ReferenceNode(parent, member) => s"${Prefix(indent)}$id = $parent.$member"
+      }
       case _ => s"${Prefix(indent)}$id = nil"
     }
     case FunctionNode(id, params, res, body) =>

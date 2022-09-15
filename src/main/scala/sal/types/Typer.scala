@@ -3,7 +3,8 @@ package sal.types
 import org.antlr.v4.runtime.{ParserRuleContext}
 import java.lang.StringBuilder
 import sal.types._
-import sal.{SalException, ExpressionNode, FieldNode, InitializerNode, LitNode, UnOpExpression, BiOpExpression, TypeNameNode}
+import sal.{SalException, ExpressionNode, FieldNode, InitializerNode, LitNode, UnOpExpression}
+import sal.{BiOpExpression, TypeNameNode, ReferenceNode}
 
 class Typer {
   import Typer._
@@ -185,7 +186,7 @@ class Typer {
           report(s"the field ${f._1} has existed in $name", at(ctx))
           lst
         }
-        else (FieldNode(f._1, TypeNameNode(f._2)) +: lst)
+        else (FieldNode(f._1, TypeNameNode(f._2), Some(ReferenceNode(name, f._1))) +: lst)
       )
       case _ => res
     })
