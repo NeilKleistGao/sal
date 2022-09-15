@@ -181,11 +181,11 @@ class Typer {
       }
     }) match {
       case RecordType(_, fields) => fields.foldLeft(res)((lst, f) =>
-        if (from.exists(node => (node.id.equals(f._1) && (node.salType !== f._2)))) {
-          report(s"the field ${f._1} has another type rather than ${f._2}", at(ctx))
+        if (from.exists(node => node.id.equals(f._1))) {
+          report(s"the field ${f._1} has existed in $name", at(ctx))
           lst
         }
-        else FieldNode(f._1, TypeNameNode(f._2)) +: lst
+        else (FieldNode(f._1, TypeNameNode(f._2)) +: lst)
       )
       case _ => res
     })
