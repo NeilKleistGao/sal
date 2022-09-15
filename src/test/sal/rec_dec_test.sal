@@ -60,3 +60,5 @@ rec Implement2 with Interface with GG {}
 rec Implement3 with Implement {
   z: float
 }
+
+val w33 = new Implement3{x = 3, y = 3}

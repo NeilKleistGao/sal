@@ -180,7 +180,7 @@ class Typer {
         anythingType // shield other type checking.
       }
     }) match {
-      case RecordType(_, fields) => fields.foldLeft(res)((lst, f) =>
+      case RecordType(_, fields) => fields.foldRight(res)((f, lst) =>
         if (from.exists(node => node.id.equals(f._1))) {
           report(s"the field ${f._1} has existed in $name", at(ctx))
           lst

@@ -100,8 +100,14 @@ Implement2 = {
   f = nil
 }
 Implement3 = {
-  y = nil,
-  x = nil,
   f = nil,
+  x = nil,
+  y = nil,
   z = nil
 }
+local w33 = {
+  f = Implement3.f,
+  x = 3,
+  y = 3,
+  z = Implement3.z
+} --[[type: rec Implement3.]]
