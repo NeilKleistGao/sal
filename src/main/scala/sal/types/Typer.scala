@@ -3,7 +3,7 @@ package sal.types
 import org.antlr.v4.runtime.{ParserRuleContext}
 import java.lang.StringBuilder
 import sal.types._
-import sal.{SalException, ExpressionNode, FieldNode, InitializerNode, LitNode, UnOpExpression, BiOpExpression}
+import sal.{SalException, ExpressionNode, FieldNode, InitializerNode, LitNode, UnOpExpression, BiOpExpression, TypeNameNode}
 
 class Typer {
   import Typer._
@@ -174,7 +174,21 @@ class Typer {
     }
 
   def mixRecords(ctx: ParserRuleContext, from: List[FieldNode], withList: List[String])(implicit typeCtx: Context) =
-    withList.foldLeft(from)((res, parent) => res)
+    withList.foldLeft(from)((res, name) => (try typeCtx?name catch {
+      case SalException(info) => {
+        report(info, at(ctx))
+        anythingType // shield other type checking.
+      }
+    }) match {
+      case RecordType(_, fields) => fields.foldLeft(res)((lst, f) =>
+        if (from.exists(node => (node.id.equals(f._1) && (node.salType !== f._2)))) {
+          report(s"the field ${f._1} has another type rather than ${f._2}", at(ctx))
+          lst
+        }
+        else res :+ FieldNode(f._1, TypeNameNode(f._2))
+      )
+      case _ => res
+    })
 }
 
 object Typer {

@@ -49,3 +49,8 @@ rec Union1 {
 rec Union2 {
   value: string | int | bool | float = 42
 }
+
+rec Implement with Interface {
+  x: int = 1,
+  y: int = 2
+}

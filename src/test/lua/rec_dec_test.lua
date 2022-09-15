@@ -90,3 +90,8 @@ Union1 = {
 Union2 = {
   value = 42
 }
+Implement = {
+  x = 1,
+  y = 2,
+  f = nil
+}
