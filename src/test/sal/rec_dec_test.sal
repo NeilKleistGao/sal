@@ -54,3 +54,9 @@ rec Implement with Interface {
   x: int = 1,
   y: int = 2
 }
+
+rec Implement2 with Interface with GG {}
+
+rec Implement3 with Implement {
+  z: float
+}

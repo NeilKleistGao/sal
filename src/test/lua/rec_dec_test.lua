@@ -91,7 +91,17 @@ Union2 = {
   value = 42
 }
 Implement = {
+  f = nil,
   x = 1,
-  y = 2,
+  y = 2
+}
+Implement2 = {
+  g = nil,
   f = nil
+}
+Implement3 = {
+  y = nil,
+  x = nil,
+  f = nil,
+  z = nil
 }

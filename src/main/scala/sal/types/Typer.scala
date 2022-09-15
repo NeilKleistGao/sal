@@ -185,7 +185,7 @@ class Typer {
           report(s"the field ${f._1} has another type rather than ${f._2}", at(ctx))
           lst
         }
-        else res :+ FieldNode(f._1, TypeNameNode(f._2))
+        else FieldNode(f._1, TypeNameNode(f._2)) +: lst
       )
       case _ => res
     })
