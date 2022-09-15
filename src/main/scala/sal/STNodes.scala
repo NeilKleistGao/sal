@@ -184,7 +184,7 @@ case class FieldNode(val id: String, field: STNode with FieldType, default: Opti
   }
 }
 
-case class FieldsNode(val fields: List[FieldNode]) extends STNode {
+case class FieldsNode(fields: List[FieldNode]) extends STNode {
   override def toLua(indent: Int): String =
     if (fields.isEmpty) ""
     else fields.map((f) => f.toLua(indent)).reduceLeft((res, f) => s"$res,\n$f")
