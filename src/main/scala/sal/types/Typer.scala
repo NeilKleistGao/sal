@@ -172,6 +172,9 @@ class Typer {
       }
       case _ => report("only int can be used for indexing.", at(ctx)); false
     }
+
+  def mixRecords(ctx: ParserRuleContext, from: List[FieldNode], withList: List[String])(implicit typeCtx: Context) =
+    withList.foldLeft(from)((res, parent) => res)
 }
 
 object Typer {
