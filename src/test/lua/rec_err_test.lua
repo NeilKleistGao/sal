@@ -12,4 +12,5 @@
   line 38: y is not a member of Bar.
   line 39: too many arguments when creating Bar.
   line 40: too many arguments when creating Bar.
+  line 42: the field f has existed in M
 ]]

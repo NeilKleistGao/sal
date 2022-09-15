@@ -3,7 +3,8 @@ package sal.types
 import org.antlr.v4.runtime.{ParserRuleContext}
 import java.lang.StringBuilder
 import sal.types._
-import sal.{SalException, ExpressionNode, FieldNode, InitializerNode, LitNode, UnOpExpression, BiOpExpression}
+import sal.{SalException, ExpressionNode, FieldNode, InitializerNode, LitNode, UnOpExpression}
+import sal.{BiOpExpression, TypeNameNode, ReferenceNode}
 
 class Typer {
   import Typer._
@@ -172,6 +173,23 @@ class Typer {
       }
       case _ => report("only int can be used for indexing.", at(ctx)); false
     }
+
+  def mixRecords(ctx: ParserRuleContext, from: List[FieldNode], withList: List[String])(implicit typeCtx: Context) =
+    withList.foldLeft(from)((res, name) => (try typeCtx?name catch {
+      case SalException(info) => {
+        report(info, at(ctx))
+        anythingType // shield other type checking.
+      }
+    }) match {
+      case RecordType(_, fields) => fields.foldRight(res)((f, lst) =>
+        if (from.exists(node => node.id.equals(f._1))) {
+          report(s"the field ${f._1} has existed in $name", at(ctx))
+          lst
+        }
+        else (FieldNode(f._1, TypeNameNode(f._2), Some(ReferenceNode(name, f._1))) +: lst)
+      )
+      case _ => res
+    })
 }
 
 object Typer {

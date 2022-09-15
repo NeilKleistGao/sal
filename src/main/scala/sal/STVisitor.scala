@@ -202,23 +202,29 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       FieldNode(name, tp, Some(init))
     }
 
-  override def visitFields(ctx: SalParser.FieldsContext) = {
+  private def visitRecFields(ctx: SalParser.FieldsContext) = {
     val list = ctx.field.asScala.toList.map((f) => visitField(f))
     stack.push(typeCtx)
     typeCtx = typeCtx.derive()
     typer.addFields(ctx, list)
     typeCtx = stack.pop()
-    FieldsNode(list)
+    list
   }
 
   override def visitRecord(ctx: SalParser.RecordContext) = {
-    val newType: RecordNode = 
-      if (ctx.fields != null) RecordNode(ctx.ID().getText(), visitFields(ctx.fields))
-      else RecordNode(ctx.ID().getText(), FieldsNode(List()))
+    val names = ctx.ID().asScala.toList.map(id => id.getText())
+    val mixin = visitWith(ctx)
+    val fields =
+      if (ctx.fields != null) visitRecFields(ctx.fields)
+      else List()
+    val newType = RecordNode(names(0), FieldsNode(typer.mixRecords(ctx, fields, mixin)))
 
     typeCtx := newType.salType
     newType
   }
+
+  private def visitWith(ctx: SalParser.RecordContext) =
+    ctx.ID().asScala.toList.drop(1).map(id => id.getText())
     
   private def visitAccess(ctx: SalParser.ExpressionContext): AccessNode = {
     val rec = visitExpression(ctx.expression(0))

@@ -38,3 +38,7 @@ val k = new K{}
 val i = new Bar{y = 2}
 val j = new Bar{1, 2, 3}
 val ij = new Bar{x = 1, 2, 3}
+
+rec MM with M {
+  f: string
+}

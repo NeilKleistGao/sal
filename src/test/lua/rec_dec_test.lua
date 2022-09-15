@@ -90,3 +90,24 @@ Union1 = {
 Union2 = {
   value = 42
 }
+Implement = {
+  f = Interface.f,
+  x = 1,
+  y = 2
+}
+Implement2 = {
+  g = GG.g,
+  f = Interface.f
+}
+Implement3 = {
+  f = Implement.f,
+  x = Implement.x,
+  y = Implement.y,
+  z = nil
+}
+local w33 = {
+  f = Implement3.f,
+  x = 3,
+  y = 3,
+  z = Implement3.z
+} --[[type: rec Implement3.]]

@@ -21,8 +21,7 @@ allTypes: LEFT_PARENTHESE allTypes RIGHT_PARENTHESE |
           allTypes BIT_OR_OP allTypes |<assoc=right> allTypes ARROW_OP allTypes |
           LEFT_SQUARE allTypes (COMMA_OP allTypes)+ RIGHT_SQUARE | ID | typeName;
 
-value: VAL_KW ID COLON_OP allTypes ASSIGN_OP expression |
-       VAL_KW ID ASSIGN_OP expression;
+value: VAL_KW ID (COLON_OP allTypes)? ASSIGN_OP expression;
 
 expression: lit | ID | create | ifCondition | expression AS_KW allTypes | lambda |
              LEFT_SQUARE expression (COMMA_OP expression)+ RIGHT_SQUARE                    | // tuple
@@ -46,30 +45,24 @@ functionBody: block | expression;
 
 param: ID COLON_OP allTypes | ID;
 
-params: (LEFT_PARENTHESE RIGHT_PARENTHESE) |
-        (LEFT_PARENTHESE param (COMMA_OP param)* RIGHT_PARENTHESE);
+params: LEFT_PARENTHESE (param (COMMA_OP param)*)? RIGHT_PARENTHESE;
 
 field: ID COLON_OP allTypes | function | ID COLON_OP allTypes ASSIGN_OP expression;
 
 fields: field (COMMA_OP field)*;
 
-function: FUN_KW ID params COLON_OP allTypes ASSIGN_OP functionBody |
-          FUN_KW ID params ASSIGN_OP functionBody;
+function: FUN_KW ID params (COLON_OP allTypes)? ASSIGN_OP functionBody;
 
-application: expression LEFT_PARENTHESE RIGHT_PARENTHESE |
-             expression LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE;
+application: expression LEFT_PARENTHESE (expression (COMMA_OP expression)*)? RIGHT_PARENTHESE;
 
-record: REC_KW ID LEFT_BRACES RIGHT_BRACES |
-        REC_KW ID LEFT_BRACES fields RIGHT_BRACES;
+record: REC_KW ID (WITH_KW ID)* LEFT_BRACES (fields)? RIGHT_BRACES;
 
 initializer: ID ASSIGN_OP expression | expression;
 
-create: NEW_KW ID LEFT_BRACES RIGHT_BRACES |
-        NEW_KW ID LEFT_BRACES initializer (COMMA_OP initializer)* RIGHT_BRACES;
+create: NEW_KW ID LEFT_BRACES (initializer (COMMA_OP initializer)*)? RIGHT_BRACES;
 
 ifCondition: IF_KW LEFT_PARENTHESE expression RIGHT_PARENTHESE (block | expression) (elseIfCondition)* elseBlock?;
 elseIfCondition: ELSE_KW IF_KW LEFT_PARENTHESE expression RIGHT_PARENTHESE (block | expression);
 elseBlock: ELSE_KW (block | expression);
 
-lambda: FUN_KW params COLON_OP allTypes ASSIGN_OP expression |
-        FUN_KW params ASSIGN_OP expression;
+lambda: FUN_KW params (COLON_OP allTypes)? ASSIGN_OP expression;
