@@ -48,6 +48,22 @@ object OperatorParser {
     case Sub =>
       if ((lhs === types.floatType) || (rhs === types.floatType)) FSub
       else Sub
+    case Less =>
+      if ((lhs === types.floatType) || (rhs === types.floatType)) FLess
+      else if ((lhs === types.stringType) && (rhs === types.stringType)) SLess
+      else Less
+    case Greater =>
+      if ((lhs === types.floatType) || (rhs === types.floatType)) FGreater
+      else if ((lhs === types.stringType) && (rhs === types.stringType)) SGreater
+      else Greater
+    case LessEqual =>
+      if ((lhs === types.floatType) || (rhs === types.floatType)) FLessEqual
+      else if ((lhs === types.stringType) && (rhs === types.stringType)) SLessEqual
+      else LessEqual
+    case GreaterEqual =>
+      if ((lhs === types.floatType) || (rhs === types.floatType)) FGreaterEqual
+      else if ((lhs === types.stringType) && (rhs === types.stringType)) SGreaterEqual
+      else GreaterEqual
     case _ => op
   }
 }
@@ -76,5 +92,17 @@ object OperatorTranslator {
     case BitwiseOr => "|"
     case LogicAnd => "and"
     case LogicOr => "or"
+    case Less => "<"
+    case FLess => "<"
+    case SLess => "<"
+    case Greater => ">"
+    case FGreater => ">"
+    case SGreater => ">"
+    case LessEqual => "<="
+    case FLessEqual => "<="
+    case SLessEqual => "<="
+    case GreaterEqual => ">="
+    case FGreaterEqual => ">="
+    case SGreaterEqual => ">="
   }
 }
