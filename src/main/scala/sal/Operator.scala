@@ -87,11 +87,6 @@ object OperatorTranslator {
     case FSub => "-"
     case LeftShift => "<<"
     case RightShift => ">>"
-    case BitwiseAnd => "&"
-    case BitwiseXor => "~"
-    case BitwiseOr => "|"
-    case LogicAnd => "and"
-    case LogicOr => "or"
     case Less => "<"
     case FLess => "<"
     case SLess => "<"
@@ -104,5 +99,10 @@ object OperatorTranslator {
     case GreaterEqual => ">="
     case FGreaterEqual => ">="
     case SGreaterEqual => ">="
+    case BitwiseAnd => "&"
+    case BitwiseXor => "~"
+    case BitwiseOr => "|"
+    case LogicAnd => "and"
+    case LogicOr => "or"
   }
 }
