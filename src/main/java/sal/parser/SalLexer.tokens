@@ -45,11 +45,12 @@ DIV_OP=44
 MOD_OP=45
 POW_OP=46
 LESS_OP=47
-GREATE_OP=48
+GREATER_OP=48
 LE_OP=49
 GE_OP=50
 NE_OP=51
-ID=52
+EQ_OP=52
+ID=53
 'val'=1
 'int'=2
 'float'=3
@@ -98,3 +99,4 @@ ID=52
 '<='=49
 '>='=50
 '!='=51
+'=='=52

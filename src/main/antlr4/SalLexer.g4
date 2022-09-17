@@ -55,9 +55,10 @@ DIV_OP: '/';
 MOD_OP: '%';
 POW_OP: '^^';
 LESS_OP: '<';
-GREATE_OP: '>';
+GREATER_OP: '>';
 LE_OP: '<=';
 GE_OP: '>=';
 NE_OP: '!=';
+EQ_OP: '==';
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
