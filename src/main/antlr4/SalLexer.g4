@@ -58,7 +58,5 @@ LESS_OP: '<';
 GREATER_OP: '>';
 LE_OP: '<=';
 GE_OP: '>=';
-NE_OP: '!=';
-EQ_OP: '==';
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;

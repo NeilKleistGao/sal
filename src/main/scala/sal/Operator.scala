@@ -4,9 +4,8 @@ object Operator extends Enumeration {
   type Operator = Value
   val Pow, LogicNot, BitwiseNot, Mul, FMul, Div, FDiv, Mod, Add, FAdd, SAdd, Sub, FSub,
       LeftShift, RightShift, Less, Greater, LessEqual, GreaterEqual,
-      FLess, FGreater, FLessEqual, FGreaterEqual,
-      SLess, SGreater, SLessEqual, SGreaterEqual,
-      Equal, NotEqual, BitwiseAnd, BitwiseXor, BitwiseOr, LogicAnd, LogicOr = Value
+      FLess, FGreater, FLessEqual, FGreaterEqual, SLess, SGreater, SLessEqual, SGreaterEqual,
+      BitwiseAnd, BitwiseXor, BitwiseOr, LogicAnd, LogicOr = Value
 }
 
 object OperatorParser {
@@ -28,7 +27,6 @@ object OperatorParser {
     else if (ctx.GREATER_OP() != null) Greater
     else if (ctx.LE_OP() != null) LessEqual
     else if (ctx.GE_OP() != null) GreaterEqual
-    else if (ctx.NE_OP() != null) NotEqual
     else if (ctx.BIT_AND_OP() != null) BitwiseAnd
     else if (ctx.BIT_XOR_OP() != null) BitwiseXor
     else if (ctx.BIT_OR_OP() != null) BitwiseOr

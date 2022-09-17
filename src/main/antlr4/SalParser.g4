@@ -35,7 +35,7 @@ expression: lit | ID | create | ifCondition | expression AS_KW allTypes | lambda
              expression (MUL_OP | DIV_OP | MOD_OP) expression                              |
              expression (ADD_OP | SUB_OP) expression                                       |
              expression (LEFT_SHIFT_OP | RIGHT_SHIFT_OP) expression                        |
-             expression (LESS_OP | GREATER_OP | LE_OP | GE_OP | NE_OP) expression          |
+             expression (LESS_OP | GREATER_OP | LE_OP | GE_OP) expression                  |
              expression BIT_AND_OP expression                                              |
              expression BIT_XOR_OP expression                                              |
              expression BIT_OR_OP expression                                               |
