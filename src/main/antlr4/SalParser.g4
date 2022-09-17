@@ -23,9 +23,9 @@ allTypes: LEFT_PARENTHESE allTypes RIGHT_PARENTHESE |
 
 value: VAL_KW ID (COLON_OP allTypes)? ASSIGN_OP expression;
 
-expression: lit | ID | create | ifCondition | expression AS_KW allTypes | lambda |
+expression: lit | ID | create | ifCondition | expression AS_KW allTypes | lambda           |
              LEFT_SQUARE expression (COMMA_OP expression)+ RIGHT_SQUARE                    | // tuple
-             expression LEFT_SQUARE lit RIGHT_SQUARE                                    | // index
+             expression LEFT_SQUARE lit RIGHT_SQUARE                                       | // index
              expression LEFT_PARENTHESE RIGHT_PARENTHESE                                   | // application
              expression LEFT_PARENTHESE expression (COMMA_OP expression)* RIGHT_PARENTHESE |
              expression DOT_OP ID                                                          | // access
@@ -35,6 +35,7 @@ expression: lit | ID | create | ifCondition | expression AS_KW allTypes | lambda
              expression (MUL_OP | DIV_OP | MOD_OP) expression                              |
              expression (ADD_OP | SUB_OP) expression                                       |
              expression (LEFT_SHIFT_OP | RIGHT_SHIFT_OP) expression                        |
+             expression (LESS_OP | GREATER_OP | LE_OP | GE_OP) expression                  |
              expression BIT_AND_OP expression                                              |
              expression BIT_XOR_OP expression                                              |
              expression BIT_OR_OP expression                                               |

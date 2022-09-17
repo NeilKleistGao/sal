@@ -3,7 +3,9 @@ package sal
 object Operator extends Enumeration {
   type Operator = Value
   val Pow, LogicNot, BitwiseNot, Mul, FMul, Div, FDiv, Mod, Add, FAdd, SAdd, Sub, FSub,
-      LeftShift, RightShift, BitwiseAnd, BitwiseXor, BitwiseOr, LogicAnd, LogicOr = Value
+      LeftShift, RightShift, Less, Greater, LessEqual, GreaterEqual,
+      FLess, FGreater, FLessEqual, FGreaterEqual, SLess, SGreater, SLessEqual, SGreaterEqual,
+      BitwiseAnd, BitwiseXor, BitwiseOr, LogicAnd, LogicOr = Value
 }
 
 object OperatorParser {
@@ -21,6 +23,10 @@ object OperatorParser {
     else if (ctx.SUB_OP() != null) Sub
     else if (ctx.LEFT_SHIFT_OP() != null) LeftShift
     else if (ctx.RIGHT_SHIFT_OP() != null) RightShift
+    else if (ctx.LESS_OP() != null) Less
+    else if (ctx.GREATER_OP() != null) Greater
+    else if (ctx.LE_OP() != null) LessEqual
+    else if (ctx.GE_OP() != null) GreaterEqual
     else if (ctx.BIT_AND_OP() != null) BitwiseAnd
     else if (ctx.BIT_XOR_OP() != null) BitwiseXor
     else if (ctx.BIT_OR_OP() != null) BitwiseOr
@@ -42,6 +48,22 @@ object OperatorParser {
     case Sub =>
       if ((lhs === types.floatType) || (rhs === types.floatType)) FSub
       else Sub
+    case Less =>
+      if ((lhs === types.floatType) || (rhs === types.floatType)) FLess
+      else if ((lhs === types.stringType) && (rhs === types.stringType)) SLess
+      else Less
+    case Greater =>
+      if ((lhs === types.floatType) || (rhs === types.floatType)) FGreater
+      else if ((lhs === types.stringType) && (rhs === types.stringType)) SGreater
+      else Greater
+    case LessEqual =>
+      if ((lhs === types.floatType) || (rhs === types.floatType)) FLessEqual
+      else if ((lhs === types.stringType) && (rhs === types.stringType)) SLessEqual
+      else LessEqual
+    case GreaterEqual =>
+      if ((lhs === types.floatType) || (rhs === types.floatType)) FGreaterEqual
+      else if ((lhs === types.stringType) && (rhs === types.stringType)) SGreaterEqual
+      else GreaterEqual
     case _ => op
   }
 }
@@ -65,6 +87,18 @@ object OperatorTranslator {
     case FSub => "-"
     case LeftShift => "<<"
     case RightShift => ">>"
+    case Less => "<"
+    case FLess => "<"
+    case SLess => "<"
+    case Greater => ">"
+    case FGreater => ">"
+    case SGreater => ">"
+    case LessEqual => "<="
+    case FLessEqual => "<="
+    case SLessEqual => "<="
+    case GreaterEqual => ">="
+    case FGreaterEqual => ">="
+    case SGreaterEqual => ">="
     case BitwiseAnd => "&"
     case BitwiseXor => "~"
     case BitwiseOr => "|"

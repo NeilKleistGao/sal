@@ -17,3 +17,7 @@ val e = 5.0 / 2
 val f = 5 / 2.0
 val g = 12 % 5
 val h = "abc" + "def"
+
+val nop = if (1 > 2) false else true
+val yep = if (3.14 > 0) true else false
+val ss = "abc" > "ab"
