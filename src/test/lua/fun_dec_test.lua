@@ -82,3 +82,11 @@ function overload(x, y) --[[type: int | float -> bool -> float.]]
   return 1.0
 end
 local overF = overload(2, false) --[[type: float.]]
+function hp(x, y) --[[type: int -> int -> int -> int.]]
+  return (function (z) return ((x) + (y)) + (z) end)
+end
+local res_hp = (hp(1, 2))(3) --[[type: int.]]
+function voidOne(x) --[[type: int -> void -> int.]]
+  return (function () return x end)
+end
+local xxx = (voidOne(42))() --[[type: int.]]

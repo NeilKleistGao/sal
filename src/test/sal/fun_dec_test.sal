@@ -61,3 +61,9 @@ val pHigh3: (int -> int) -> (int -> int) = high
 
 fun overload(x: int | float, y: bool): float = 1.0
 val overF = overload(2, false)
+
+fun hp(x: int, y: int): int -> int = fun(z: int) = x + y + z
+val res_hp = hp(1, 2)(3)
+
+fun voidOne(x: int): void -> int = fun() = x
+val xxx = voidOne(42)()
