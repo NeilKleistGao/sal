@@ -20,3 +20,6 @@ fun high2(): int -> int = {
 fun hh(f: int -> int): int -> int = f
 
 val h_h: int -> int -> int -> int = hh
+
+fun hp(x: int, y: int): int -> int = fun(z: int) = x + y + z
+val res_hp = hp(1, 2, 3)
