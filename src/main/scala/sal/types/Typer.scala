@@ -198,8 +198,10 @@ object Typer {
   private def at(ctx: ParserRuleContext) = ctx.getStart().getLine()
 
   private def matchApplicationType(fun: Type, index: Int)(implicit funcNode: ExpressionNode, params: List[ExpressionNode]): Type = fun match {
-    case FunctionType(p, r, _) =>
-      if (p === voidType && params.isEmpty) r
+    case FunctionType(p, r, c) =>
+      if (params.length > c && c != -1)
+        throw SalException(s"too many parameters are provided at once in ${funcNode.toLua(0)}.")
+      else if (p === voidType && params.isEmpty) r
       else if (index == params.length - 1)
         if (p === params(index).salType) r
         else throw SalException(s"${funcNode.toLua(0)}'s parameters[$index] requires $p, but got ${params(index).salType}.")
