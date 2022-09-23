@@ -208,7 +208,7 @@ case class RecordNode(id: String, fields: FieldsNode) extends STNode with Statem
     s"${Prefix(indent)}$id = {\n${fields.toLua(indent + 1)}\n${Prefix(indent)}}"
 }
 
-case class AccessNode(rec: ExpressionNode, field: String, res: Type) extends STNode with ExpressionType {
+case class SelectionNode(rec: ExpressionNode, field: String, res: Type) extends STNode with ExpressionType {
   override lazy val salType = res
 
   override def toLua(indent: Int): String = s"(${rec.toLua(indent)}).$field"

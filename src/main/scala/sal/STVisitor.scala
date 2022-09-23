@@ -226,11 +226,11 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   private def visitWith(ctx: SalParser.RecordContext) =
     ctx.ID().asScala.toList.drop(1).map(id => id.getText())
     
-  private def visitAccess(ctx: SalParser.ExpressionContext): AccessNode = {
+  private def visitAccess(ctx: SalParser.ExpressionContext): SelectionNode = {
     val rec = visitExpression(ctx.expression(0))
     val fieldName = ctx.ID().getText()
 
-    AccessNode(rec, fieldName, typer.getFieldType(ctx, rec, fieldName, rec.salType))
+    SelectionNode(rec, fieldName, typer.getFieldType(ctx, rec, fieldName, rec.salType))
   }
 
   override def visitInitializer(ctx: SalParser.InitializerContext): InitializerNode =
