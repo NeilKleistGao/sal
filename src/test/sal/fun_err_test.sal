@@ -26,3 +26,5 @@ val res_hp = hp(1, 2, 3)
 
 fun wrongForward(x: int): string
 fun wrongForward(x: bool) = "42"
+
+fun noImplement(x: int): int

@@ -45,3 +45,5 @@ rec MM with M {
 
 rec ABC
 fun ABC(x: int): int = 42
+
+rec NoImplement

@@ -24,6 +24,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
 
   override def visitProgram(ctx: SalParser.ProgramContext) = {
     val list = ctx.statement.asScala.toList.map((s) => visitStatement(s))
+    typer.checkImplementation()
     typer.getErrorMessage() match {
       case Some(err) => throw SalException(err.toString())
       case _ => ProgramNode(list)

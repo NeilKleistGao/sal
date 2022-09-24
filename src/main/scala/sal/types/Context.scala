@@ -27,8 +27,10 @@ class Context(parent: Option[Context]) {
       case _ => throw sal.SalException(s"duplicate variable ${info._1}.")
     }
     else if (forwardDec.contains(info._1)) {
-      if (forwardDec(info._1) !== info._2)
+      if (forwardDec(info._1) !== info._2) {
+        forwardDec.remove(info._1)
         throw sal.SalException(s"implementation of ${info._1} does not correspond to the forward declaration.")
+      }
       else {
         map.put(info._1, info._2)
         forwardDec.remove(info._1)
@@ -65,8 +67,10 @@ class Context(parent: Option[Context]) {
     if (newTypes.contains(rec.name))
       throw sal.SalException(s"duplicate record type ${rec.name}.")
     else if (forwardDec.contains(rec.name)) {
-      if (forwardDec(rec.name) !== rec)
+      if (forwardDec(rec.name) !== rec) {
+        forwardDec.remove(rec.name)
         throw sal.SalException(s"implementation of ${rec.name} does not correspond to the forward declaration.")
+      }
       else {
         newTypes.put(rec.name, rec)
         forwardDec.remove(rec.name)

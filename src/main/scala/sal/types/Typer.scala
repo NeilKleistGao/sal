@@ -204,6 +204,9 @@ class Typer {
         report(info, at(ctx))
       }
     }
+
+  def checkImplementation()(implicit typeCtx: Context): Unit =
+    typeCtx.getNotImplementedTypes.foreach(pair => report(s"implementation of ${pair._1} not found.", -1))
 }
 
 object Typer {
