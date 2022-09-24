@@ -23,3 +23,7 @@ fun n() = {
   val x = 42
   x
 }
+
+fun fact(x: int): int
+fun fact(x: int) =
+  if (x < 2) 1 else fact(x - 1) * x

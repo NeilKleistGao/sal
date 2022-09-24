@@ -17,6 +17,7 @@ class Context(parent: Option[Context]) {
   )
 
   private val newTypes = HashMap[String, RecordType]()
+  private val forwardDec = HashMap[String, Type]()
 
   def derive() = new Context(Some(this))
 
@@ -24,6 +25,16 @@ class Context(parent: Option[Context]) {
     if (map.contains(info._1)) map(info._1) match {
       case PreservedKeyword => throw sal.SalException(s"${info._1} is a preserved keyword in lua.")
       case _ => throw sal.SalException(s"duplicate variable ${info._1}.")
+    }
+    else if (forwardDec.contains(info._1)) {
+      if (forwardDec(info._1) !== info._2) {
+        forwardDec.remove(info._1)
+        throw sal.SalException(s"implementation of ${info._1} does not correspond to the forward declaration.")
+      }
+      else {
+        map.put(info._1, info._2)
+        forwardDec.remove(info._1)
+      }
     }
     else map.put(info._1, info._2)
 
@@ -35,7 +46,7 @@ class Context(parent: Option[Context]) {
     else map(name) === req
 
   def alloc(name: String, tp: Type): String =
-    if (map.contains(name)) alloc(name + "_", tp)
+    if (map.contains(name) || forwardDec.contains(name)) alloc(name + "_", tp)
     else {
       map.put(name, tp)
       name
@@ -44,20 +55,41 @@ class Context(parent: Option[Context]) {
   def -=(name: String): Unit = map.remove(name); {}
 
   def query(name: String): Type =
-    map.getOrElse(name, parent match {
+    map.getOrElse(name, forwardDec.getOrElse(name, parent match {
       case Some(p) => p.query(name)
       case _ => throw sal.SalException(s"unknown variable $name.")
-    })
+    }))
 
   def query(op: sal.Operator.Operator): Type =
     Context.operatos.getOrElse(op, throw sal.SalException(s"unknown operator $op."))
 
-  def :=(rec: RecordType): Unit = newTypes.put(rec.name, rec)
+  def :=(rec: RecordType): Unit =
+    if (newTypes.contains(rec.name))
+      throw sal.SalException(s"duplicate record type ${rec.name}.")
+    else if (forwardDec.contains(rec.name)) {
+      if (forwardDec(rec.name) !== rec) {
+        forwardDec.remove(rec.name)
+        throw sal.SalException(s"implementation of ${rec.name} does not correspond to the forward declaration.")
+      }
+      else {
+        newTypes.put(rec.name, rec)
+        forwardDec.remove(rec.name)
+      }
+    }
+    else newTypes.put(rec.name, rec)
+  
   def ?(typeName: String): Type =
-    newTypes.getOrElse(typeName, parent match {
+    newTypes.getOrElse(typeName, forwardDec.getOrElse(typeName, parent match {
       case Some(p) => p?typeName
       case _ => throw sal.SalException(s"unknown type $typeName.")
-    })
+    }))
+
+  def +=!(info: (String, Type)) =
+    if (forwardDec.contains(info._1) || map.contains(info._1))
+      throw sal.SalException(s"duplicate forward declaration ${info._1}.")
+    else forwardDec.put(info._1, info._2)
+
+  def getNotImplementedTypes = forwardDec
 }
 
 object Context {

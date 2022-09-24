@@ -190,6 +190,23 @@ class Typer {
       )
       case _ => res
     })
+
+  def addFunctionDeclaration(ctx: ParserRuleContext, name: String, tp: Type)(implicit typeCtx: Context): Unit =
+    try typeCtx +=! (name, tp) catch {
+      case SalException(info) => {
+        report(info, at(ctx))
+      }
+    }
+
+  def addRecordDeclaration(ctx: ParserRuleContext, name: String)(implicit typeCtx: Context): Unit =
+    try typeCtx +=! (name, RecordType(name, List())) catch {
+      case SalException(info) => {
+        report(info, at(ctx))
+      }
+    }
+
+  def checkImplementation()(implicit typeCtx: Context): Unit =
+    typeCtx.getNotImplementedTypes.foreach(pair => report(s"implementation of ${pair._1} not found.", -1))
 }
 
 object Typer {

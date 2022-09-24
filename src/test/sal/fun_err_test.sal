@@ -23,3 +23,8 @@ val h_h: int -> int -> int -> int = hh
 
 fun hp(x: int, y: int): int -> int = fun(z: int) = x + y + z
 val res_hp = hp(1, 2, 3)
+
+fun wrongForward(x: int): string
+fun wrongForward(x: bool) = "42"
+
+fun noImplement(x: int): int

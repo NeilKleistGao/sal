@@ -27,6 +27,8 @@ sealed trait FieldType
 sealed trait ElseBlockType
 sealed trait FieldDefaultType
 
+case object EmptyNode extends STNode with StatementType // for some non-lua-generating semantics
+
 case class LitNode(value: String) extends STNode with ExpressionType {
   override def toLua(indent: Int): String =
     if (value.equals("nix")) s"${Prefix(indent)}nil"
@@ -75,7 +77,7 @@ case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends
   override lazy val salType = voidType
 }
 
-case class StatementNode(s: STNode with StatementType) extends STNode with BlockInnerType {
+case class StatementNode(val s: STNode with StatementType) extends STNode with BlockInnerType {
   override def toLua(indent: Int): String = s.toLua(indent)
 
   override lazy val salType = s.salType
@@ -83,7 +85,10 @@ case class StatementNode(s: STNode with StatementType) extends STNode with Block
 
 case class ProgramNode(states: List[StatementNode]) extends STNode with ResultNode {
   override def toLua(indent: Int): String =
-    states.foldLeft("")((res, s) => s"$res${s.toLua(0)}\n")
+    states.foldLeft("")((res, s) => s.s match {
+      case EmptyNode => res
+      case _ => s"$res${s.toLua(0)}\n"
+    })
 
   override lazy val salType = voidType
 }

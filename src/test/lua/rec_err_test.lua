@@ -13,4 +13,6 @@
   line 39: too many arguments when creating Bar.
   line 40: too many arguments when creating Bar.
   line 42: the field f has existed in M
+  line 47: implementation of ABC does not correspond to the forward declaration.
+  line -1: implementation of NoImplement not found.
 ]]
