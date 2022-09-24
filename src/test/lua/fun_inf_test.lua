@@ -35,3 +35,15 @@ function n() --[[type: void -> int.]]
   res = x
   return res
 end
+
+function fact(x) --[[type: int -> int.]]
+  return (function()
+  local if_res = nil
+  if ((x) < (2)) then
+    if_res = 1
+  else
+    if_res = (fact((x) - (1))) * (x)
+  end
+  return if_res
+end)()
+end

@@ -27,7 +27,10 @@ sealed trait FieldType
 sealed trait ElseBlockType
 sealed trait FieldDefaultType
 
-case object EmptyNode extends STNode with StatementType // for some non-lua-generating semantics
+case object EmptyNode extends STNode with StatementType { // for some non-lua-generating semantics
+  override lazy val salType: Type = voidType
+  override def toLua(indent: Int): String = ""
+}
 
 case class LitNode(value: String) extends STNode with ExpressionType {
   override def toLua(indent: Int): String =
