@@ -35,6 +35,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     else if (ctx.application != null) StatementNode(visitApplication(ctx.application))
     else if (ctx.record != null) StatementNode(visitRecord(ctx.record))
     else if (ctx.ifCondition != null) StatementNode(visitIfCondition(ctx.ifCondition))
+    else if (ctx.forwardDec != null) StatementNode(visitForwardDec(ctx.forwardDec))
     else StatementNode(visitFunction(ctx.function))
 
   override def visitTypeName(ctx: SalParser.TypeNameContext): TypeNameNode =
@@ -314,7 +315,25 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     LambdaNode(params, retType, exp)
   }
 
-  override def visitForwardDec(ctx: SalParser.ForwardDecContext) = EmptyNode
+  override def visitForwardDec(ctx: SalParser.ForwardDecContext): STNode with StatementType =
+    if (ctx.FUN_KW() != null) {
+      stack.push(typeCtx)
+      typeCtx = typeCtx.derive()
+
+      val name = ctx.ID().getText()
+      val params = visitParams(ctx.params)
+      val retType = visitAllTypes(ctx.allTypes)
+      val res =
+        if (params.params.isEmpty) FunctionType(voidType, retType.salType, 0)
+        else params.params.foldRight(retType.salType)((p, t) => FunctionType(p.salType, t, params.params.length))
+      typeCtx = stack.pop()
+      typer.addFunctionDeclaration(ctx, name, res)
+      EmptyNode
+    }
+    else {
+      typer.addRecordDeclaration(ctx, ctx.ID().getText())
+      EmptyNode
+    }
 }
 
 object STVisitor {

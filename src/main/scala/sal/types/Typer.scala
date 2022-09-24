@@ -190,6 +190,20 @@ class Typer {
       )
       case _ => res
     })
+
+  def addFunctionDeclaration(ctx: ParserRuleContext, name: String, tp: Type)(implicit typeCtx: Context): Unit =
+    try typeCtx +=! (name, tp) catch {
+      case SalException(info) => {
+        report(info, at(ctx))
+      }
+    }
+
+  def addRecordDeclaration(ctx: ParserRuleContext, name: String)(implicit typeCtx: Context): Unit =
+    try typeCtx +=! (name, RecordType(name, List())) catch {
+      case SalException(info) => {
+        report(info, at(ctx))
+      }
+    }
 }
 
 object Typer {

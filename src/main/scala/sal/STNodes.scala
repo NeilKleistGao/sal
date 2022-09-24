@@ -18,8 +18,6 @@ object Prefix {
   }
 }
 
-case object EmptyNode extends STNode // for some non-lua-generating semantics
-
 sealed trait ResultNode
 sealed trait FunctionBodyType
 sealed trait StatementType
@@ -28,6 +26,8 @@ sealed trait ExpressionType
 sealed trait FieldType
 sealed trait ElseBlockType
 sealed trait FieldDefaultType
+
+case object EmptyNode extends STNode with StatementType // for some non-lua-generating semantics
 
 case class LitNode(value: String) extends STNode with ExpressionType {
   override def toLua(indent: Int): String =

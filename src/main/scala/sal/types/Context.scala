@@ -26,6 +26,14 @@ class Context(parent: Option[Context]) {
       case PreservedKeyword => throw sal.SalException(s"${info._1} is a preserved keyword in lua.")
       case _ => throw sal.SalException(s"duplicate variable ${info._1}.")
     }
+    else if (forwardDec.contains(info._1)) {
+      if (forwardDec(info._1) !== info._2)
+        throw sal.SalException(s"implementation of ${info._1} does not correspond to the forward declaration.")
+      else {
+        map.put(info._1, info._2)
+        forwardDec.remove(info._1)
+      }
+    }
     else map.put(info._1, info._2)
 
   def require(name: String, req: Type): Boolean =
@@ -54,8 +62,16 @@ class Context(parent: Option[Context]) {
     Context.operatos.getOrElse(op, throw sal.SalException(s"unknown operator $op."))
 
   def :=(rec: RecordType): Unit =
-    if (newTypes.contains(rec.name) || forwardDec.contains(rec.name))
+    if (newTypes.contains(rec.name))
       throw sal.SalException(s"duplicate record type ${rec.name}.")
+    else if (forwardDec.contains(rec.name)) {
+      if (forwardDec(rec.name) !== rec)
+        throw sal.SalException(s"implementation of ${rec.name} does not correspond to the forward declaration.")
+      else {
+        newTypes.put(rec.name, rec)
+        forwardDec.remove(rec.name)
+      }
+    }
     else newTypes.put(rec.name, rec)
   
   def ?(typeName: String): Type =
@@ -69,7 +85,7 @@ class Context(parent: Option[Context]) {
       throw sal.SalException(s"duplicate forward declaration ${info._1}.")
     else forwardDec.put(info._1, info._2)
 
-  def getNotImplemented = forwardDec
+  def getNotImplementedTypes = forwardDec
 }
 
 object Context {
