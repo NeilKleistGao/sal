@@ -10,7 +10,7 @@ lit: NUMBER | TRUE_LIT | FALSE_LIT | STRING_LIT | NIX_LIT;
 
 program: statement* EOF;
 
-statement: value | function | application | record | ifCondition; // here, application is for void function application
+statement: value | function | application | record | ifCondition | forwardDec; // here, application is for void function application
 
 blockInner: statement | expression;
 
@@ -67,3 +67,4 @@ elseIfCondition: ELSE_KW IF_KW LEFT_PARENTHESE expression RIGHT_PARENTHESE (bloc
 elseBlock: ELSE_KW (block | expression);
 
 lambda: FUN_KW params (COLON_OP allTypes)? ASSIGN_OP expression;
+forwardDec: FUN_KW ID params COLON_OP allTypes;

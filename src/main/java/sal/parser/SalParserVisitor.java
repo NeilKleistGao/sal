@@ -150,4 +150,10 @@ public interface SalParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLambda(SalParser.LambdaContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SalParser#forwardDec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForwardDec(SalParser.ForwardDecContext ctx);
 }
