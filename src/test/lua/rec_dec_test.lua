@@ -111,3 +111,14 @@ local w33 = {
   y = 3,
   z = Implement3.z
 } --[[type: rec Implement3.]]
+RecA = {
+  b = nil
+}
+RecB = {
+  a = nil
+}
+local aabb = {
+  b = {
+  a = RecB.a
+}
+} --[[type: rec RecA.]]

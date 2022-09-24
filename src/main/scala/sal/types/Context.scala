@@ -75,10 +75,10 @@ class Context(parent: Option[Context]) {
     else newTypes.put(rec.name, rec)
   
   def ?(typeName: String): Type =
-    newTypes.getOrElse(typeName, parent match {
+    newTypes.getOrElse(typeName, forwardDec.getOrElse(typeName, parent match {
       case Some(p) => p?typeName
       case _ => throw sal.SalException(s"unknown type $typeName.")
-    })
+    }))
 
   def +=!(info: (String, Type)) =
     if (forwardDec.contains(info._1) || map.contains(info._1))

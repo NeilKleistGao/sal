@@ -62,3 +62,15 @@ rec Implement3 with Implement {
 }
 
 val w33 = new Implement3{x = 3, y = 3}
+
+rec RecB
+
+rec RecA {
+  b: RecB
+}
+
+rec RecB {
+  a: RecA
+}
+
+val aabb = new RecA{new RecB{}}

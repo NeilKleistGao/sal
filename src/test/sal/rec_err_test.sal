@@ -42,3 +42,6 @@ val ij = new Bar{x = 1, 2, 3}
 rec MM with M {
   f: string
 }
+
+rec ABC
+fun ABC(x: int): int = 42
