@@ -35,7 +35,6 @@ function n() --[[type: void -> int.]]
   res = x
   return res
 end
-
 function fact(x) --[[type: int -> int.]]
   return (function()
   local if_res = nil
