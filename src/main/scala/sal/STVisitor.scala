@@ -91,7 +91,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
       }
     }
     else if (ctx.lambda != null) ExpressionNode(visitLambda(ctx.lambda))
-    else if (ctx.DOT_OP() != null) ExpressionNode(visitAccess(ctx))
+    else if (ctx.DOT_OP() != null) ExpressionNode(visitSelection(ctx))
     else if (ctx.create != null) ExpressionNode(visitCreate(ctx.create))
     else if (ctx.ifCondition != null) ExpressionNode(visitIfCondition(ctx.ifCondition))
     else if (ctx.ID() != null) {
@@ -226,7 +226,7 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
   private def visitWith(ctx: SalParser.RecordContext) =
     ctx.ID().asScala.toList.drop(1).map(id => id.getText())
     
-  private def visitAccess(ctx: SalParser.ExpressionContext): SelectionNode = {
+  private def visitSelection(ctx: SalParser.ExpressionContext): SelectionNode = {
     val rec = visitExpression(ctx.expression(0))
     val fieldName = ctx.ID().getText()
 
@@ -313,6 +313,8 @@ class STVisitor extends sal.parser.SalParserBaseVisitor[STNode] {
     typeCtx = stack.pop()
     LambdaNode(params, retType, exp)
   }
+
+  override def visitForwardDec(ctx: SalParser.ForwardDecContext) = EmptyNode
 }
 
 object STVisitor {

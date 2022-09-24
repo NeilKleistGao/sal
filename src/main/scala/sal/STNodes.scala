@@ -18,6 +18,8 @@ object Prefix {
   }
 }
 
+case object EmptyNode extends STNode // for some non-lua-generating semantics
+
 sealed trait ResultNode
 sealed trait FunctionBodyType
 sealed trait StatementType

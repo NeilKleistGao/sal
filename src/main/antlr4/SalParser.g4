@@ -67,4 +67,4 @@ elseIfCondition: ELSE_KW IF_KW LEFT_PARENTHESE expression RIGHT_PARENTHESE (bloc
 elseBlock: ELSE_KW (block | expression);
 
 lambda: FUN_KW params (COLON_OP allTypes)? ASSIGN_OP expression;
-forwardDec: FUN_KW ID params COLON_OP allTypes;
+forwardDec: FUN_KW ID params COLON_OP allTypes | REC_KW ID;
