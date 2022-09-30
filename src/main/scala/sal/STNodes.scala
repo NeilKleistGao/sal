@@ -2,10 +2,11 @@ package sal
 
 import Operator._;
 import types._;
+import lua._;
 
 sealed trait STNode {
   lazy val salType: Type = ???
-  def toLua(indent: Int): String = ???
+  def toLua(): LuaCode = ???
 }
 
 object Prefix {
@@ -30,9 +31,9 @@ sealed trait FieldDefaultType
 case object EmptyNode extends STNode with StatementType // for some non-lua-generating semantics
 
 case class LitNode(value: String) extends STNode with ExpressionType {
-  override def toLua(indent: Int): String =
-    if (value.equals("nix")) s"${Prefix(indent)}nil"
-    else s"${Prefix(indent)}$value"
+  override def toLua(): LuaCode =
+    if (value.equals("nix")) LuaLit("nil")
+    else LuaLit(value)
 
   override lazy val salType = LitNode.getLitType(value)
 
@@ -54,15 +55,19 @@ case class TypeNameNode(tp: Type) extends STNode with FieldType {
 
 case class VariableNode(name: String, tp: Type) extends STNode with ExpressionType {
   override lazy val salType = tp
-  override def toLua(indent: Int): String = name
+  override def toLua(): LuaCode = LuaVariable(name)
 }
 
 case class ExpressionNode(val exp: STNode with ExpressionType, tp: Option[Type] = None)
   extends STNode with FunctionBodyType with BlockInnerType with ElseBlockType with FieldDefaultType {
-  override def toLua(indent: Int): String = exp match {
+  override def toLua(): LuaCode = exp match {
     case c @ IfConditionNode(_, _, _, res) =>
-      s"${Prefix(indent)}(function()\n${c.toLua(indent + 1)}\n${Prefix(indent + 1)}return $res\n${Prefix(indent)}end)()"
-    case _ => exp.toLua(indent)
+      LuaApplication(LuaSequence(List(
+        LuaFunction("", List()),
+        LuaBlock(List(c.toLua(), LuaReturn(LuaVariable(res)))),
+        LuaEnd
+      )), List())
+    case _ => exp.toLua()
   }
 
   override lazy val salType = tp match {
@@ -72,23 +77,25 @@ case class ExpressionNode(val exp: STNode with ExpressionType, tp: Option[Type] 
 }
 
 case class ValueNode(id: String, tp: TypeNameNode, expr: ExpressionNode) extends STNode with StatementType {
-  override def toLua(indent: Int): String = s"${Prefix(indent)}local $id = ${expr.toLua(0)} ${PrettyTypePrinter(tp.salType)}"
+  override def toLua(): LuaCode = LuaSequence(List(
+    LuaAssign(id, expr.toLua(), true), LuaComments(PrettyTypePrinter(tp.salType))
+  ))
 
   override lazy val salType = voidType
 }
 
 case class StatementNode(val s: STNode with StatementType) extends STNode with BlockInnerType {
-  override def toLua(indent: Int): String = s.toLua(indent)
+  override def toLua(): LuaCode = s.toLua()
 
   override lazy val salType = s.salType
 }
 
 case class ProgramNode(states: List[StatementNode]) extends STNode with ResultNode {
-  override def toLua(indent: Int): String =
-    states.foldLeft("")((res, s) => s.s match {
+  override def toLua(): LuaCode =
+    LuaProgram(states.foldLeft(List[LuaCode]())((res, s) => s.s match {
       case EmptyNode => res
-      case _ => s"$res${s.toLua(0)}\n"
-    })
+      case _ => res :+ s.toLua()
+    }))
 
   override lazy val salType = voidType
 }
@@ -99,13 +106,11 @@ case class ErrorNode(errInfo: String) extends ResultNode {
 
 case class ParamNode(name: String, tp: TypeNameNode) extends STNode {
   override lazy val salType = tp.salType
-  override def toLua(indent: Int): String = name
+  override def toString(): String = name
 }
 
 case class ParamsNode(val params: List[ParamNode]) extends STNode {
-  override def toLua(indent: Int): String =
-    if (params.isEmpty) ""
-    else params.map((p) => p.toLua(0)).reduceLeft((r, p) => s"$r, $p")
+  lazy val paramsList = params.map(p => p.toString())
 }
 
 case class BlockNode(stats: List[STNode with BlockInnerType], val res: String) extends STNode with FunctionBodyType with ElseBlockType {
@@ -113,21 +118,21 @@ case class BlockNode(stats: List[STNode with BlockInnerType], val res: String) e
     if (stats.isEmpty) voidType
     else stats.last.salType
 
-  private def translateBlock(lst: List[STNode with BlockInnerType], indent: Int): String =
-    lst.foldLeft("")((r, s) => s match {
-        case e: ExpressionNode => s"$r\n${Prefix(indent)}local _ = ${s.toLua(0)}"
-        case _ => s"$r\n${s.toLua(indent)}"
+  private def translateBlock(lst: List[STNode with BlockInnerType]): List[LuaCode] =
+    lst.map(s => s match {
+        case e: ExpressionNode => LuaAssign("_", s.toLua(), true)
+        case _ => s.toLua()
       })
 
-  override def toLua(indent: Int): String =
-    if (stats.isEmpty) ""
+  override def toLua(): LuaCode =
+    if (stats.isEmpty) LuaBlock(List())
     else salType match {
       case BuiltInType(name) if (name.equals("void")) =>
-        translateBlock(stats, indent)
-      case _ => {
-        val body = translateBlock(stats.dropRight(1), indent)
-        s"$body\n${Prefix(indent)}$res = ${stats.last.toLua(0)}"
-      }
+        LuaBlock(translateBlock(stats))
+      case _ =>
+        LuaSequence(List(
+          LuaBlock(translateBlock(stats.dropRight(1))), LuaAssign(res, stats.last.toLua(), false)
+        ))
     }
 
   def rename(newName: String) = BlockNode(stats, newName)
@@ -136,10 +141,15 @@ case class BlockNode(stats: List[STNode with BlockInnerType], val res: String) e
 case class FunctionBodyNode(body: STNode with FunctionBodyType) extends STNode {
   override lazy val salType = body.salType
 
-  override def toLua(indent: Int): String =
+  override def toLua(): LuaCode =
     body match {
-      case e: ExpressionNode => s"${Prefix(indent)}return ${e.toLua(0)}"
-      case BlockNode(_, res) => s"${Prefix(indent)}local $res = nil${body.toLua(indent)}\n${Prefix(indent)}return $res"
+      case e: ExpressionNode => LuaBlock(List(LuaReturn(e.toLua())))
+      case BlockNode(_, res) =>
+        LuaSequence(List(
+          LuaAssign(res, LuaLit("nil"), true),
+          body.toLua(),
+          LuaReturn(LuaVariable(res))
+        ))
     }
 }
 
@@ -147,8 +157,13 @@ case class FunctionNode(val id: String, params: ParamsNode, res: TypeNameNode, b
   extends STNode with StatementType with FieldType {
   override lazy val salType = voidType
     
-  override def toLua(indent: Int): String =
-    s"${Prefix(indent)}function $id(${params.toLua(0)}) ${PrettyTypePrinter(functionType)}\n${body.toLua(indent + 1)}\n${Prefix(indent)}end"
+  override def toLua(): LuaCode =
+    LuaSequence(List(
+      LuaFunction(id, params.paramsList),
+      body.toLua(),
+      LuaEnd,
+      LuaComments(PrettyTypePrinter(functionType))
+    ))
 
   val functionType =
     if (params.params.isEmpty) FunctionType(voidType, res.salType, 0)
@@ -159,21 +174,11 @@ case class ApplicationNode(func: ExpressionNode, params: List[ExpressionNode], r
   extends STNode with ExpressionType with StatementType {
   override lazy val salType = retType
 
-  override def toLua(indent: Int): String = {
-    val luaParams =
-      if (params.isEmpty) ""
-      else params.map((p) => p.toLua(0)).reduceLeft((r, p) => s"$r, $p")
-    val funcName = func.exp match {
-      case v: VariableNode => v.toLua(0)
-      case _ => s"(${func.toLua(0)})"
-    }
-
-    if (rest.isEmpty) s"${Prefix(indent)}$funcName(${luaParams})"
-    else {
-      val newList = rest.reduceLeft((r, p) => s"$r, $p")
-      s"${Prefix(indent)}function($newList) return $funcName(${luaParams}, $newList) end"
-    }
-  }
+  override def toLua(): LuaCode =
+    if (rest.isEmpty) LuaApplication(func.exp.toLua(), params.map((p) => p.toLua()))
+    else
+      LuaInlineFunction(rest,
+        LuaReturn(LuaApplication(func.exp.toLua(), (params.map((p) => p.toLua())) ::: rest.map(r => LuaVariable(r)))))
 }
 
 case class ReferenceNode(parent: String, member: String) extends STNode with FieldDefaultType
@@ -182,23 +187,21 @@ case class FieldNode(val id: String, field: STNode with FieldType, default: Opti
     case f: FunctionNode => f.functionType
     case _ => field.salType
   }
-  override def toLua(indent: Int): String = field match {
+
+  lazy val luaField: LuaFieldType = field match {
     case t: TypeNameNode => default match {
       case Some(v) => v match {
-        case exp: ExpressionNode => s"${Prefix(indent)}$id = ${exp.toLua(0)}"
-        case ReferenceNode(parent, member) => s"${Prefix(indent)}$id = $parent.$member"
+        case exp: ExpressionNode => (id, exp.toLua())
+        case ReferenceNode(parent, member) => (id, LuaSelection(LuaVariable(parent), member))
       }
-      case _ => s"${Prefix(indent)}$id = nil"
+      case _ => (id, LuaLit("nil"))
     }
-    case FunctionNode(id, params, res, body) =>
-      s"${Prefix(indent)}$id =\n${FunctionNode("", params, res, body).toLua(indent + 1)}"
+    case FunctionNode(id, params, res, body) => (id, FunctionNode("", params, res, body).toLua())
   }
 }
 
 case class FieldsNode(fields: List[FieldNode]) extends STNode {
-  override def toLua(indent: Int): String =
-    if (fields.isEmpty) ""
-    else fields.map((f) => f.toLua(indent)).reduceLeft((res, f) => s"$res,\n$f")
+  override def toLua(): LuaCode = LuaTable(fields.map(f => f.luaField), false)
 
   lazy val toList = fields.map((f) => f.field match {
     case FunctionNode(name, _, _, _) => (name, f.salType)
@@ -209,14 +212,13 @@ case class FieldsNode(fields: List[FieldNode]) extends STNode {
 case class RecordNode(id: String, fields: FieldsNode) extends STNode with StatementType {
   override lazy val salType = RecordType(id, fields.toList)
 
-  override def toLua(indent: Int): String =
-    s"${Prefix(indent)}$id = {\n${fields.toLua(indent + 1)}\n${Prefix(indent)}}"
+  override def toLua(): LuaCode = LuaAssign(id, fields.toLua(), false)
 }
 
 case class SelectionNode(rec: ExpressionNode, field: String, res: Type) extends STNode with ExpressionType {
   override lazy val salType = res
 
-  override def toLua(indent: Int): String = s"(${rec.toLua(indent)}).$field"
+  override def toLua(): LuaCode = LuaSelection(rec.toLua(), field)
 }
 
 case class InitializerNode(val param: (Option[String], ExpressionNode)) extends STNode {
@@ -226,32 +228,28 @@ case class InitializerNode(val param: (Option[String], ExpressionNode)) extends 
 case class CreateNode(rec: RecordType, initializers: List[InitializerNode]) extends STNode with ExpressionType {
   override lazy val salType = rec
 
-  override def toLua(indent: Int): String =
-    if (rec.fields.isEmpty) s"${Prefix(indent)}{}"
-    else {
-      val namedInit = initializers.filter((i) => !i.param._1.isEmpty).map((i) => (i.param._1.get, i.param._2)).toMap
-      val defaultInit = initializers.filter((i) => i.param._1.isEmpty).map((i) => i.param._2).iterator
+  override def toLua(): LuaCode = {
+    val namedInit = initializers.filter((i) => !i.param._1.isEmpty).map((i) => (i.param._1.get, i.param._2)).toMap
+    val defaultInit = initializers.filter((i) => i.param._1.isEmpty).map((i) => i.param._2).iterator
 
-      val body = rec.fields.map((f) =>
-        if (namedInit.contains(f._1)) s"${Prefix(indent)}  ${f._1} = ${namedInit(f._1).toLua(0)}"
-        else if (defaultInit.hasNext) s"${Prefix(indent)}  ${f._1} = ${defaultInit.next().toLua(0)}"
-        else s"${Prefix(indent)}  ${f._1} = ${rec.name}.${f._1}"
-      )
-
-      s"${Prefix(indent)}{\n${body.reduceLeft((r, f) => s"$r,\n$f")}\n${Prefix(indent)}}"
-    }
+    LuaTable(rec.fields.map((f) =>
+      if (namedInit.contains(f._1)) (f._1, namedInit(f._1).toLua())
+      else if (defaultInit.hasNext) (f._1, defaultInit.next().toLua())
+      else (f._1, LuaSelection(LuaVariable(rec.name), f._1))
+    ), false)
+  }
 }
 
 case class BiOpExpression(lhs: ExpressionNode, rhs: ExpressionNode, op: Operator, res: Type) extends STNode with ExpressionType {
   override lazy val salType = res
 
-  override def toLua(indent: Int): String = s"(${lhs.toLua(0)}) ${OperatorTranslator(op)} (${rhs.toLua(0)})"
+  override def toLua(): LuaCode = LuaBinaryOperator(OperatorTranslator(op), lhs.toLua(), rhs.toLua())
 }
 
 case class UnOpExpression(v: ExpressionNode, op: Operator, res: Type) extends STNode with ExpressionType {
   override lazy val salType = res
 
-  override def toLua(indent: Int): String = s"${OperatorTranslator(op)} (${v.toLua(0)})"
+  override def toLua(): LuaCode = LuaUnaryOperator(OperatorTranslator(op), v.toLua())
 }
 
 case class IfConditionNode(condition: ExpressionNode, body: STNode with FunctionBodyType, elseList: List[STNode with ElseBlockType], res: String)
@@ -259,19 +257,21 @@ case class IfConditionNode(condition: ExpressionNode, body: STNode with Function
   override lazy val salType =
     elseList.foldLeft(body.salType)((res, e) => if (res !== e.salType) anythingType else res)
 
-  override def toLua(indent: Int): String = {
-    val ifLua = s"${Prefix(indent)}if (${condition.toLua(0)}) then${translateBody(body, indent + 1)}\n"
-    val elseLua = elseList.foldLeft("")((els, e) => e match {
-      case IfConditionNode(c, b, _, _) => s"$els${Prefix(indent)}elseif (${c.toLua(0)}) then${translateBody(b, indent + 1)}\n"
-      case elseBlock: STNode with FunctionBodyType => s"$els${Prefix(indent)}else${translateBody(elseBlock, indent + 1)}\n"
-    })
+  override def toLua(): LuaCode =
+    LuaSequence(List(
+      LuaAssign(res, LuaLit("nil"), true),
+      LuaSequence(List(LuaIf(condition.toLua(), false), translateBody(body))),
+      LuaSequence(
+        elseList.map(e => e match {
+          case IfConditionNode(c, b, _, _) => LuaSequence(List(LuaIf(c.toLua(), true), translateBody(b)))
+          case elseBlock: STNode with FunctionBodyType => LuaSequence(List(LuaElse, translateBody(elseBlock)))
+        })),
+      LuaEnd
+    ))
 
-    s"${Prefix(indent)}local $res = nil\n$ifLua$elseLua${Prefix(indent)}end"
-  }
-
-  private def translateBody(body: STNode with FunctionBodyType, indent: Int) = body match {
-    case block: BlockNode => block.toLua(indent)
-    case exp: ExpressionNode => s"\n${Prefix(indent)}$res = ${exp.toLua(0)}"
+  private def translateBody(body: STNode with FunctionBodyType) = body match {
+    case block: BlockNode => block.toLua()
+    case exp: ExpressionNode => LuaBlock(List(LuaAssign(res, exp.toLua(), false)))
   }
 }
 
@@ -280,10 +280,10 @@ case class LambdaNode(params: ParamsNode, res: TypeNameNode, exp: ExpressionNode
     if (params.params.isEmpty) FunctionType(voidType, res.salType, 0)
     else params.params.foldRight(res.salType)((p, t) => FunctionType(p.salType, t, params.params.length))
     
-  override def toLua(indent: Int): String = res.salType match {
+  override def toLua(): LuaCode = res.salType match {
     case BuiltInType(typename) if (typename.equals("void")) =>
-      s"${Prefix(indent)}(function (${params.toLua(0)}) ${exp.toLua(0)} end)"
-    case _ => s"${Prefix(indent)}(function (${params.toLua(0)}) return ${exp.toLua(0)} end)"
+      LuaInlineFunction(params.paramsList, exp.toLua())
+    case _ => LuaInlineFunction(params.paramsList, LuaReturn(exp.toLua()))
   }
     
 }
@@ -291,13 +291,12 @@ case class LambdaNode(params: ParamsNode, res: TypeNameNode, exp: ExpressionNode
 case class TupleNode(fields: List[ExpressionNode]) extends STNode with ExpressionType {
   override lazy val salType = TupleType(fields.map(f => f.salType))
 
-  override def toLua(indent: Int): String =
-    s"${Prefix(indent)}{${fields.map(f => f.toLua(0)).reduceLeft((r, s) => s"$r, $s")}}"
+  override def toLua(): LuaCode = LuaTable(fields.map(f => ("", f.toLua())), true)
 }
 
 case class IndexedNode(parent: ExpressionNode, index: Int) extends STNode with ExpressionType {
   override lazy val salType = parent.salType.at(index)
 
-  override def toLua(indent: Int): String =
-    s"${Prefix(indent)}${parent.toLua(0)}[${index + 1}]"
+  override def toLua(): LuaCode =
+    LuaIndex(parent.toLua(), LuaLit((index + 1).toString()))
 }

@@ -1,41 +1,52 @@
-function f() --[[type: void -> int.]]
+function f()
   return 42
 end
-function g() --[[type: void -> string.]]
-  local res = nil
-  local x = false --[[type: bool.]]
-  res = "wuwuwu"
-  return res
+ --[type: void -> int.]
+function g()
+local res = nil
+  local x = false
+ --[type: bool.]
+res = "wuwuwu"
+return res
 end
-function h(x) --[[type: bool -> bool.]]
+ --[type: void -> string.]
+function h(x)
   return x
 end
-function m(x, y) --[[type: anything -> anything -> string.]]
+ --[type: bool -> bool.]
+function m(x, y)
   return ""
 end
-function high(x) --[[type: int -> anything -> int.]]
-  local res = nil
-  function inner(y) --[[type: anything -> int.]]
+ --[type: anything -> anything -> string.]
+function high(x)
+local res = nil
+  function inner(y)
     return x
   end
-  res = inner
-  return res
+ --[type: anything -> int.]
+res = inner
+return res
 end
-function hgih(x) --[[type: anything -> float -> anything.]]
-  local res = nil
-  function outer(y) --[[type: float -> anything.]]
+ --[type: int -> anything -> int.]
+function hgih(x)
+local res = nil
+  function outer(y)
     return x
   end
-  res = outer
-  return res
+ --[type: float -> anything.]
+res = outer
+return res
 end
-function n() --[[type: void -> int.]]
-  local res = nil
-  local x = 42 --[[type: int.]]
-  res = x
-  return res
+ --[type: anything -> float -> anything.]
+function n()
+local res = nil
+  local x = 42
+ --[type: int.]
+res = x
+return res
 end
-function fact(x) --[[type: int -> int.]]
+ --[type: void -> int.]
+function fact(x)
   return (function()
   local if_res = nil
   if ((x) < (2)) then
@@ -46,3 +57,4 @@ function fact(x) --[[type: int -> int.]]
   return if_res
 end)()
 end
+ --[type: int -> int.]

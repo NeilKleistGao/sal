@@ -99,7 +99,7 @@ class Typer {
     try
       recType match {
         case rt: RecordType => rt.get(fieldName)
-        case _ => throw SalException(s"${node.toLua(0)} is not a record.")
+        case _ => throw SalException(s"${node.toLua().show("")} is not a record.")
       }
     catch {
       case SalException(info) => {
@@ -217,14 +217,14 @@ object Typer {
   private def matchApplicationType(fun: Type, index: Int)(implicit funcNode: ExpressionNode, params: List[ExpressionNode]): Type = fun match {
     case FunctionType(p, r, c) =>
       if (params.length > c && c != -1)
-        throw SalException(s"too many parameters are provided at once in ${funcNode.toLua(0)}.")
+        throw SalException(s"too many parameters are provided at once in ${funcNode.toLua().show("")}.")
       else if (p === voidType && params.isEmpty) r
       else if (index == params.length - 1)
         if (p === params(index).salType) r
-        else throw SalException(s"${funcNode.toLua(0)}'s parameters[$index] requires $p, but got ${params(index).salType}.")
+        else throw SalException(s"${funcNode.toLua().show("")}'s parameters[$index] requires $p, but got ${params(index).salType}.")
       else
         if (p === params(index).salType) matchApplicationType(r, index + 1)
-        else throw SalException(s"${funcNode.toLua(0)}'s parameters[$index] requires $p, but got ${params(index).salType}.")
-    case _ => throw SalException(s"${funcNode.toLua(0)} is not a function.")
+        else throw SalException(s"${funcNode.toLua().show("")}'s parameters[$index] requires $p, but got ${params(index).salType}.")
+    case _ => throw SalException(s"${funcNode.toLua().show("")} is not a function.")
   }
 }

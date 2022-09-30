@@ -1,23 +1,27 @@
 local if_res = nil
 if (true) then
-  print("hello")
+print("hello")
 else
-  print("world")
+print("world")
 end
 local if_res_ = nil
 if (false) then
-  local x = 41 --[[type: int.]]
-  print(x)
+  local x = 41
+ --[type: int.]
+print(x)
+
 end
-local x = false --[[type: bool.]]
-local y = true --[[type: bool.]]
+local x = false
+ --[type: bool.]
+local y = true
+ --[type: bool.]
 local if_res__ = nil
 if (x) then
-  print("x")
+print("x")
 elseif (y) then
-  print("y")
+print("y")
 else
-  print("z")
+print("z")
 end
 local num = (function()
   local if_res___ = nil
@@ -27,7 +31,8 @@ local num = (function()
     if_res___ = 1
   end
   return if_res___
-end)() --[[type: int.]]
+end)()
+ --[type: int.]
 local str = (function()
   local if_res____ = nil
   if (x) then
@@ -38,10 +43,12 @@ local str = (function()
     if_res____ = ("res: ") .. ("z")
   end
   return if_res____
-end)() --[[type: string.]]
+end)()
+ --[type: string.]
 local if_res_____ = nil
 if (true) then
   if_res_____ = false
+
 end
 local if_res______ = nil
 if (true) then
@@ -57,4 +64,5 @@ local wtf = (function()
     if_res_______ = "42"
   end
   return if_res_______
-end)() --[[type: anything.]]
+end)()
+ --[type: anything.]

@@ -36,7 +36,7 @@ class Compiler(filename: String) {
       val writer = new BufferedWriter(new FileWriter(outputname))
       result match {
         case e: ErrorNode => writer.write(e.toString)
-        case p: ProgramNode => writer.write(p.toLua(0))
+        case p: ProgramNode => writer.write(p.toLua().show(""))
       }
       writer.close()
     }

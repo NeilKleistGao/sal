@@ -20,11 +20,13 @@ case class LuaAssign(name: String, value: LuaCode, isLocal: Boolean) extends Lua
 }
 
 case class LuaBlock(codes: List[LuaCode]) extends LuaCode {
-  override def show(implicit indent: String): String =
-    codes.foldLeft("")((r, c) => s"$r${c.show(indent + spaces)}\n")
+  override def show(implicit indent: String): String = {
+    val res = codes.foldLeft("")((r, c) => s"$r${c.show(indent + spaces)}\n")
+    if (res.isEmpty()) res else res.dropRight(1)
+  }
 }
 
-case class LuaFunction(name: String, params: List[String], body: LuaBlock) extends LuaCode {
+case class LuaFunction(name: String, params: List[String]) extends LuaCode {
   private lazy val paramsString =
     if (params.isEmpty) ""
     else params.reduceLeft((s, p) => s"$s, $p")
@@ -43,8 +45,10 @@ case class LuaApplication(fun: LuaCode, params: List[LuaCode]) extends LuaCode {
     if (params.isEmpty) ""
     else params.map(p => p.show("")).reduceLeft((s, p) => s"$s, $p")
 
-  override def show(implicit indent: String): String =
-    s"${fun.show}($paramsString)"
+  override def show(implicit indent: String): String = fun match {
+    case LuaVariable(name) => s"$name($paramsString)"
+    case _ => s"(${fun.show})($paramsString)"
+  }
 }
 
 case class LuaReturn(res: LuaCode) extends LuaCode {
@@ -67,11 +71,11 @@ case class LuaIndex(obj: LuaCode, index: LuaCode) extends LuaCode {
 }
 
 case class LuaUnaryOperator(op: String, exp: LuaCode) extends LuaCode {
-  override def show(implicit indent: String): String = s"$indent$op${exp.show}"
+  override def show(implicit indent: String): String = s"$indent$op(${exp.show})"
 }
 
 case class LuaBinaryOperator(op: String, lhs: LuaCode, rhs: LuaCode) extends LuaCode {
-  override def show(implicit indent: String): String = s"${lhs.show} $op ${rhs.show("")}"
+  override def show(implicit indent: String): String = s"$indent(${lhs.show("")}) $op (${rhs.show("")})"
 }
 
 case class LuaTable(fields: List[LuaFieldType], isInline: Boolean) extends LuaCode {
@@ -79,7 +83,12 @@ case class LuaTable(fields: List[LuaFieldType], isInline: Boolean) extends LuaCo
     if (fields.isEmpty) s"$indent{}"
     else {
       val split = if (isInline) ", " else ",\n"
-      val fs = fields.map(ft => s"${indent + spaces}${ft._1} = ${ft._2.show("")}").reduceLeft((r, s) => s"$r$split$s")
+      val fs = fields.map(ft =>
+        if (isInline)
+          s"${ft._2.show("")}"
+        else
+          s"${indent + spaces}${ft._1} = ${ft._2.show("")}"
+      ).reduceLeft((r, s) => s"$r$split$s")
 
       if (isInline) s"$indent{$fs}"
       else s"$indent{\n$fs\n$indent}"
@@ -88,6 +97,29 @@ case class LuaTable(fields: List[LuaFieldType], isInline: Boolean) extends LuaCo
 
 case class LuaComments(content: String) extends LuaCode {
   override def show(implicit indent: String): String = s" --[$content]"
+}
+
+case class LuaSequence(codes: List[LuaCode]) extends LuaCode {
+  override def show(implicit indent: String): String = {
+    val res = codes.foldLeft("")((r, c) => s"$r${c.show}\n")
+    if (res.isEmpty()) res else res.dropRight(1)
+  }
+}
+
+case class LuaSelection(parent: LuaCode, field: String) extends LuaCode {
+  override def show(implicit indent: String): String = parent match {
+    case LuaVariable(name) => s"${parent.show}.$field"
+    case _ => s"(${parent.show}).$field"
+  }
+}
+
+case class LuaInlineFunction(params: List[String], exp: LuaCode) extends LuaCode {
+  private lazy val paramsString =
+    if (params.isEmpty) ""
+    else params.reduceLeft((s, p) => s"$s, $p")
+
+  override def show(implicit indent: String): String =
+    s"${indent}function($paramsString) ${exp.show("")} end"
 }
 
 case object LuaElse extends LuaCode {
