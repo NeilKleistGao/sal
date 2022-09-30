@@ -16,3 +16,5 @@ function swap(x)
   return {x[2], x[1]}
 end
  --[type: [int, string] -> [string, int].]
+local funcs = {function(x) return x end, function(x, y) return (x) + (y) end}
+ --[type: [anything -> anything, int -> int -> int].]

@@ -7,3 +7,5 @@ fun throwErr(code: int, err: string) = [code, err]
 val v42 = t2[1]
 
 fun swap(x: [int, string]) = [x[1], x[0]]
+
+val funcs = [fun(x) = x, fun(x: int, y: int) = x + y]
