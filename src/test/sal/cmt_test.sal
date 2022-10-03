@@ -1,0 +1,21 @@
+// this is a comment
+
+fun add(x: int, y: int) = x + y
+
+/* this
+    is
+    another
+    comment
+ */
+
+val z = add(1, 2)
+
+/*
+ * @param
+ * @param
+ * @return
+*/
+fun addZ(w: float) = w + z
+
+val s1 = "//abc"
+val s2 = "/*def*/"
