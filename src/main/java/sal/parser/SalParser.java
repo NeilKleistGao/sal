@@ -27,7 +27,8 @@ public class SalParser extends Parser {
 		ARROW_OP=30, DOT_OP=31, BIT_AND_OP=32, BIT_OR_OP=33, BIT_NOT_OP=34, BIT_XOR_OP=35, 
 		LEFT_SHIFT_OP=36, RIGHT_SHIFT_OP=37, LOGIC_AND_OP=38, LOGIC_OR_OP=39, 
 		LOGIC_NOT_OP=40, ADD_OP=41, SUB_OP=42, MUL_OP=43, DIV_OP=44, MOD_OP=45, 
-		POW_OP=46, LESS_OP=47, GREATER_OP=48, LE_OP=49, GE_OP=50, ID=51;
+		POW_OP=46, LESS_OP=47, GREATER_OP=48, LE_OP=49, GE_OP=50, ID=51, LINE_COMMENT=52, 
+		COMMENT=53;
 	public static final int
 		RULE_lit = 0, RULE_program = 1, RULE_statement = 2, RULE_blockInner = 3, 
 		RULE_block = 4, RULE_typeName = 5, RULE_allTypes = 6, RULE_value = 7, 
@@ -66,7 +67,7 @@ public class SalParser extends Parser {
 			"ARROW_OP", "DOT_OP", "BIT_AND_OP", "BIT_OR_OP", "BIT_NOT_OP", "BIT_XOR_OP", 
 			"LEFT_SHIFT_OP", "RIGHT_SHIFT_OP", "LOGIC_AND_OP", "LOGIC_OR_OP", "LOGIC_NOT_OP", 
 			"ADD_OP", "SUB_OP", "MUL_OP", "DIV_OP", "MOD_OP", "POW_OP", "LESS_OP", 
-			"GREATER_OP", "LE_OP", "GE_OP", "ID"
+			"GREATER_OP", "LE_OP", "GE_OP", "ID", "LINE_COMMENT", "COMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -2473,7 +2474,7 @@ public class SalParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u00013\u0167\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u00015\u0167\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+

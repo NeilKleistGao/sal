@@ -60,3 +60,6 @@ LE_OP: '<=';
 GE_OP: '>=';
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
+
+LINE_COMMENT: '//' .*? '\r'? '\n' -> skip ;
+COMMENT: '/*' .*? '*/' -> skip ;
