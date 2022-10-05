@@ -80,3 +80,7 @@ return res
 end
  --[type: anything -> anything -> anything -> void.]
 (function(p_) return (function(p_, p__) return triple(1, p_, p__) end)(2, p_) end)(3)
+assert(true, "abc")
+local mt = getmetatable(temptemp)
+ --[type: anything.]
+print(_VERSION)
