@@ -7,6 +7,7 @@ package object types {
   lazy val stringType = types.BuiltInType("string")
   lazy val voidType = types.BuiltInType("void")
   lazy val anythingType = types.BuiltInType("anything")
+  lazy val nothingType = types.BuiltInType("nothing")
 
   lazy val numberType = UnionType(intType, floatType)
 }
