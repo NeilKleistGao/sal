@@ -9,11 +9,18 @@ class Context(parent: Option[Context]) {
     "tostring" -> (anythingType --> stringType),
     "tonumber" -> (anythingType --> (intType \/ floatType)),
     "type" -> (anythingType --> stringType),
+    "assert" -> (anythingType --> (anythingType --> voidType)),
+    "error" -> (anythingType --> (anythingType --> nothingType)),
+    "getmetatable" -> (anythingType --> anythingType),
+    "_VERSION" -> stringType,
 
     "and" -> PreservedKeyword,
     "or" -> PreservedKeyword,
     "not" -> PreservedKeyword,
     "nil" -> PreservedKeyword,
+    "_G" -> PreservedKeyword,
+    "ipairs" -> PreservedKeyword,
+    "pairs" -> PreservedKeyword
   )
 
   private val newTypes = HashMap[String, RecordType]()

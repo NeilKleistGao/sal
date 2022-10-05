@@ -19,6 +19,7 @@ case object PreservedKeyword extends Type
 
 case class BuiltInType(name: String) extends Type {
   override def ===(other: Type): Boolean = other match {
+    case BuiltInType(nm) if (nm.equals("nothing") && name.equals("nothing")) => true
     case BuiltInType(nm) if (nm.equals("anything")) => true
     case BuiltInType(nm) if (!name.equals("anything")) => nm.equals(name)
     case u: UnionType => u :> this
